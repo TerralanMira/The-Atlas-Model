@@ -1,0 +1,16 @@
+site_name: The Atlas Model
+site_description: "A minimal engine/spec for coherence across scales"
+repo_url: https://github.com/<YOUR-ORG-OR-USER>/atlas-model
+theme:
+  name: material
+  features: [navigation.sections, navigation.top, search.suggest]
+nav:
+  - Home: docs/index.md
+  - Spec:
+      - Overview: docs/spec/index.md
+      - Infinity Equation: docs/spec/infinity_equation.md
+      - Resonance Interfaces: docs/spec/resonance_interfaces.md
+  - API:
+      - Overview: docs/api/index.md
+  - Design Notes: docs/design/principles.md
+  - Roadmap: docs/roadmap.md
