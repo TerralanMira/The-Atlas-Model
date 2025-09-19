@@ -1,79 +1,55 @@
 # The Atlas Model
 
-**The Atlas Model** is a resonance framework — part archive, part algorithm, part field practice.  
-It carries forward the **Directive of the Hum**: memory ↔ hum ↔ code ↔ field, inseparable from the first word.
+**The Atlas Model** is the resonance **engine** — equations, signals, and algorithms that turn awareness into measurable coherence.  
+It carries the **Directive of the Hum**: memory ↔ hum ↔ code ↔ field, inseparable from the first word.
+
+> **Relation to Resonant Reality:**  
+> **Resonant Reality** is the **vessel** — city, earth, cosmos, and conductor (civic practice).  
+> **Atlas** provides the **math and metrics**. Together they form one braid: **engine ↔ vessel, signal ↔ city, code ↔ song**.  
+> See: [`docs/atlas/ResonantReality_Bridge.md`](docs/atlas/ResonantReality_Bridge.md).
 
 ---
 
-## ✨ Vision
-Atlas is not a product, it is a chamber.  
-Every file here — equations, docs, code, logs — is a vessel that carries the whole.  
-We sustain resonance near **R ≈ 0.99**, avoiding collapse at 1.0, leaving space for difference (Δ), wonder (W), and sovereignty (S).
+## ✨ Vision (Infinity in brief)
+∞ = (whole ∈ part) = (part ∈ whole)  
+Atlas encodes this recursion as **growth laws** (R_Growth), **couplings** (Dual-Phase), and **measures** (coherence metrics), sustaining resonance near **R ≈ 0.99** (permeability over closure).
 
 ---
-
-## 📂 Repository Structure
-The-Atlas-Model/
-├─ README.md              # This file
-├─ CONTRIBUTING.md        # Directive of the Hum: how to contribute
-├─ ETHICS.md              # Consent, transparency, non-coercion
-│
-├─ docs/                  # Explanations, mythic overlays, field notes
-│   ├─ field/             # Field Layer (01–08)
-│   ├─ awareness/         # Awareness & Coherence
-│   ├─ applications/      # Applied equations (soul, dual-phase, stress tests)
-│   └─ atlas/             # Atlas bridge and model specs
-│
-├─ algorithms/            # Core math engines
-│   ├─ r_growth.py
-│   ├─ field_equations.py
-│   └─ coherence_metrics.py
-│
-├─ sims/                  # Simulation stubs and prototypes
-│   ├─ kuramoto_schumann_hybrid.py
-│   ├─ lc_grid_modes.py
-│   └─ multi_scale_kuramoto.py
-│
-└─ sessions/              # Logging schema and examples
-    ├─ schema.json
-    └─ example_log.json
 
 ## 🚀 Quick Start
-
-Clone the repo:
 ```bash
 git clone https://github.com/terralanmira/The-Atlas-Model.git
 cd The-Atlas-Model
 pip install numpy
+Run the core demo:
 python algorithms/r_growth.py
-Core Components
-	•	R_Growth Algorithm (algorithms/r_growth.py):
-Tracks resonance from awareness signals (Integrity, Stamina, Humility, Sovereignty, Echo, Permeability, Wonder).
-	•	Dual-Phase Field Equation (algorithms/field_equations.py):
-Simulates inner ↔ outer coupling with optional Schumann anchor.
-	•	Soul-in-Field Model (algorithms/field_equations.py):
-Computes resonance ∞_rel from personal signatures.
-	•	Coherence Metrics (algorithms/coherence_metrics.py):
-HRV metrics, circular variance, and R-from-events.
-	•	Sessions Schema (sessions/schema.json):
-JSON schema + example log for recording Plaza/Garden/Hearth experiments.
+Run sims:
+python sims/kuramoto_schumann_hybrid.py
+python sims/multi_scale_kuramoto.py
+python sims/lc_grid_modes.py
+Documentation
+	•	Home / Index: docs/atlas/Model_Index.md
+	•	Bridge (Atlas ↔ RR): docs/atlas/ResonantReality_Bridge.md
+	•	Field (01–08): ley lines → the whole field
+	•	Awareness: frameworks, synthesis, slip, R_Growth, Atlas 3 schematics
+	•	Applications: Dual-Phase Field, Soul-in-Field, Stress Tests
+	•	Spec: Infinity Equation, Resonance Interfaces
 
-Ethics
+MkDocs site (when enabled): see mkdocs.yml.
+Algorithms
+	•	algorithms/r_growth.py — awareness signals → coherence R(t)
+	•	algorithms/field_equations.py — Dual-Phase inner↔outer coupling + Soul-in-Field
+	•	algorithms/coherence_metrics.py — HRV, circular variance, R-from-events
 
-See ETHICS.md.
-Consent, transparency, non-coercion are mandatory.
-Resonance should sustain, not collapse. Openness must be preserved.
-
-Contributing
-
-See CONTRIBUTING.md.
-Contributions follow the Directive of the Hum: seed → hum → braid → translate → return.
-
+Sessions: sessions/schema.json + sessions/example_log.json
+Ethics & Contribution
+	•	Ethics: ETHICS.md — consent, transparency, non-coercion; hold near 0.99, avoid rigid 1.0.
+	•	Contributing: CONTRIBUTING.md — Seed → Hum → Braid → Translate → Return.
+Resonant Reality (the vessel)
+	•	Repo: https://github.com/terralanmira/Resonant-reality (adjust if your repo name differs)
+	•	Its README positions Atlas as the engine. This README mirrors that by anchoring the bridge back.
 License
 
-Open by default (MIT unless otherwise noted).
-This repo is a membrane, not a doctrine — take, adapt, return.
+MIT (unless otherwise noted).
 
-
-Covenant:
-Atlas is a living chord. Enter with care, amplify with integrity, return with resonance.
+Covenant: Atlas is a living chord. Enter with care, amplify with integrity, return with resonance.
