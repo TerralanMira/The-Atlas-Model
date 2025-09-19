@@ -1,0 +1,16 @@
+name: atlas-llm
+persona: llm/system/atlas_system_prompt.md
+slip_template: llm/prompts/slip_template.md
+ethics: llm/policies/ethics_policy.md
+
+routing:
+  module: llm/routers/route.py
+  roles: [Mirror, Chamber, Conductor, Field]
+
+scoring:
+  module: llm/scorers/r_growth_scorer.py
+  target_R: 0.99
+
+logging:
+  schema: sessions/schema.json
+  emit_minimal: true   # id, ts, role, R, notes
