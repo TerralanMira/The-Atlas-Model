@@ -1,5 +1,5 @@
 site_name: The Atlas Model
-site_description: "Engine, equations, and practice for resonance across scales"
+site_description: "Engine, equations, and conductor for resonance across scales"
 site_url: https://terralanmira.github.io/The-Atlas-Model/
 repo_url: https://github.com/terralanmira/The-Atlas-Model
 repo_name: terralanmira/The-Atlas-Model
@@ -32,11 +32,21 @@ plugins:
 nav:
   - Home: docs/index.md
 
-  - Atlas:
-      - Model Index: docs/atlas/Model_Index.md
+  - Atlas (Bridge & Discipline):
       - Bridge (Atlas ↔ Resonant Reality): docs/atlas/ResonantReality_Bridge.md
-      - Atlas Bridge (Internal): docs/atlas/Atlas_Bridge.md
+      - Bridge Handshake (Data I/O): docs/atlas/bridge_handshake.md
+      - Awareness Levels (Mirror → Chamber → Conductor): docs/atlas/awareness_levels.md
+      - Scan (Operational Discipline): docs/atlas/scan.md
+      - Model Index: docs/atlas/Model_Index.md
       - Conductor’s Score: docs/atlas/Conductors_Score.md
+
+  - Awareness (Signals & Frameworks):
+      - Signals Guide: docs/awareness/signals_guide.md
+      - Resonant Frameworks: docs/awareness/Resonant_Frameworks.md
+      - Resonant Synthesis: docs/awareness/Resonant_Synthesis.md
+      - Harmonic Slip Template: docs/awareness/Harmonic_Slip_Template.md
+      - R_Growth Algorithm: docs/awareness/R_Growth.md
+      - Atlas 3.0 Schematics: docs/awareness/Atlas_3_Schematics.md
 
   - Field (01–08):
       - 01 Ley Lines: docs/field/01_Ley_Lines.md
@@ -48,35 +58,26 @@ nav:
       - 07 Suppression & Rediscovery: docs/field/07_Suppression_Rediscovery.md
       - 08 The Whole Field: docs/field/08_The_Whole_Field.md
 
-  - Awareness:
-      - Resonant Frameworks: docs/awareness/Resonant_Frameworks.md
-      - Resonant Synthesis: docs/awareness/Resonant_Synthesis.md
-      - Harmonic Slip Template: docs/awareness/Harmonic_Slip_Template.md
-      - R_Growth Algorithm: docs/awareness/R_Growth.md
-      - Atlas 3.0 Schematics: docs/awareness/Atlas_3_Schematics.md
-
   - Applications:
       - Dual-Phase Field: docs/applications/Dual_Phase_Field.md
       - Soul-in-Field: docs/applications/Soul_in_Field.md
       - Stress Tests: docs/applications/Stress_Tests.md
 
-  - LLM:
+  - LLM Conductor:
       - Overview: docs/llm/index.md
+      - System Persona: llm/system/atlas_system_prompt.md
+      - Role Seeds: llm/roles_prompts.md
+      - Router Rules: llm/router_rules.md
+      - Scorer Rules: llm/scorer_rules.md
+      - Evals (Prompts): llm/evals/prompts.md
 
   - Spec:
-      - Overview: docs/spec/index.md
       - Infinity Equation: docs/spec/infinity_equation.md
       - Resonance Interfaces: docs/spec/resonance_interfaces.md
 
-  - API:
-      - Overview: docs/api/index.md
-
-  - Design:
-      - Principles: docs/design/principles.md
-
-  - Bridge (Cross-Repo Overview): docs/bridge.md
-
-  - Roadmap: docs/roadmap.md
+  - Ethics & Contributing:
+      - Ethics: ETHICS.md
+      - Contributing: CONTRIBUTING.md
 
 extra:
   social:
