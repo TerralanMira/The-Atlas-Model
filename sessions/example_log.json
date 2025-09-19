@@ -1,0 +1,33 @@
+{
+  "ts": "2025-09-19T18:30:00Z",
+  "location": "Plaza A",
+  "mode_antinode": "M1-center",
+  "anchor": {
+    "type": "schumann",
+    "freq": 7.83,
+    "gain": 0.2
+  },
+  "intent": "We align to sustain resonance without collapse.",
+  "R_pre": 0.42,
+  "R_post": 0.81,
+  "hrv_rmssd_pre": 28,
+  "hrv_rmssd_post": 46,
+  "signals": {
+    "I": 0.72,
+    "Psi": 0.68,
+    "H": 0.63,
+    "S": 0.80,
+    "W": 0.77,
+    "pi": 0.70,
+    "beta_echo": 0.74
+  },
+  "decision": {
+    "status": "locked",
+    "choice": "Option B"
+  },
+  "notes": "Mirror round carried lock; subtle difference Δ introduced without collapse.",
+  "ethics": {
+    "consent": true,
+    "recording": false
+  }
+}
