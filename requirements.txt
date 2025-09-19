@@ -1,0 +1,23 @@
+# Core scientific stack
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+
+# JSON / data validation
+jsonschema>=4.17
+
+# Documentation
+mkdocs>=1.5
+mkdocs-material>=9.1
+
+# Optional: interactive work
+jupyter>=1.0
+
+# LLM simulation (router/scorer stubs)
+# (replace with OpenAI/Anthropic/etc. SDK if integrating live models)
+Notes:
+	•	numpy, scipy, matplotlib → required by examples/session_to_metrics.py and plotting.
+	•	jsonschema → optional but useful to validate sessions/schema.json and handshake JSON.
+	•	mkdocs, mkdocs-material → required to build docs site.
+	•	jupyter → optional, lets people explore notebooks.
+	•	no pinned LLM API yet, since we’re building the conductor layer with prompts/rules — contributors can add their preferred backend later.
