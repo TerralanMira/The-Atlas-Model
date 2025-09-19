@@ -24,3 +24,5 @@ def recommend_K_range(resonance: float) -> tuple[float,float]:
         return (0.4, 0.6)
     else:
         return (0.6, 0.8)
+def clamp(x, lo=0.0, hi=1.0):
+    return max(lo, min(hi, x))
