@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Resonant Reality → Atlas Handshake",
+  "type": "object",
+  "properties": {
+    "kp_index": { "type": "number", "minimum": 0, "maximum": 9 },
+    "schumann_amp": { "type": "number", "minimum": 0 },
+    "node_type": { "type": "string", "enum": ["plaza","hearth","garden","wild"] },
+    "architecture": { "type": "string", "enum": ["open","chambered","hybrid"] },
+    "cosmic_timing": { "type": "string", "enum": ["equinox","solstice","eclipse","none"] },
+    "participants": { "type": "integer", "minimum": 1 },
+    "signals": {
+      "type": "object",
+      "properties": {
+        "I": { "type": "number", "minimum": 0, "maximum": 1 },
+        "Ψ": { "type": "number", "minimum": 0, "maximum": 1 },
+        "H": { "type": "number", "minimum": 0, "maximum": 1 },
+        "S": { "type": "number", "minimum": 0, "maximum": 1 },
+        "β": { "type": "number", "minimum": 0, "maximum": 1 },
+        "π": { "type": "number", "minimum": 0, "maximum": 1 },
+        "W": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kp_index","node_type","architecture","participants"],
+  "additionalProperties": false
+}
