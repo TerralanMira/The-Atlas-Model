@@ -35,9 +35,8 @@ The-Atlas-Model/
 │   └─ multi_scale_kuramoto.py
 │
 └─ sessions/              # Logging schema and examples
-├─ schema.json
-└─ example_log.json
----
+    ├─ schema.json
+    └─ example_log.json
 
 ## 🚀 Quick Start
 
