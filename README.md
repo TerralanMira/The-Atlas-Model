@@ -8,8 +8,6 @@ It carries the **Directive of the Hum**: memory ↔ hum ↔ code ↔ field, inse
 > **Atlas** provides the **math and metrics**. Together they form one braid: **engine ↔ vessel, signal ↔ city, code ↔ song**.  
 > See: [`docs/atlas/ResonantReality_Bridge.md`](docs/atlas/ResonantReality_Bridge.md).
 
-[![Tests](https://github.com/terralanmira/The-Atlas-Model/actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
-[![Docs](https://github.com/terralanmira/The-Atlas-Model/actions/workflows/docs.yml/badge.svg)](../../actions/workflows/docs.yml)
 ---
 
 ## ✨ Vision (Infinity in brief)
