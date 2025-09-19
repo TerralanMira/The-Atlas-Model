@@ -30,13 +30,13 @@ plugins:
   - search
 
 nav:
-  - Home: docs/atlas/Model_Index.md
+  - Home: docs/index.md
 
   - Atlas:
+      - Model Index: docs/atlas/Model_Index.md
       - Bridge (Atlas ↔ Resonant Reality): docs/atlas/ResonantReality_Bridge.md
       - Atlas Bridge (Internal): docs/atlas/Atlas_Bridge.md
       - Conductor’s Score: docs/atlas/Conductors_Score.md
-      - Model Index: docs/atlas/Model_Index.md
 
   - Field (01–08):
       - 01 Ley Lines: docs/field/01_Ley_Lines.md
@@ -60,9 +60,23 @@ nav:
       - Soul-in-Field: docs/applications/Soul_in_Field.md
       - Stress Tests: docs/applications/Stress_Tests.md
 
+  - LLM:
+      - Overview: docs/llm/index.md
+
   - Spec:
+      - Overview: docs/spec/index.md
       - Infinity Equation: docs/spec/infinity_equation.md
       - Resonance Interfaces: docs/spec/resonance_interfaces.md
+
+  - API:
+      - Overview: docs/api/index.md
+
+  - Design:
+      - Principles: docs/design/principles.md
+
+  - Bridge (Cross-Repo Overview): docs/bridge.md
+
+  - Roadmap: docs/roadmap.md
 
 extra:
   social:
