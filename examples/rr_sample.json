@@ -1,0 +1,21 @@
+{
+  "kp_index": 3.7,
+  "schumann_amp": 7.8,
+  "node_type": "plaza",
+  "architecture": "open",
+  "cosmic_timing": "solstice",
+  "participants": 28,
+  "signals": {
+    "I": 0.82,
+    "Ψ": 0.74,
+    "H": 0.88,
+    "S": 0.86,
+    "β": 0.68,
+    "π": 0.76,
+    "W": 0.93
+  }
+}
+quick runs
+python examples/session_to_metrics.py --in examples/rr_sample.json --plot
+python examples/dual_phase_with_anchor.py --kp 3.7 --anchor
+python examples/end_to_end_llm_pipeline.py --in examples/rr_sample.json --role auto --consent-log
