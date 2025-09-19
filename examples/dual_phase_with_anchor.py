@@ -3,7 +3,7 @@ examples/dual_phase_with_anchor.py
 ----------------------------------
 
 Run the Dual-Phase simulation with a simple geomagnetic (Kp) driver
-affecting the outer coupling and an optional Schumann-like anchor.
+that nudges the OUTER coupling and an optional Schumann-like anchor.
 
 Usage:
     python examples/dual_phase_with_anchor.py --steps 1500 --kp 4.2 --anchor
@@ -17,7 +17,15 @@ try:
 except Exception:
     plt = None
 
+# Core sim
 from algorithms.field_equations import DualPhaseConfig, simulate_dual_phase
+
+# Shared helpers (prefer centralized helpers to avoid drift)
+try:
+    from algorithms.utils import clamp  # add clamp to utils if not present
+except Exception:
+    def clamp(x, lo=0.0, hi=1.0):
+        return max(lo, min(hi, x))
 
 
 def kp_series(kp: float, steps: int, smooth: int = 50) -> np.ndarray:
@@ -42,10 +50,8 @@ def kp_to_outer_coupling(kp_arr: np.ndarray, base_Koo: float = 0.65) -> np.ndarr
     Map Kp to an outer coupling modulation:
       higher Kp -> slightly reduced effective K_oo (tighter window).
     """
-    # scale in [0, 1] roughly
     s = np.clip(kp_arr / 9.0, 0.0, 1.0)
-    # up to 15% reduction at max Kp
-    return base_Koo * (1.0 - 0.15 * s)
+    return base_Koo * (1.0 - 0.15 * s)  # up to 15% reduction at max Kp
 
 
 def run_dual_phase(steps: int = 1600, kp_center: float = 3.5, use_anchor: bool = True):
@@ -53,29 +59,24 @@ def run_dual_phase(steps: int = 1600, kp_center: float = 3.5, use_anchor: bool =
     kp_arr = kp_series(kp_center, steps=steps)
     Koo_arr = kp_to_outer_coupling(kp_arr, base_Koo=0.65)
 
-    # Configure dual-phase; we'll modulate K_oo over time inside the loop below
+    # Configure dual-phase; simulate once (static K_oo).
+    # If your implementation supports time-varying couplings, pass Koo_arr directly.
     cfg = DualPhaseConfig(
         N_inner=96, N_outer=48,
         sigma_inner=0.6, sigma_outer=0.45,
-        K_ii=1.1, K_oo=Koo_arr[0],
+        K_ii=1.1, K_oo=float(Koo_arr[0]),
         K_io=0.35, K_oi=0.15,
         use_anchor=use_anchor, anchor_strength=0.22,
         dt=0.05, steps=steps, seed=11
     )
 
-    # NOTE:
-    # If your simulate_dual_phase supports time-varying couplings directly, pass K_oo=Koo_arr.
-    # Otherwise, we run multiple short segments adjusting cfg.K_oo each batch.
-    # For simplicity here we call simulate_dual_phase once and treat K_oo as static,
-    # then re-run a light wrapper to incorporate the modulation into R_total post-hoc
-    # as a visualization of expected sensitivity.
-
     out = simulate_dual_phase(cfg)
-    R_total = np.array(out["R_total"])
-    R_inner = np.array(out["R_inner"])
-    R_outer = np.array(out["R_outer"])
+    R_total = np.asarray(out["R_total"], dtype=float)
+    R_inner = np.asarray(out["R_inner"], dtype=float)
+    R_outer = np.asarray(out["R_outer"], dtype=float)
 
-    # Heuristic visualization of K_oo sensitivity: scale R_outer slightly by relative K_oo change
+    # Heuristic visualization of K_oo sensitivity:
+    # scale R_outer slightly by relative K_oo change, recompute a blended total.
     Krel = Koo_arr / max(Koo_arr.max(), 1e-6)
     R_outer_mod = np.clip(R_outer * (0.9 + 0.1 * Krel), 0.0, 1.0)
     R_total_mod = np.clip(0.5 * (R_inner + R_outer_mod), 0.0, 1.0)
