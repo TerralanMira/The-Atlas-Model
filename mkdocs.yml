@@ -65,19 +65,19 @@ nav:
 
   - LLM Conductor:
       - Overview: docs/llm/index.md
-      - System Persona: llm/system/atlas_system_prompt.md
-      - Role Seeds: llm/roles_prompts.md
-      - Router Rules: llm/router_rules.md
-      - Scorer Rules: llm/scorer_rules.md
-      - Evals (Prompts): llm/evals/prompts.md
+      - System Persona: docs/llm/system_persona.md
+      - Role Seeds: docs/llm/roles_prompts.md
+      - Router Rules: docs/llm/router_rules.md
+      - Scorer Rules: docs/llm/scorer_rules.md
+      - Evals (Prompts): docs/llm/evals_prompts.md
 
   - Spec:
       - Infinity Equation: docs/spec/infinity_equation.md
       - Resonance Interfaces: docs/spec/resonance_interfaces.md
 
   - Ethics & Contributing:
-      - Ethics: ETHICS.md
-      - Contributing: CONTRIBUTING.md
+      - Ethics: docs/meta/ETHICS.md
+      - Contributing: docs/meta/CONTRIBUTING.md
 
 extra:
   social:
