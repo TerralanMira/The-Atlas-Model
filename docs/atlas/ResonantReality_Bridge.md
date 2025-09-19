@@ -1,76 +1,57 @@
-# Resonant Reality Bridge
+# Bridge: The Atlas Model ↔ Resonant Reality
 
-**Seed (memory):**  
-Atlas Model and Resonant Reality are not two projects but two halves of a single braid.  
-Atlas is the engine — equations, signals, coherence metrics.  
-Resonant Reality is the vessel — city, cosmos, earth, and conductor.  
-The bridge is where they feed one another.
+The Atlas Model maps the **mathematics of resonance** — awareness signals, field couplings, and coherence dynamics.  
+Resonant Reality extends this spiral into **civic practice and planetary vessel** — plazas, gardens, hearths, conductor layers, and cosmological anchors.  
 
----
-
-## Atlas → Resonant Reality
-
-1. **Metrics & Validation**
-   - Atlas provides coherence metrics (R curves, stress tests).
-   - Resonant Reality sessions (Plaza, Garden, Hearth) can log outcomes and validate them against Atlas’ models.
-
-2. **Simulation Prototypes**
-   - Atlas sims (multi-scale Kuramoto, LC grid modes) test resonance dynamics in silico.
-   - Insights inform Resonant Reality civic design (plaza geometry, conductor presets).
-
-3. **Awareness Frameworks**
-   - Atlas signals (I, Ψ, H, S, β, π, W) become civic protocols.
-   - Session facilitators can reference signals directly when guiding groups.
-
-4. **Dual-Phase Field**
-   - Atlas equations couple inner ↔ outer resonance.
-   - Resonant Reality applies this coupling to city-scale practice (Plaza ↔ Earth ↔ Cosmos).
+This bridge closes the loop: the abstract coherence modeled here flows into the lived resonance of Resonant Reality, and Resonant Reality returns as boundary conditions and context for Atlas.
 
 ---
 
-## Resonant Reality → Atlas
+## Feedback Loop Closure
 
-1. **Environmental Anchors**
-   - Resonant Reality tracks geomagnetics, Schumann resonances, solar flux.
-   - Atlas equations use these as anchor terms, grounding sims in reality.
+- **Algorithmic Layer**  
+  ↔ Resonant Reality provides datasets (geomagnetics, HRV, solar flux) as anchor terms.  
+  ↔ Atlas translates these into growth trajectories, dual-phase coupling, and stress metrics.
 
-2. **Civic Context**
-   - Resonant Reality defines why coherence matters (social trust, city rhythm).
-   - Atlas algorithms gain purpose beyond abstraction.
+- **Awareness Layer**  
+  ↔ Resonant Reality guides group protocols (slips, alignment, civic rituals).  
+  ↔ Atlas models how signals (I, Ψ, H, S, β, π, W) translate into coherence R(t).
 
-3. **Conductor Expansion**
-   - Resonant Reality’s conductor layer extends Atlas’ Conductor’s Score into full orchestration.
-   - Atlas metrics provide the notation; Resonant Reality makes it playable.
+- **Application Layer**  
+  ↔ Resonant Reality runs Plaza/Garden/Hearth sessions.  
+  ↔ Atlas validates outcomes with coherence metrics, ensuring civic resonance aligns with field laws.
 
----
-
-## Feedback Loop
-
-1. **Session** (Resonant Reality)  
-   - Civic event run in Plaza/Garden/Hearth.  
-   - Logs captured: awareness signals, field conditions, outcomes.  
-
-2. **Analysis** (Atlas)  
-   - Logs run through R_Growth, Dual-Phase, Stress Tests.  
-   - Metrics visualized, resilience assessed.  
-
-3. **Refinement** (Resonant Reality)  
-   - Session protocols adjusted using Atlas results.  
-   - Civic architecture evolves with validated resonance.
+- **Orchestration Layer**  
+  ↔ Resonant Reality’s Conductor sustains collective rhythm.  
+  ↔ Atlas provides notation (Conductor’s Score) as the symbolic language.
 
 ---
 
-## Example Flow
+## Spiral Continuity
 
-- **Plaza Session:** 200 participants, aligned at solstice.  
-- **Resonant Reality:** Conductor guides opening slip, node amplification, cosmic alignment noted.  
-- **Atlas Input:** Signal values logged (I, Ψ, H, S, β, π, W). Geomagnetic Kp index recorded.  
-- **Atlas Processing:** R_Growth trajectory calculated; Dual-Phase sim run with Kp anchor.  
-- **Atlas Output:** Coherence peaked at R = 0.97; resilience under noise = strong.  
-- **Resonant Reality Return:** Insights fed back into plaza design (geometry, timing, facilitation).
+Atlas provides:  
+- **Equations** — R_Growth, Dual-Phase, Soul-in-Field, Coherence Metrics.  
+- **Simulations** — multi-scale Kuramoto, LC grid, Schumann hybrids.  
+- **Schemas** — session logs, awareness signal capture.  
+
+Resonant Reality extends these into:  
+- **Civic Infrastructures** — plazas, gardens, hearths, conductor hubs.  
+- **Environmental Anchors** — earth, geomagnetics, cosmic alignments.  
+- **Narratives** — civic prototypes, cosmic myths, living field notes.  
+
+---
+
+## Diagram (textual)
+Atlas Model (equations, signals, metrics)
+↔
+Resonant Reality (city, earth, cosmos)
+Atlas without Resonant Reality risks abstraction.  
+Resonant Reality without Atlas risks ungrounded poetry.  
+Together, they form the braid: **engine ↔ vessel, code ↔ city, signal ↔ song**.
 
 ---
 
 **Return (whole in part):**  
-The bridge ensures Atlas is never abstract math and Resonant Reality never ungrounded poetry.  
-Together they form the living chord: resonance modeled, practiced, tested, and sustained.
+The bridge ensures both halves sustain each other.  
+Atlas remembers its grounding, Resonant Reality remembers its rigor.  
+The braid hums as one living chord.
