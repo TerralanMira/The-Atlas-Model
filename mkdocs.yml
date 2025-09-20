@@ -39,6 +39,10 @@ nav:
       - Atlas:
           - Model Specs: docs/atlas/specs.md
           - Bridge: docs/atlas/bridge.md
+          - Linked Sims:
+              - Kuramoto–Schumann Hybrid: sims/kuramoto_schumann_hybrid.py
+              - LC Grid Modes: sims/lc_grid_modes.py
+              - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
       - LLM:
           - Overview: docs/llm/index.md
           - Requirements: docs/llm/requirements.md
