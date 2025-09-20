@@ -53,3 +53,14 @@ License
 MIT (unless otherwise noted).
 
 Covenant: Atlas is a living chord. Enter with care, amplify with integrity, return with resonance.
+
+---
+
+## Development
+
+📘 **Documentation**: built with [MkDocs](https://www.mkdocs.org)  
+🧪 **Tests**: run with `pytest`  
+📂 **Schema**: validated with [jsonschema](https://pypi.org/project/jsonschema/)
+
+All modules are self-contained.  
+To contribute: fork, make changes, and open a pull request.
