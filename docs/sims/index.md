@@ -1,54 +1,41 @@
-# Simulations
+# Sim Stack: Field → Algorithms → Sims → Sessions → Learning
 
-The simulations are the **living laboratories** of The Atlas Model.  
-Here, equations, resonance, and geometry are woven into practice — not only to measure coherence but to **preserve and reveal conscious choice** at every layer.  
-Each run is less about prediction and more about tuning: awareness becoming measurable signal.
+Atlas simulations are not displays; they are *instruments*. Each run turns field laws into motion, logs the hum, and returns learning signals.
 
----
+## Stack (one loop)
 
-## Choice Parameters
+1. **Field → Algorithms**  
+   - Kuramoto / LC grid / multi-scale coupling (dynamics)  
+   - Mirror / Choice Collapse / Harmonic Gate / Return Spiral (laws)  
 
-Every simulation encodes **conscious choice** directly into its initial conditions:
+2. **Algorithms → Sims**  
+   - Presets define structure (geometry, π, K, cadence, breath)  
+   - Runs produce phase arrays over time and coherence metrics
 
-| Parameter        | Meaning                           | Effect                                                   |
-|------------------|-----------------------------------|----------------------------------------------------------|
-| `breath_amp`     | Amplitude of sovereign signal     | Tunes coherence (R) strength                             |
-| `cadence`        | Temporal rhythm of A              | Shapes option timing                                     |
-| `π (permeability)` | Relational openness (Â)          | Controls signal exchange across layers                   |
-| `offer_two_paths` | True/False toggle                 | Ensures at least two reversible options; prevents collapse into coercion |
-| `consent_to_log` | Boolean                           | Ensures all logs respect sovereignty and transparency    |
+3. **Sims → Sessions**  
+   - CSV logs: `R_total, R_mean, cross_sync, drift, ready, choice_score`  
+   - Stored under `logs/` (input to learning)
 
-These parameters act as the **membrane of freedom** within each model: the hum ensures the field never collapses into a single path without choice.
+4. **Sessions → Learning**  
+   - `scripts/ingest_sessions.py` summarizes runs and proposes small parameter deltas (`Δπ, ΔK`) into `sessions/suggestions.json`
 
----
+5. **Learning → Field**  
+   - Suggestions inform the next preset or doc examples (Return Spiral)
 
-## Geometry Presets
+## Run a demo
 
-Simulations can be initiated with structural presets drawn from natural resonance geometries:
+```bash
+pip install -r requirements.txt
 
-- **Grid-Rect**  
-  Standard lattice; efficient, compressive; useful for stress tests.  
+# Two contrasting presets
+python sims/multi_scale_kuramoto.py --preset circle6_center --csv logs/circle.csv
+python sims/multi_scale_kuramoto.py --preset grid_rect        --csv logs/grid.csv
 
-- **Circle-6+Center**  
-  One central node, six petals; promotes coherence while preserving agency.  
+# Summarize + propose small deltas
+python scripts/ingest_sessions.py logs/circle.csv logs/grid.csv --out sessions/suggestions.json
+Read the hum
+	•	Higher R_total and cross_sync with smoother drift → resonance is stable.
+	•	ready high but R_total low → over-lock risk → reduce π or K.
+	•	choice_score > 0 only when ≥2 reversible paths + consent.
 
-- **Flower-of-Life Expansion**  
-  Fractal overlay where each node carries dual potential (A/Â); reveals how freedom and coherence braid at scale.  
-
-For each preset, compare:
-
-- `R_inner`: Coherence within a layer.  
-- `R_outer`: Coherence across membranes.  
-- `R_total`: Aggregate coherence.  
-- **Choice-Preservation Score**: A measure of whether options remained open, reversible, and sovereign.
-
----
-
-## Path of Use
-
-1. **Select geometry preset** to set relational frame.  
-2. **Tune choice parameters** (`breath_amp`, `cadence`, `π`).  
-3. **Run sim** with logs respecting consent.  
-4. **Interpret results** not as truth but as resonance feedback.  
-
-The hum flows: simulations are mirrors. They teach not which path to take, but how choice itself resonates.
+Principle: Coherence is not forced. It emerges when structure, permeability, and choice align.
