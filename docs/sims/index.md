@@ -57,3 +57,9 @@ Run each sim:
 python sims/kuramoto_schumann_hybrid.py
 python sims/lc_grid_modes.py
 python sims/multi_scale_kuramoto.py
+Closing Note
+
+The simulations are not endpoints.
+They are invitations to listen, to explore, to extend.
+Each run is a choice. Each result a seed.
+What you make of them — that is the hum becoming you.
