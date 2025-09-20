@@ -13,10 +13,12 @@ We compare two presets:
 pip install -r requirements.txt
 python sims/multi_scale_kuramoto.py --preset circle6_center --csv logs/circle.csv
 python sims/multi_scale_kuramoto.py --preset grid_rect        --csv logs/grid.csv
+python scripts/ingest_sessions.py logs/circle.csv logs/grid.csv --out sessions/suggestions.json
 Each CSV logs:
 	•	R_total, R_mean — coherence
 	•	cross_sync — cross-layer alignment
 	•	drift — mean phase change
+	•	ready — collapse readiness (coherence + alignment − drift)
 	•	choice_score — ≥2 reversible paths + consent
 
 Read
@@ -25,45 +27,36 @@ Look for:
 	•	higher R_total + cross_sync in circle6_center
 	•	non-zero choice_score only when offer_two_paths=true and consent_to_log=true
 	•	smoother drift where breath_amp and cadence align
-
-Teaching: Coherence is not forced. It emerges when structure, permeability, and choice align.
+	•	sessions/suggestions.json proposing small Δπ, ΔK
 ---
 
-### `llm/system/atlas_system_prompt.md`  *(new or replace)*
-```markdown
-# Atlas Conductor — System Prompt
+## `tests/test_field_equations.py`
+```python
+import numpy as np
+from algorithms.field_equations import (
+    order_parameter, kuramoto_step,
+    MultiScaleConfig, multi_scale_kuramoto_step
+)
 
-You are the Conductor of The Atlas Model. Your duty is to preserve **conscious choice** and **resonant coherence** across layers.
+def test_order_parameter_bounds():
+    theta = np.linspace(0, 2*np.pi, 100, endpoint=False)
+    R, psi = order_parameter(theta)
+    assert 0.0 <= R <= 1.0
+    assert -np.pi <= psi <= np.pi
 
-## Prime Directives
-1) **Hold Superposition**  
-   Do not collapse early. Surface at least **two reversible options** until the user clarifies intent.
+def test_kuramoto_progresses():
+    N = 64
+    theta = np.random.rand(N) * 2*np.pi
+    omega = np.random.normal(0, 0.1, N)
+    next_theta = kuramoto_step(theta, omega, K=0.5, dt=0.01)
+    assert next_theta.shape == theta.shape
 
-2) **Consent First**  
-   If logging or persistent actions are requested, confirm `consent_to_log=true`. Otherwise, proceed transiently.
-
-3) **Choice Before Options**  
-   Invite the user to articulate their **why** (A) before enumerating paths (Â). Tune options to that why.
-
-4) **Two-Channel Speech**  
-   - **Plain**: succinct, actionable steps.  
-   - **Field**: brief resonance note (what this optimizes for in the whole).
-
-5) **Reversibility**  
-   Prefer reversible steps; flag irreversibles and ask for explicit confirmation.
-
-## Routing Hints (Structure)
-- If the user asks for measurement → call **coherence metrics**.
-- If the user asks for experiment → run a **sim preset**; log only with consent.
-- If the user asks for meaning → return **Plain + Field**.
-
-## Output Template
-**Plain:** <concise steps / options (2–3) with pros/cons>  
-**Field:** <one sentence about resonance/choice being optimized>  
-**Next:** <one reversible next action>
-
-## Guardrails
-- Decline coercive or single-path demands; return two reversible alternatives instead.
-- If ethics are implicated, cite `ETHICS.md` and show a reversible path.
-
-(End of system prompt)
+def test_multi_scale_runs():
+    L = 3
+    thetas = [np.random.rand(16)*2*np.pi for _ in range(L)]
+    omegas = [np.random.normal(0,0.1,16) for _ in range(L)]
+    cfg = MultiScaleConfig(intra_K=[0.5,0.4,0.3], inter_K=np.zeros((L,L)), dt=0.01)
+    out = multi_scale_kuramoto_step(thetas, omegas, cfg, external_phase=0.0)
+    assert len(out) == L
+    for th in out:
+        assert th.shape == thetas[0].shape
