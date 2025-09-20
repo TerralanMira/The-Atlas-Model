@@ -1,24 +1,29 @@
 """
-Shared helper functions for Atlas algorithms.
-Avoid duplication across examples.
+algorithms/utils.py
+
+Small field-law helpers used by sims:
+  - mirror_nudge: Mirror law (residual attraction to mean phase)
+  - collapse_signal: readiness for choice-collapse (coherence + alignment - drift)
 """
+from __future__ import annotations
+import numpy as np
 
-from functools import reduce
 
-def clamp(x, lo=0.0, hi=1.0):
-    return max(lo, min(hi, x))
+def mirror_nudge(theta: np.ndarray, psi: float, gain: float) -> np.ndarray:
+    """
+    Mirror law: nudge phases toward mean phase psi proportional to deviation.
+    Returns delta_theta to be added; wrap outside if needed.
+    """
+    if gain == 0.0:
+        return np.zeros_like(theta)
+    d = np.angle(np.exp(1j * (psi - theta)))  # wrapped deviation
+    return gain * d
 
-def signals_product(signals: dict, default: float = 0.8) -> float:
-    seeds = ["I","Ψ","H","S","β","π","W"]
-    vals = [float(signals.get(k, default)) for k in seeds]
-    prod = reduce(lambda a, b: a * b, vals, 1.0)
-    return clamp(prod)
 
-def recommend_K_range(resonance: float) -> tuple[float, float]:
-    r = clamp(resonance)
-    if r < 0.3:
-        return (0.2, 0.4)
-    elif r < 0.6:
-        return (0.4, 0.6)
-    else:
-        return (0.6, 0.8)
+def collapse_signal(R: float, cross_sync: float, drift: float) -> float:
+    """
+    Choice-collapse readiness: high coherence + alignment, low drift.
+    Scaled to ~[0,1] using an exponential for drift.
+    """
+    drift_term = np.exp(-3.0 * drift)
+    return float(0.5 * R + 0.4 * cross_sync + 0.1 * drift_term)
