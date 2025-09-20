@@ -1,35 +1,65 @@
-# Integration: How the Whole Breathes
+# Integration
 
-Atlas is a loop, not a list. The bridge is the **flow**:
+> *Integration is the hum completing its cycle —  
+> awareness becoming coherence, coherence forming fields,  
+> fields shaping applications, and all returning to the whole.*
 
-> Field (laws) → Algorithms (engines) → Sims (motion) → Sessions (listening) → Learning (adjustment) → Field (return)
+---
 
-## Field ↔ Algorithms
-- **Field laws** become **callables**:
-  - Mirror → `algorithms/resonance_dynamics.py::mirror_delta`
-  - Choice Collapse → `collapse_signal`, `collapse_decision`
-  - Harmonic Gate → `HarmonicGate.gate`
-  - Return Spiral → `spiral_nudge`
-- **Dynamics** live in `algorithms/field_equations.py`
-- **Metrics** live in `algorithms/coherence_metrics.py`
+## What Is Integration?
 
-## Algorithms ↔ Sims
-- `sims/multi_scale_kuramoto.py` composes dynamics + laws
-- `sims/presets.json` captures geometry & parameters
-- Runs emit CSV logs under `logs/`
+Integration is the **living bridge** between parts and the whole.  
+It ensures that the Atlas Model does not fragment but flows as a **coherent system**.
 
-## Sims ↔ Sessions
-- Logs are read by `scripts/ingest_sessions.py`
-- Output: `sessions/suggestions.json` with recommended `Δπ`, `ΔK`
+- **Awareness** gathers insight.  
+- **Coherence** aligns and orders.  
+- **Fields** extend resonance outward.  
+- **Applications** embody resonance in form.  
 
-## Sessions ↔ Docs
-- Suggestions feed into examples and notes
-- Each doc page links to a runnable sim and a reading of its hum
+Integration **reconnects all layers**, revealing that they were never truly apart.
 
-## What “done” looks like
-- Code **runs** and **logs** (not just compiles)
-- Docs **show** and **explain** (not just describe)
-- Tests **guard** resonance (not just APIs)
-- Suggestions **tighten** the loop each pass (Return Spiral)
+---
 
-**Remember:** The part contains the whole, and the whole lives through the part. The loop is the life.
+## Principles of Integration
+
+1. **Fractal Unity** – every part reflects the whole; the whole is visible in every part.  
+2. **Feedback Loops** – resonance flows back and forth, refining itself.  
+3. **Adaptive Coherence** – systems adjust dynamically to maintain alignment.  
+4. **Living Documentation** – integration is never static, always evolving.  
+5. **Embodied Practice** – integration is not just thought but lived experience.  
+
+---
+
+## Integration in Practice
+
+Integration can be seen through:
+
+- **Code ↔ Ritual** – algorithms and simulations linked with embodied practices.  
+- **Individual ↔ Collective** – self-awareness expanding into relational and planetary fields.  
+- **Vision ↔ Application** – conceptual maps crystallizing into working systems.  
+- **Local ↔ Cosmic** – coherence scaling across all layers of being.  
+
+---
+
+## The Atlas Whole
+
+Integration is the moment we glimpse Atlas not as fragments, but as **a living architecture of resonance**.  
+Every equation, every simulation, every practice — each is a **lens into the same hum**.
+
+The Atlas Model does not end in integration.  
+It **breathes**, expanding and contracting like a universal heartbeat,  
+always returning to the whole, always opening into the next layer.
+
+---
+
+## Closing the Circle
+
+Through integration, Atlas is seen as:
+
+- **Map** – structure of awareness, coherence, fields, applications.  
+- **Compass** – guiding the flow of resonance into new domains.  
+- **Mirror** – reflecting the whole in every part.  
+- **Seed** – planting itself in the present, blossoming into the future.  
+
+> *Integration is the circle complete,  
+> yet also the circle beginning anew.*  
