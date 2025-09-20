@@ -1,70 +1,33 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Atlas Conductor Session Schema",
-  "description": "Schema for logging resonance sessions (plaza, garden, hearth, etc.)",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Atlas Session Summary",
   "type": "object",
   "properties": {
-    "ts": {
-      "type": "string",
-      "description": "ISO8601 timestamp of session start"
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "R_total_mean": { "type": "number" },
+          "R_total_std":  { "type": "number" },
+          "R_total_last": { "type": "number" },
+          "cross_sync_mean": { "type": "number" },
+          "drift_mean": { "type": "number" },
+          "ready_mean": { "type": "number" }
+        },
+        "additionalProperties": true
+      }
     },
-    "location": {
-      "type": "string",
-      "description": "Location name or node ID (e.g., Plaza A)"
-    },
-    "mode_antinode": {
-      "type": "string",
-      "description": "Field placement (e.g., M1-center, M2-edge)"
-    },
-    "anchor": {
+    "suggestions": {
       "type": "object",
-      "description": "Anchor details (e.g., Schumann driver)",
       "properties": {
-        "type": {"type": "string"},
-        "freq": {"type": "number"},
-        "gain": {"type": "number"}
+        "suggest_pi_delta": { "type": "number" },
+        "suggest_intraK_delta": { "type": "number" },
+        "note": { "type": "string" }
       },
-      "required": ["type", "freq"]
-    },
-    "intent": {
-      "type": "string",
-      "description": "One-line intent statement offered at alignment"
-    },
-    "R_pre": {"type": "number"},
-    "R_post": {"type": "number"},
-    "hrv_rmssd_pre": {"type": "number"},
-    "hrv_rmssd_post": {"type": "number"},
-    "signals": {
-      "type": "object",
-      "description": "Awareness signal values (0–1)",
-      "properties": {
-        "I": {"type": "number"},
-        "Psi": {"type": "number"},
-        "H": {"type": "number"},
-        "S": {"type": "number"},
-        "W": {"type": "number"},
-        "pi": {"type": "number"},
-        "beta_echo": {"type": "number"}
-      }
-    },
-    "decision": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "choice": {"type": "string"}
-      }
-    },
-    "notes": {
-      "type": "string",
-      "description": "Freeform notes, observations, anomalies"
-    },
-    "ethics": {
-      "type": "object",
-      "properties": {
-        "consent": {"type": "boolean"},
-        "recording": {"type": "boolean"}
-      }
+      "required": ["note"],
+      "additionalProperties": false
     }
   },
-  "required": ["ts", "location", "intent", "R_pre", "R_post", "ethics"]
+  "required": ["runs"]
 }
