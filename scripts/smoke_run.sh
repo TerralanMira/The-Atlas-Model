@@ -33,3 +33,5 @@ python "$ROOT/scripts/ingest_sessions.py" \
 
 echo "✓ Wrote $ROOT/sessions/suggestions.json"
 jq . "$ROOT/sessions/suggestions.json" 2>/dev/null || cat "$ROOT/sessions/suggestions.json"
+Make executable:
+chmod +x scripts/smoke_run.sh
