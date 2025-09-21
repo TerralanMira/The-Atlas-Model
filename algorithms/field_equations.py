@@ -1,202 +1,123 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Dual-Phase Field dynamics + Soul-in-Field signature.
+Field dynamics & utilities used by sims and tests.
 
-Implements two families referenced across the Field Applications docs:
-
-1) Dual-Phase Field (inner/outer Kuramoto with optional outer driver)
-   - Inner (Φ_I): within (e.g., a group of humans)
-   - Outer (Φ_O): without (e.g., place/planetary/civic anchor)
-   - Coherence emerges when inner alignment and tuned outer coupling interact.
-
-2) Soul-in-Field signature
-   - Person-level resonance from origin magnitude (MΩ), memory echo (β),
-     permeability (π), wonder (W), and awareness signals:
-     Integrity (I), Stamina/Presence (Ψ), Humility (H), Surrender (S).
-
-Exports (used by tests):
-- DualPhaseConfig
-- simulate_dual_phase(cfg)
-- SoulSignature
-- soul_resonance(sig, R_between=0.0)
+Exports (simple Kuramoto + multi-scale + dual-phase):
+- order_parameter(theta) -> (R, psi)
+- kuramoto_step(theta, omega, K=0.0, dt=0.01, A=None) -> next_theta
+- class MultiScaleConfig(intra_K, inter_K, dt=0.01, gamma_ext=0.0)
+- multi_scale_kuramoto_step(thetas, omegas, cfg, external_phase=0.0) -> list[theta_next]
+- class DualPhaseConfig(...)
+- simulate_dual_phase(cfg) -> dict[str, np.ndarray]
 """
-
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, Tuple, Optional
-import math
+from typing import List
 import numpy as np
+import math
 
-TAU = 2.0 * math.pi
+TAU = 2*np.pi
 
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Utilities
-# ──────────────────────────────────────────────────────────────────────────────
-
+# ---------- basics ----------
 def wrap_phase(theta: np.ndarray) -> np.ndarray:
-    """Map angles to (-pi, pi]."""
-    return (theta + math.pi) % (2.0 * math.pi) - math.pi
+    return (theta + np.pi) % TAU - np.pi
 
-def kuramoto_order_parameter(theta: np.ndarray) -> Tuple[float, float]:
-    """
-    Return (R, psi): R ∈ [0,1], psi mean phase angle.
-    """
-    z = np.exp(1j * theta).mean()
+def order_parameter(theta: np.ndarray) -> tuple[float, float]:
+    z = np.exp(1j*theta).mean()
     return float(np.abs(z)), float(np.angle(z))
 
+# ---------- single-layer Kuramoto ----------
+def kuramoto_step(theta: np.ndarray, omega: np.ndarray, K: float = 0.0, dt: float = 0.01, A: np.ndarray | None = None) -> np.ndarray:
+    """
+    theta, omega ∈ R^N, optional adjacency A (0/1) uses sin coupling along edges; if None, use mean-field.
+    """
+    N = theta.shape[0]
+    if A is None:
+        R, psi = order_parameter(theta)
+        dtheta = omega + K*R*np.sin(psi - theta)
+    else:
+        dtheta = omega.copy()
+        for i in range(N):
+            nbrs = np.where(A[i] > 0)[0]
+            if nbrs.size:
+                dtheta[i] += (K / max(1, nbrs.size)) * np.sum(np.sin(theta[nbrs] - theta[i]))
+    return wrap_phase(theta + dt*dtheta)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Dual-Phase Field
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------- multi-scale (L coupled layers) ----------
+@dataclass
+class MultiScaleConfig:
+    intra_K: List[float]
+    inter_K: np.ndarray  # LxL gains (diagonal ignored)
+    dt: float = 0.01
+    gamma_ext: float = 0.0  # global external pull (to external_phase)
 
+def _mean_phase(theta: np.ndarray) -> float:
+    return float(np.angle(np.exp(1j*theta).mean()))
+
+def multi_scale_kuramoto_step(thetas: List[np.ndarray], omegas: List[np.ndarray], cfg: MultiScaleConfig, external_phase: float = 0.0) -> List[np.ndarray]:
+    L = len(thetas)
+    next_thetas = []
+    means = [ _mean_phase(th) for th in thetas ]
+    for ℓ in range(L):
+        th = thetas[ℓ]; om = omegas[ℓ]
+        # intra-layer mean-field
+        R, psi = order_parameter(th)
+        d = om + cfg.intra_K[ℓ]*R*np.sin(psi - th)
+        # inter-layer gentle mean-phase attraction
+        for m in range(L):
+            if m == ℓ: 
+                continue
+            Kxm = cfg.inter_K[ℓ, m]
+            if Kxm != 0.0:
+                d += Kxm * np.sin(means[m] - th)
+        # optional external driver
+        if cfg.gamma_ext != 0.0:
+            d += cfg.gamma_ext * np.sin(external_phase - th)
+        next_thetas.append(wrap_phase(th + cfg.dt*d))
+    return next_thetas
+
+# ---------- dual-phase convenience (for tests & examples) ----------
 @dataclass
 class DualPhaseConfig:
-    # sizes
-    N_inner: int = 64
-    N_outer: int = 32
-    # timing
-    steps: int = 1000
-    dt: float = 0.05
-    seed: Optional[int] = 0
-    # couplings
+    N_inner: int = 32
+    N_outer: int = 16
+    steps: int = 200
+    dt: float = 0.02
     K_inner: float = 0.4
     K_outer: float = 0.25
-    K_cross: float = 0.15  # inner↔outer coupling
-    # natural frequencies
-    omega_inner_std: float = 0.10
+    K_cross: float = 0.12
+    omega_inner_std: float = 0.1
     omega_outer_std: float = 0.05
-    # optional Schumann-like outer driver: dΦ_O/dt += A * sin(Ω t + φ)
-    driver_amp: float = 0.0
-    driver_omega: float = 7.83  # Hz metaphorically; unitless here
-    driver_phase: float = 0.0
-    # noise
-    noise_std: float = 0.0
+    seed: int = 0
 
-
-def _ring_adjacency(n: int) -> np.ndarray:
-    A = np.zeros((n, n), dtype=float)
-    for i in range(n):
-        A[i, (i - 1) % n] = 1.0
-        A[i, (i + 1) % n] = 1.0
-    return A
-
-
-def simulate_dual_phase(cfg: DualPhaseConfig) -> Dict[str, np.ndarray]:
-    """
-    Minimal two-layer Kuramoto integrator with inner/outer rings and cross-coupling.
-    Returns time series arrays keyed by: R_total, R_inner, R_outer, C_cross (proxy).
-    """
+def simulate_dual_phase(cfg: DualPhaseConfig) -> dict[str, np.ndarray]:
     rng = np.random.default_rng(cfg.seed)
+    thI = rng.uniform(-np.pi, np.pi, size=cfg.N_inner)
+    thO = rng.uniform(-np.pi, np.pi, size=cfg.N_outer)
+    omI = rng.normal(0.0, cfg.omega_inner_std, size=cfg.N_inner)
+    omO = rng.normal(0.0, cfg.omega_outer_std, size=cfg.N_outer)
 
-    # states
-    theta_I = rng.uniform(-math.pi, math.pi, size=cfg.N_inner)
-    theta_O = rng.uniform(-math.pi, math.pi, size=cfg.N_outer)
+    R_total = np.zeros(cfg.steps)
+    R_inner = np.zeros(cfg.steps)
+    R_outer = np.zeros(cfg.steps)
+    C_cross = np.zeros(cfg.steps)
 
-    # natural frequencies
-    omega_I = rng.normal(0.0, cfg.omega_inner_std, size=cfg.N_inner)
-    omega_O = rng.normal(0.0, cfg.omega_outer_std, size=cfg.N_outer)
-
-    # adjacency (simple rings)
-    A_I = _ring_adjacency(cfg.N_inner)
-    A_O = _ring_adjacency(cfg.N_outer)
-
-    out = {
-        "R_total": np.zeros(cfg.steps),
-        "R_inner": np.zeros(cfg.steps),
-        "R_outer": np.zeros(cfg.steps),
-        "C_cross": np.zeros(cfg.steps),  # crude inner↔outer sync proxy
-    }
-
-    # helper for cross term: use mean phases
-    def cross_term(inner: np.ndarray, outer: np.ndarray, K: float) -> Tuple[np.ndarray, np.ndarray]:
-        _, psi_I = kuramoto_order_parameter(inner)
-        _, psi_O = kuramoto_order_parameter(outer)
-        # pull each layer slightly toward the other's mean
-        return K * np.sin(psi_O - inner), K * np.sin(psi_I - outer)
-
+    def mean_phase(x): return float(np.angle(np.exp(1j*x).mean()))
     for k in range(cfg.steps):
-        t = (k + 1) * cfg.dt
-
-        # coupling on rings
-        dI = omega_I.copy()
-        for i in range(cfg.N_inner):
-            dI[i] += cfg.K_inner * np.sum(A_I[i] * np.sin(theta_I - theta_I[i]))
-
-        dO = omega_O.copy()
-        for j in range(cfg.N_outer):
-            dO[j] += cfg.K_outer * np.sum(A_O[j] * np.sin(theta_O - theta_O[j]))
-
-        # cross-coupling (mean-angle attraction)
-        cI, cO = cross_term(theta_I, theta_O, cfg.K_cross)
-        dI += cI
-        dO += cO
-
-        # optional outer driver
-        if cfg.driver_amp != 0.0:
-            dO += cfg.driver_amp * np.sin(cfg.driver_omega * t + cfg.driver_phase)
-
-        # noise
-        if cfg.noise_std > 0.0:
-            dI += rng.normal(0.0, cfg.noise_std, size=cfg.N_inner)
-            dO += rng.normal(0.0, cfg.noise_std, size=cfg.N_outer)
-
+        # intra mean-field
+        RI, psiI = order_parameter(thI)
+        RO, psiO = order_parameter(thO)
+        dI = omI + cfg.K_inner*RI*np.sin(psiI - thI)
+        dO = omO + cfg.K_outer*RO*np.sin(psiO - thO)
+        # cross via mean phases
+        dI += cfg.K_cross*np.sin(psiO - thI)
+        dO += cfg.K_cross*np.sin(psiI - thO)
         # integrate
-        theta_I = wrap_phase(theta_I + cfg.dt * dI)
-        theta_O = wrap_phase(theta_O + cfg.dt * dO)
-
+        thI = wrap_phase(thI + cfg.dt*dI)
+        thO = wrap_phase(thO + cfg.dt*dO)
         # metrics
-        R_i, _ = kuramoto_order_parameter(theta_I)
-        R_o, _ = kuramoto_order_parameter(theta_O)
-        R_t, _ = kuramoto_order_parameter(np.concatenate([theta_I, theta_O]))
-        # cross proxy: alignment of layer means
-        cross = math.cos(_angle_diff_of_means(theta_I, theta_O))
-        out["R_inner"][k] = R_i
-        out["R_outer"][k] = R_o
-        out["R_total"][k] = R_t
-        out["C_cross"][k] = (cross + 1.0) * 0.5  # map to [0,1]
+        RT, _ = order_parameter(np.concatenate([thI, thO]))
+        R_total[k], R_inner[k], R_outer[k] = RT, RI, RO
+        C_cross[k] = (math.cos(mean_phase(thI) - mean_phase(thO)) + 1.0)*0.5
 
-    return out
-
-
-def _angle_diff_of_means(inner: np.ndarray, outer: np.ndarray) -> float:
-    _, psi_I = kuramoto_order_parameter(inner)
-    _, psi_O = kuramoto_order_parameter(outer)
-    return float(np.angle(np.exp(1j * (psi_I - psi_O))))
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Soul-in-Field
-# ──────────────────────────────────────────────────────────────────────────────
-
-@dataclass
-class SoulSignature:
-    MOmega: float = 1.0  # origin magnitude
-    beta_echo: float = 0.7  # memory echo
-    pi: float = 0.7      # permeability
-    W: float = 0.7       # wonder
-    I: float = 0.7       # integrity
-    Psi: float = 0.7     # stamina / presence
-    H: float = 0.7       # humility
-    S: float = 0.7       # surrender
-
-
-def soul_resonance(sig: SoulSignature, R_between: float = 0.0) -> float:
-    """
-    Simple positive-valued resonance score ∈ (0, +∞), typically ~[0,1.5].
-    In practice we interpret a soft-normalized version in [0,1].
-    """
-    # core product of awareness terms
-    core = (sig.I * sig.Psi * sig.H * sig.S)
-    # permeability + memory echo amplify but penalize extremes
-    perm = sig.pi * (1.0 - 0.3 * abs(sig.pi - 0.7))
-    echo = sig.beta_echo * (1.0 - 0.2 * abs(sig.beta_echo - 0.7))
-    # wonder as curvature opener
-    curv = 0.7 + 0.6 * (sig.W - 0.5)
-    # origin magnitude and between-group coherence as gates
-    gate = 0.5 + 0.5 * (math.tanh(sig.MOmega - 0.6))
-    between = 0.7 + 0.3 * R_between
-    raw = gate * between * core * perm * echo * curv
-    # soft clip into [0,1]
-    return float(1.0 - math.exp(-raw))
+    return {"R_total": R_total, "R_inner": R_inner, "R_outer": R_outer, "C_cross": C_cross}
