@@ -2,47 +2,65 @@
 """
 sims/multi_scale_kuramoto.py
 
-Multi-scale Kuramoto runner that logs both classical and Atlas metrics:
-- Classical: R_total, cross_sync, drift
-- Atlas relational: C (coherence across edges), Delta (diversity kept alive), Phi (flow smoothness)
-- Ethical readiness & choice: ready, choice_score (consent + reversible paths)
+A schema-driven Kuramoto runner that reads sims/presets.json, constructs
+topologies (grid, circular, nested_spheres, flower_of_life), supports
+multi-group and multi-layer presets, optional ouroboros feedback, and
+emits dashboard-friendly metrics per step.
 
-Dependencies: numpy
-Also uses algorithms/ modules:
-  - algorithms.field_equations
-  - algorithms.resonance_dynamics
-  - algorithms.coherence_metrics (for global/local coherence helpers)
+Designed to align with:
+- sims/presets.json  (schema v1.0.0 with meta.defaults + presets)
+- dashboard overlays expecting columns like:
+  step,t,R_total,cross_sync,drift,C,Delta,Phi
+- ethics flags for logging context: offer_two_paths, consent_to_log
 
-MIT License.
+If optional helpers are missing from algorithms/, local fallbacks are used.
 """
+
 from __future__ import annotations
-import argparse, csv, json, math, os
+import argparse, json, math, os, csv
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 
 import numpy as np
 
-from algorithms.field_equations import (
-    kuramoto_step, order_parameter, wrap_phase,
-    adjacency_circle6_center, adjacency_grid
-)
-from algorithms.resonance_dynamics import (
-    collapse_signal, collapse_decision, HarmonicGate, gated_params
-)
-from algorithms.coherence_metrics import (
-    phase_coherence,      # global coherence via Kuramoto order magnitude
-    local_coherence       # weighted cos(Δθ) over adjacency
-)
+# ──────────────────────────────────────────────────────────────────────────────
+# Optional imports (fallbacks if not present)
+# ──────────────────────────────────────────────────────────────────────────────
+try:
+    from algorithms.coherence_metrics import phase_coherence, local_coherence
+except Exception:
+    def phase_coherence(phases: np.ndarray) -> float:
+        return float(np.abs(np.exp(1j * phases).mean()))
+
+    def local_coherence(phases: np.ndarray, adjacency: np.ndarray) -> float:
+        A = np.maximum(adjacency, adjacency.T)
+        I, J = np.where(A > 0)
+        if I.size == 0:
+            return 0.0
+        return float(np.cos(phases[J] - phases[I]).mean())
+
+try:
+    from algorithms.field_equations import wrap_phase
+except Exception:
+    def wrap_phase(theta: np.ndarray) -> np.ndarray:
+        return np.mod(theta + np.pi, 2.0 * np.pi) - np.pi
 
 TAU = 2.0 * math.pi
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Utilities
+# ──────────────────────────────────────────────────────────────────────────────
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Relational signals
-# ──────────────────────────────────────────────────────────────────────────────
+def ensure_dir(p: str) -> None:
+    d = os.path.dirname(p)
+    if d and not os.path.exists(d):
+        os.makedirs(d, exist_ok=True)
+
+def complex_mean_angle(ang: np.ndarray) -> float:
+    z = np.exp(1j * ang).mean()
+    return float(np.angle(z))
 
 def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
-    """Mean cos(θ_j - θ_i) over edges, mapped to [0,1]."""
     A = np.maximum(A, A.T)
     I, J = np.where(A > 0)
     if I.size == 0:
@@ -50,224 +68,383 @@ def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
     d = theta[J] - theta[I]
     return float((np.cos(d).mean() + 1.0) * 0.5)
 
-def phase_entropy_normalized(theta: np.ndarray, bins: int = 36) -> float:
-    """
-    Normalized histogram entropy in [0,1]; 1 = maximum diversity, 0 = fully clamped.
-    (This is 'diversity' — not 'entropy_coherence' which is 1 - entropy.)
-    """
+def phase_entropy_norm(theta: np.ndarray, bins: int = 36) -> float:
     h, _ = np.histogram(np.mod(theta, TAU), bins=bins, range=(0.0, TAU))
     p = h.astype(float)
-    if p.sum() == 0:
+    s = p.sum()
+    if s == 0:
         return 0.0
-    p /= p.sum()
+    p /= s
     with np.errstate(divide="ignore", invalid="ignore"):
         ent = -(p * np.log(p + 1e-12)).sum()
     return float(ent / math.log(bins))
 
-def lag1_circular_smoothness(theta_now: np.ndarray, theta_prev: np.ndarray) -> float:
-    """Φ: average cos(wrapped Δθ) mapped to [0,1]; 1 = very smooth evolution."""
+def lag1_smoothness(theta_now: np.ndarray, theta_prev: np.ndarray) -> float:
     dphi = np.angle(np.exp(1j * (theta_now - theta_prev)))
     return float((np.cos(dphi).mean() + 1.0) * 0.5)
 
+def gaussian_omega(n: int, mean: float = 0.0, std: float = 0.1, seed: Optional[int] = None) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    return rng.normal(mean, std, size=n).astype(float)
+
+def harmonic_scale_omega(n: int, scale: List[int] | List[float], seed: Optional[int] = None) -> np.ndarray:
+    """Assign base frequencies from a small harmonic set (cycled)."""
+    rng = np.random.default_rng(seed)
+    base = np.array(scale, dtype=float)
+    vals = np.tile(base, int(np.ceil(n / len(base))))[:n]
+    # small jitter to avoid perfect degeneracy
+    vals = vals + rng.normal(0.0, 0.01, size=n)
+    return vals.astype(float)
+
+def spiral_mapping_omega(n: int, turns: float = 2.0, std: float = 0.05, seed: Optional[int] = None) -> np.ndarray:
+    """Map natural frequencies along a spiral in freq space."""
+    rng = np.random.default_rng(seed)
+    t = np.linspace(0.0, 1.0, n)
+    base = turns * t
+    return (base + rng.normal(0.0, std, size=n)).astype(float)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Presets
+# Geometries (adjacency & coordinates as needed)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def adjacency_grid(rows: int, cols: int, diagonal: bool = False) -> np.ndarray:
+    N = rows * cols
+    A = np.zeros((N, N), float)
+    def idx(r, c): return r * cols + c
+    for r in range(rows):
+        for c in range(cols):
+            i = idx(r, c)
+            for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+                rr, cc = r + dr, c + dc
+                if 0 <= rr < rows and 0 <= cc < cols:
+                    j = idx(rr, cc)
+                    A[i, j] = A[j, i] = 1.0
+            if diagonal:
+                for dr, dc in [(1,1), (1,-1), (-1,1), (-1,-1)]:
+                    rr, cc = r + dr, c + dc
+                    if 0 <= rr < rows and 0 <= cc < cols:
+                        j = idx(rr, cc)
+                        A[i, j] = A[j, i] = 1.0
+    return A
+
+def adjacency_circular(nodes: int) -> np.ndarray:
+    N = nodes
+    A = np.zeros((N, N), float)
+    for i in range(N):
+        j1 = (i + 1) % N
+        j2 = (i - 1 + N) % N
+        A[i, j1] = A[j1, i] = 1.0
+        A[i, j2] = A[j2, i] = 1.0
+    return A
+
+def adjacency_nested_spheres(layer_sizes: List[int], inter_strength: float = 0.2) -> np.ndarray:
+    """Block adjacency: each layer ring-connected; inter-layer radial links."""
+    n_total = sum(layer_sizes)
+    A = np.zeros((n_total, n_total), float)
+    offset = 0
+    anchors = []
+    for size in layer_sizes:
+        # ring inside each layer
+        for i in range(size):
+            j1 = (i + 1) % size
+            A[offset + i, offset + j1] = 1.0
+            A[offset + j1, offset + i] = 1.0
+        anchors.append(offset)     # pick node 0 of each layer as "radial" anchor
+        offset += size
+    # radial couplings between anchors
+    for a, b in zip(anchors[:-1], anchors[1:]):
+        A[a, b] = A[b, a] = inter_strength
+    return A
+
+def adjacency_flower_of_life(rings: int = 3) -> np.ndarray:
+    """
+    Approximate Flower-of-Life lattice:
+    - One center + hexagonal rings (6, 12, 18, ...) up to 'rings'
+    - Connect near neighbors within a distance threshold.
+    """
+    coords = []
+    coords.append((0.0, 0.0))  # center
+    # hex rings at integer radii; each ring has 6*k nodes
+    for k in range(1, rings + 1):
+        m = 6 * k
+        for j in range(m):
+            angle = 2.0 * math.pi * (j / m)
+            x = k * math.cos(angle)
+            y = k * math.sin(angle)
+            coords.append((x, y))
+    pts = np.array(coords, dtype=float)
+    N = len(coords)
+    A = np.zeros((N, N), float)
+    # connect nodes within ~1.05 distance (hex-neighbor approx)
+    for i in range(N):
+        for j in range(i + 1, N):
+            d = np.linalg.norm(pts[i] - pts[j])
+            if d <= 1.05 + 1e-9:
+                A[i, j] = A[j, i] = 1.0
+    return A
+
+def make_adjacency(geom: Dict[str, Any]) -> np.ndarray:
+    name = geom.get("name", "grid")
+    if name == "grid":
+        return adjacency_grid(int(geom.get("rows", 8)), int(geom.get("cols", 8)), bool(geom.get("diagonal", False)))
+    if name == "circular":
+        return adjacency_circular(int(geom.get("nodes", 64)))
+    if name == "nested_spheres":
+        # layer sizes are implied by preset; we set a reasonable default
+        # this will be overridden by multi-layer builder if provided
+        return adjacency_nested_spheres([30, 60, 120, 240], inter_strength=0.2)
+    if name == "flower_of_life":
+        return adjacency_flower_of_life(int(geom.get("rings", 3)))
+    raise ValueError(f"Unknown geometry: {name}")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Dynamics
+# ──────────────────────────────────────────────────────────────────────────────
+
+def step_kuramoto(theta: np.ndarray, omega: np.ndarray, K: float, A: np.ndarray,
+                  dt: float, noise_std: float = 0.0, rng: Optional[np.random.Generator] = None,
+                  feedback: Optional[Dict[str, Any]] = None) -> np.ndarray:
+    if rng is None:
+        rng = np.random.default_rng()
+    A_sym = np.maximum(A, A.T)
+    dtheta = omega.copy()
+    # coupling term
+    for i in range(len(theta)):
+        dtheta[i] += K * np.sum(A_sym[i] * np.sin(theta - theta[i]))
+    # optional feedback (ouroboros style)
+    if feedback and feedback.get("type") == "ouroboros":
+        gain = float(feedback.get("gain", 0.1))
+        mean_ang = complex_mean_angle(theta)
+        dtheta += gain * np.angle(np.exp(1j * (mean_ang - theta)))
+    # noise
+    if noise_std > 0.0:
+        dtheta += rng.normal(0.0, noise_std, size=len(theta))
+    theta_next = wrap_phase(theta + dt * dtheta)
+    return theta_next
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Preset loading and omega assignment
+# ──────────────────────────────────────────────────────────────────────────────
+
+def load_presets(path: str) -> Dict[str, Any]:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def pick_preset(blob: Dict[str, Any], name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    meta = blob.get("meta", {})
+    defaults = meta.get("defaults", {})
+    presets = blob.get("presets", {})
+    if name not in presets:
+        raise KeyError(f"Preset '{name}' not found. Available: {list(presets.keys())}")
+    return defaults, presets[name]
+
+def build_omega(N: int, spec: Dict[str, Any], seed: Optional[int] = None) -> np.ndarray:
+    dist = spec.get("distribution", "gaussian")
+    if dist == "gaussian":
+        return gaussian_omega(N, float(spec.get("mean", 0.0)), float(spec.get("std", 0.1)), seed)
+    if dist == "harmonic_scale":
+        return harmonic_scale_omega(N, spec.get("scale", [1,2,3,5,8]), seed)
+    if dist == "spiral_mapping":
+        return spiral_mapping_omega(N, float(spec.get("turns", 2.0)), float(spec.get("std", 0.05)), seed)
+    raise ValueError(f"Unknown omega distribution: {dist}")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Builders for different preset styles
 # ──────────────────────────────────────────────────────────────────────────────
 
 @dataclass
-class Preset:
-    name: str
-    geometry: str = "circle6_center"   # "circle6_center" | "grid"
-    rows: int = 0
-    cols: int = 0
-    K: float = 0.85
-    pi: float = 0.75
-    offer_two_paths: bool = True
-    consent_to_log: bool = True
+class SimConfig:
+    steps: int
+    dt: float
+    K: float
+    noise_std: float
+    seed: int
+    output_csv: str
+    offer_two_paths: bool
+    consent_to_log: bool
 
-def default_preset(name: str = "circle6_center") -> Preset:
-    if name == "grid_rect":
-        return Preset(name="grid_rect", geometry="grid", rows=8, cols=8, K=0.8, pi=0.7)
-    return Preset(name="circle6_center", geometry="circle6_center", K=0.85, pi=0.75)
+def build_from_basic(preset: Dict[str, Any], defaults: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, np.ndarray, SimConfig, Dict[str, Any]]:
+    geom = preset.get("geometry", {"name": "grid"})
+    A = make_adjacency(geom)
+    N = int(preset.get("num_oscillators", A.shape[0]))
+    # if A size doesn't match N, pad/truncate naively
+    if A.shape[0] != N:
+        # rebuild reasonable grid
+        A = make_adjacency({"name": "grid", "rows": int(math.sqrt(N)) or 1, "cols": max(1, N // max(1, int(math.sqrt(N))))})
+    omega = build_omega(N, preset.get("omega", {"distribution": "gaussian"}), seed=preset.get("seed", defaults.get("seed", 0)))
+    theta0 = wrap_phase(np.random.default_rng(preset.get("seed", 0)).uniform(-math.pi, math.pi, size=N))
+    cfg = SimConfig(
+        steps=int(preset.get("steps", defaults.get("steps", 4000))),
+        dt=float(preset.get("dt", defaults.get("dt", 0.01))),
+        K=float(preset.get("coupling_strength", 0.5)),
+        noise_std=float(preset.get("noise_std", defaults.get("noise_std", 0.0))),
+        seed=int(preset.get("seed", defaults.get("seed", 0))),
+        output_csv=str(preset.get("output_csv", defaults.get("output_csv", "logs/run.csv"))),
+        offer_two_paths=bool(preset.get("offer_two_paths", defaults.get("offer_two_paths", True))),
+        consent_to_log=bool(preset.get("consent_to_log", defaults.get("consent_to_log", True))),
+    )
+    return A, omega, theta0, cfg, {"feedback": preset.get("feedback")}
 
-def load_preset(path: Optional[str], name: Optional[str]) -> Preset:
-    if path and os.path.isfile(path):
-        with open(path, "r") as f:
-            data = json.load(f)
-        if isinstance(data, list):
-            if not name:
-                raise ValueError("When presets.json is a list, --preset <name> is required.")
-            for p in data:
-                if p.get("name") == name:
-                    return Preset(**{
-                        "name": p.get("name", name),
-                        "geometry": p.get("geometry", "grid"),
-                        "rows": p.get("rows", 0),
-                        "cols": p.get("cols", 0),
-                        "K": float(p.get("K", 0.8)),
-                        "pi": float(p.get("pi", 0.7)),
-                        "offer_two_paths": bool(p.get("offer_two_paths", True)),
-                        "consent_to_log": bool(p.get("consent_to_log", True)),
-                    })
-            raise ValueError(f"Preset '{name}' not found in {path}")
-        # single-dict form
-        return Preset(**{
-            "name": data.get("name", name or "preset"),
-            "geometry": data.get("geometry", "grid"),
-            "rows": data.get("rows", 0),
-            "cols": data.get("cols", 0),
-            "K": float(data.get("K", 0.8)),
-            "pi": float(data.get("pi", 0.7)),
-            "offer_two_paths": bool(data.get("offer_two_paths", True)),
-            "consent_to_log": bool(data.get("consent_to_log", True)),
-        })
-    return default_preset(name or "circle6_center")
+def build_from_groups(preset: Dict[str, Any], defaults: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, np.ndarray, SimConfig, Dict[str, Any]]:
+    groups: List[Dict[str, Any]] = preset.get("groups", [])
+    if not groups:
+        raise ValueError("Preset with groups requires 'groups' array.")
 
+    sizes = [int(g.get("size", 0)) for g in groups]
+    N = int(np.sum(sizes))
+    # geometry: use provided or build grid with N close to rectangular
+    geom = preset.get("geometry", {"name": "grid", "rows": int(math.sqrt(N)) or 1, "cols": max(1, N // max(1, int(math.sqrt(N))))})
+    A = make_adjacency(geom)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Geometry & frequencies
-# ──────────────────────────────────────────────────────────────────────────────
+    # per-group omega, concatenate
+    rng_seed = preset.get("seed", defaults.get("seed", 0))
+    parts = []
+    for g in groups:
+        parts.append(build_omega(int(g.get("size", 0)), g.get("omega", {"distribution": "gaussian"}), seed=rng_seed))
+        rng_seed += 1
+    omega = np.concatenate(parts)
 
-def make_adjacency(p: Preset) -> np.ndarray:
-    if p.geometry == "circle6_center":
-        return adjacency_circle6_center()
-    if p.geometry == "grid":
-        if p.rows <= 0 or p.cols <= 0:
-            raise ValueError("grid geometry requires positive rows and cols")
-        return adjacency_grid(p.rows, p.cols, diagonal=False)
-    raise ValueError(f"Unknown geometry: {p.geometry}")
+    # effective K: blend group couplings using choice/mixing if provided
+    Ks = [float(g.get("coupling_strength", 0.5)) for g in groups]
+    choice = float(preset.get("choice_parameter", 0.5))
+    if len(Ks) == 2:
+        K_eff = Ks[0] * (1.0 - choice) + Ks[1] * choice
+    else:
+        K_eff = float(np.mean(Ks))
 
-def make_omega(N: int, mean: float = 0.0, std: float = 0.1, seed: int = 0) -> np.ndarray:
-    rng = np.random.default_rng(seed)
-    return rng.normal(loc=mean, scale=std, size=N).astype(float)
+    # add weak inter-group edges depending on mixing prob
+    mix = preset.get("mixing", {"type": "bipartite_edges", "prob": 0.2})
+    if mix.get("type") == "bipartite_edges" and len(groups) == 2:
+        prob = float(mix.get("prob", 0.2))
+        rng = np.random.default_rng(rng_seed + 777)
+        # map indices
+        idxA = np.arange(0, sizes[0])
+        idxB = np.arange(sizes[0], sizes[0] + sizes[1])
+        for i in idxA:
+            # connect with probability to random B
+            if rng.random() < prob:
+                j = int(rng.choice(idxB))
+                A[i, j] = A[j, i] = 1.0
 
+    theta0 = wrap_phase(np.random.default_rng(preset.get("seed", 0)).uniform(-math.pi, math.pi, size=N))
+    cfg = SimConfig(
+        steps=int(preset.get("steps", defaults.get("steps", 4000))),
+        dt=float(preset.get("dt", defaults.get("dt", 0.01))),
+        K=float(K_eff),
+        noise_std=float(preset.get("noise_std", defaults.get("noise_std", 0.0))),
+        seed=int(preset.get("seed", defaults.get("seed", 0))),
+        output_csv=str(preset.get("output_csv", defaults.get("output_csv", "logs/run.csv"))),
+        offer_two_paths=bool(preset.get("offer_two_paths", defaults.get("offer_two_paths", True))),
+        consent_to_log=bool(preset.get("consent_to_log", defaults.get("consent_to_log", True))),
+    )
+    return A, omega, theta0, cfg, {"feedback": preset.get("feedback")}
+
+def build_from_layers(preset: Dict[str, Any], defaults: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, np.ndarray, SimConfig, Dict[str, Any]]:
+    layers: List[Dict[str, Any]] = preset.get("layers", [])
+    if not layers:
+        raise ValueError("Preset with layers requires 'layers' array.")
+
+    sizes = [int(L.get("size", 0)) for L in layers]
+    N = int(np.sum(sizes))
+    A = adjacency_nested_spheres(sizes, inter_strength=float(preset.get("interlayer_coupling", {}).get("strength", 0.2)))
+
+    # compose omega per layer
+    rng_seed = preset.get("seed", defaults.get("seed", 0))
+    parts = []
+    Ks = []
+    for L in layers:
+        parts.append(build_omega(int(L.get("size", 0)), L.get("omega", {"distribution": "gaussian"}), seed=rng_seed))
+        Ks.append(float(L.get("K", 0.5)))
+        rng_seed += 1
+    omega = np.concatenate(parts)
+    K_eff = float(np.mean(Ks)) if Ks else 0.5
+
+    theta0 = wrap_phase(np.random.default_rng(preset.get("seed", 0)).uniform(-math.pi, math.pi, size=N))
+    cfg = SimConfig(
+        steps=int(preset.get("steps", defaults.get("steps", 4000))),
+        dt=float(preset.get("dt", defaults.get("dt", 0.01))),
+        K=float(K_eff),
+        noise_std=float(preset.get("noise_std", defaults.get("noise_std", 0.0))),
+        seed=int(preset.get("seed", defaults.get("seed", 0))),
+        output_csv=str(preset.get("output_csv", defaults.get("output_csv", "logs/run.csv"))),
+        offer_two_paths=bool(preset.get("offer_two_paths", defaults.get("offer_two_paths", True))),
+        consent_to_log=bool(preset.get("consent_to_log", defaults.get("consent_to_log", True))),
+    )
+    return A, omega, theta0, cfg, {"feedback": preset.get("feedback")}
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Runner
 # ──────────────────────────────────────────────────────────────────────────────
 
-def run_sim(p: Preset, steps: int = 2000, dt: float = 0.01,
-            csv_path: Optional[str] = None,
-            seed: int = 0,
-            gate: Optional[HarmonicGate] = None) -> None:
-    A = make_adjacency(p)
-    N = A.shape[0]
+def run_from_preset(preset_name: str, presets_path: str) -> None:
+    blob = load_presets(presets_path)
+    defaults, preset = pick_preset(blob, preset_name)
 
-    rng = np.random.default_rng(seed)
-    theta = np.mod(rng.uniform(0, TAU, size=N), TAU)
-    omega = make_omega(N, std=0.1, seed=seed)
+    engine = str(preset.get("engine", defaults.get("engine", "kuramoto")))
 
-    # CSV header (already included here — just replacing the file is enough)
+    # Build model state
+    if "groups" in preset:
+        A, omega, theta, cfg, extra = build_from_groups(preset, defaults)
+    elif "layers" in preset and preset.get("geometry", {}).get("name") != "grid":
+        # if explicit multi-layer semantic model
+        A, omega, theta, cfg, extra = build_from_layers(preset, defaults)
+    else:
+        A, omega, theta, cfg, extra = build_from_basic(preset, defaults)
+
+    feedback = extra.get("feedback")
+
+    # Prepare writer
+    ensure_dir(cfg.output_csv)
     header = [
-        "step", "t",
-        "R_total", "R_mean", "cross_sync", "drift",
-        "C", "Delta", "Phi",
-        "ready", "choice_score",
-        "offer_two_paths", "consent_to_log"
+        "preset","step","t",
+        "R_total","cross_sync","drift","C","Delta","Phi",
+        "offer_two_paths","consent_to_log"
     ]
+    f = open(cfg.output_csv, "w", newline="")
+    writer = csv.writer(f)
+    writer.writerow(header)
 
-    writer = None
-    f = None
-    if csv_path:
-        os.makedirs(os.path.dirname(csv_path), exist_ok=True)
-        f = open(csv_path, "w", newline="")
-        writer = csv.writer(f)
-        writer.writerow(header)
+    rng = np.random.default_rng(cfg.seed)
+    theta_prev = theta.copy()
 
-    theta_prev = np.array(theta, copy=True)
-    gate = gate or HarmonicGate(ethics=1.0, ignition=1.0, destabilizer=0.0, time_gate=1.0)
+    # Integrate
+    for k in range(cfg.steps):
+        t = (k + 1) * cfg.dt
+        theta_next = step_kuramoto(theta, omega, cfg.K, A, dt=cfg.dt, noise_std=cfg.noise_std, rng=rng, feedback=feedback)
 
-    for k in range(steps):
-        t = (k + 1) * dt
-        K_eff, pi_eff = gated_params(p.K, p.pi, gate=gate, t_step=k)
+        # Metrics
+        R_total = phase_coherence(theta_next)
+        cross   = cross_edge_sync(A, theta_next)
+        drift   = float(np.mean(np.abs(np.angle(np.exp(1j * (theta_next - theta))))))
+        C_raw   = local_coherence(theta_next, np.maximum(A, A.T))
+        C_m01   = float((C_raw + 1.0) * 0.5)  # map [-1,1] → [0,1]
+        Delta   = phase_entropy_norm(theta_next)
+        Phi     = lag1_smoothness(theta_next, theta)
 
-        theta_next, metrics = kuramoto_step(theta, omega, K_eff, A, dt=dt)
-        R_total = float(metrics["R_total"])
-        cross   = float(metrics["cross_sync"])
-        drift   = float(metrics["drift"])
+        writer.writerow([
+            preset_name, k + 1, t,
+            R_total, cross, drift, C_m01, Delta, Phi,
+            int(cfg.offer_two_paths), int(cfg.consent_to_log)
+        ])
 
-        # Relational measures
-        # Global coherence via order parameter (sanity check):
-        _R_check = phase_coherence(theta_next)  # ~ equals R_total
-        # Local coherence (weighted cos over adjacency) mapped to [0,1]:
-        local_c = local_coherence(theta_next, np.maximum(A, A.T))
-        C_val = float((local_c + 1.0) * 0.5)
-        # Diversity (normalized phase entropy) in [0,1]:
-        Delta_val = phase_entropy_normalized(theta_next, bins=36)
-        # Flow smoothness (lag-1):
-        Phi_val = lag1_circular_smoothness(theta_next, theta)
-
-        # Ethical readiness & choice
-        ready = collapse_signal(R_total, cross, drift)
-        choice_ok = collapse_decision(
-            ready=ready,
-            consent=bool(p.consent_to_log),
-            offer_two_paths=bool(p.offer_two_paths),
-            thresh=0.70
-        )
-        choice_score = 1.0 if choice_ok else 0.0
-
-        if writer:
-            writer.writerow([
-                k + 1, t,
-                R_total, R_total, cross, drift,
-                C_val, Delta_val, Phi_val,
-                ready, choice_score,
-                int(p.offer_two_paths), int(p.consent_to_log)
-            ])
-
+        theta_prev = theta
         theta = theta_next
 
-    if f:
-        f.close()
-
+    f.close()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CLI
 # ──────────────────────────────────────────────────────────────────────────────
 
 def parse_args() -> argparse.Namespace:
-    ap = argparse.ArgumentParser(description="Multi-scale Kuramoto with relational signals (C, Δ, Φ)")
-    ap.add_argument("--presets", type=str, default="sims/presets.json", help="Path to presets.json")
-    ap.add_argument("--preset", type=str, default="circle6_center", help="Preset name")
-    ap.add_argument("--steps", type=int, default=2000, help="Simulation steps")
-    ap.add_argument("--dt", type=float, default=0.01, help="Time step")
-    ap.add_argument("--K", type=float, default=None, help="Override coupling K ∈ [0,1]")
-    ap.add_argument("--pi", type=float, default=None, help="Override permeability π ∈ [0,1]")
-    ap.add_argument("--csv", type=str, default="logs/run.csv", help="Output CSV path")
-    ap.add_argument("--seed", type=int, default=0, help="Random seed")
-    ap.add_argument("--no-two-paths", action="store_true", help="Disable reversible options")
-    ap.add_argument("--no-consent", action="store_true", help="Disable consent flag")
-    ap.add_argument("--destabilizer", type=float, default=0.0, help="Gate noise proportion")
+    ap = argparse.ArgumentParser(description="Multi-scale Kuramoto — schema-driven simulator")
+    ap.add_argument("--preset", type=str, default="default", help="Preset name in presets.json")
+    ap.add_argument("--presets-file", type=str, default="sims/presets.json", help="Path to presets JSON")
     return ap.parse_args()
 
 def main():
     args = parse_args()
-    p = load_preset(args.presets, args.preset)
-    if args.K is not None:
-        p.K = float(args.K)
-    if args.pi is not None:
-        p.pi = float(args.pi)
-    if args.no_two_paths:
-        p.offer_two_paths = False
-    if args.no_consent:
-        p.consent_to_log = False
-
-    gate = HarmonicGate(
-        ethics=1.0,
-        ignition=1.0,
-        destabilizer=max(0.0, float(args.destabilizer)),
-        time_gate=1.0
-    )
-
-    run_sim(
-        p=p,
-        steps=int(args.steps),
-        dt=float(args.dt),
-        csv_path=args.csv,
-        seed=int(args.seed),
-        gate=gate
-    )
+    run_from_preset(args.preset, args.presets_file)
 
 if __name__ == "__main__":
     main()
