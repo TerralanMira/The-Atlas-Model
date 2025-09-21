@@ -87,3 +87,13 @@ python sims/multi_scale_kuramoto.py --preset multi_scale_field
 
 # breath-modulated lattice (if breath engine runner is available)
 # python sims/breath_cycle.py --preset breath_flower
+Tip: logs default to logs/*.csv per preset. Point the dashboard there to see overlays breathe.
+
+⸻
+
+Hum Check
+	•	Does the preset preserve Δ while lifting C and Φ?
+	•	Are changes reversible (breath) before we increase K?
+	•	Does geometry help the field learn—or clamp it?
+
+Presets are not answers; they are questions in motion.
