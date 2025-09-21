@@ -1,22 +1,50 @@
-[
-  {
-    "name": "circle6_center",
-    "geometry": "circle6_center",
-    "rows": 0,
-    "cols": 0,
-    "K": 0.85,
-    "pi": 0.75,
-    "offer_two_paths": true,
-    "consent_to_log": true
+{
+  "default": {
+    "description": "Baseline Kuramoto model with moderate coupling",
+    "num_oscillators": 100,
+    "coupling_strength": 0.5,
+    "natural_frequencies": "gaussian",
+    "noise": 0.01
   },
-  {
-    "name": "grid_rect",
-    "geometry": "grid",
-    "rows": 8,
-    "cols": 8,
-    "K": 0.80,
-    "pi": 0.70,
-    "offer_two_paths": true,
-    "consent_to_log": true
+
+  "flower_of_life": {
+    "description": "Oscillators arranged in the Flower of Life geometry; coherence measured across concentric hexagonal rings.",
+    "num_oscillators": 90,
+    "geometry": "flower_of_life",
+    "layers": 3,
+    "coupling_strength": 0.6,
+    "natural_frequencies": "harmonic_scale",
+    "noise": 0.005,
+    "seed_pattern": "sacred_geometry"
+  },
+
+  "ouroboros_loop": {
+    "description": "Closed loop oscillator chain symbolizing self-reference; coherence emerges through feedback.",
+    "num_oscillators": 64,
+    "geometry": "circular",
+    "coupling_strength": 0.7,
+    "feedback": "ouroboros",
+    "natural_frequencies": "spiral_mapping",
+    "noise": 0.002
+  },
+
+  "conscious_choice": {
+    "description": "Two oscillator populations — one aligned, one dissonant. System coherence depends on 'choice' parameter blending them.",
+    "num_oscillators": 128,
+    "groups": 2,
+    "choice_parameter": 0.5,
+    "coupling_strength": [0.4, 0.8],
+    "natural_frequencies": "bimodal",
+    "noise": 0.01
+  },
+
+  "multi_scale_field": {
+    "description": "Nested layers of oscillators representing field layers (self, group, collective, cosmos).",
+    "layers": 4,
+    "oscillators_per_layer": [30, 60, 120, 240],
+    "coupling_strengths": [0.3, 0.5, 0.7, 0.9],
+    "geometry": "nested_spheres",
+    "natural_frequencies": "layered",
+    "noise": 0.003
   }
-]
+}
