@@ -2,25 +2,21 @@
 """
 sims/multi_scale_kuramoto.py
 
-Multi-scale Kuramoto runner with relational awareness signals:
-  - C   : coherence (cross-edge synchrony)                ∈ [0,1]
-  - Delta: difference kept alive (phase-entropy diversity) ∈ [0,1]
-  - Phi : flow (lag-1 circular smoothness)                ∈ [0,1]
+Multi-scale Kuramoto runner that logs both classical and Atlas metrics:
+- Classical: R_total, cross_sync, drift
+- Atlas relational: C (coherence across edges), Delta (diversity kept alive), Phi (flow smoothness)
+- Ethical readiness & choice: ready, choice_score (consent + reversible paths)
 
-Also logs:
-  R_total, R_mean, cross_sync, drift, ready, choice_score,
-  offer_two_paths, consent_to_log
-
-Presets are read from sims/presets.json (optional); built-ins provided.
+Dependencies: numpy
+Also uses algorithms/ modules:
+  - algorithms.field_equations
+  - algorithms.resonance_dynamics
+  - algorithms.coherence_metrics (for global/local coherence helpers)
 
 MIT License.
 """
 from __future__ import annotations
-import argparse
-import csv
-import json
-import math
-import os
+import argparse, csv, json, math, os
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
@@ -33,12 +29,16 @@ from algorithms.field_equations import (
 from algorithms.resonance_dynamics import (
     collapse_signal, collapse_decision, HarmonicGate, gated_params
 )
+from algorithms.coherence_metrics import (
+    phase_coherence,      # global coherence via Kuramoto order magnitude
+    local_coherence       # weighted cos(Δθ) over adjacency
+)
 
 TAU = 2.0 * math.pi
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Utility metrics (pure NumPy)
+# Relational signals
 # ──────────────────────────────────────────────────────────────────────────────
 
 def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
@@ -50,8 +50,11 @@ def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
     d = theta[J] - theta[I]
     return float((np.cos(d).mean() + 1.0) * 0.5)
 
-def phase_entropy_norm(theta: np.ndarray, bins: int = 36) -> float:
-    """Normalized histogram entropy of phases in [0,1]; 1=diverse, 0=clamped."""
+def phase_entropy_normalized(theta: np.ndarray, bins: int = 36) -> float:
+    """
+    Normalized histogram entropy in [0,1]; 1 = maximum diversity, 0 = fully clamped.
+    (This is 'diversity' — not 'entropy_coherence' which is 1 - entropy.)
+    """
     h, _ = np.histogram(np.mod(theta, TAU), bins=bins, range=(0.0, TAU))
     p = h.astype(float)
     if p.sum() == 0:
@@ -62,10 +65,7 @@ def phase_entropy_norm(theta: np.ndarray, bins: int = 36) -> float:
     return float(ent / math.log(bins))
 
 def lag1_circular_smoothness(theta_now: np.ndarray, theta_prev: np.ndarray) -> float:
-    """
-    Φ proxy: average cos(Δθ) across nodes (Δθ wrapped), mapped to [0,1].
-    1.0 means very smooth evolution (small, coherent step), ~0 means jittery.
-    """
+    """Φ: average cos(wrapped Δθ) mapped to [0,1]; 1 = very smooth evolution."""
     dphi = np.angle(np.exp(1j * (theta_now - theta_prev)))
     return float((np.cos(dphi).mean() + 1.0) * 0.5)
 
@@ -94,7 +94,6 @@ def load_preset(path: Optional[str], name: Optional[str]) -> Preset:
     if path and os.path.isfile(path):
         with open(path, "r") as f:
             data = json.load(f)
-        # if presets.json contains an array of presets, find by name
         if isinstance(data, list):
             if not name:
                 raise ValueError("When presets.json is a list, --preset <name> is required.")
@@ -111,7 +110,7 @@ def load_preset(path: Optional[str], name: Optional[str]) -> Preset:
                         "consent_to_log": bool(p.get("consent_to_log", True)),
                     })
             raise ValueError(f"Preset '{name}' not found in {path}")
-        # otherwise accept a single dict preset
+        # single-dict form
         return Preset(**{
             "name": data.get("name", name or "preset"),
             "geometry": data.get("geometry", "grid"),
@@ -122,12 +121,11 @@ def load_preset(path: Optional[str], name: Optional[str]) -> Preset:
             "offer_two_paths": bool(data.get("offer_two_paths", True)),
             "consent_to_log": bool(data.get("consent_to_log", True)),
         })
-    # fall back to built-in
     return default_preset(name or "circle6_center")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Geometry & natural frequencies
+# Geometry & frequencies
 # ──────────────────────────────────────────────────────────────────────────────
 
 def make_adjacency(p: Preset) -> np.ndarray:
@@ -159,7 +157,7 @@ def run_sim(p: Preset, steps: int = 2000, dt: float = 0.01,
     theta = np.mod(rng.uniform(0, TAU, size=N), TAU)
     omega = make_omega(N, std=0.1, seed=seed)
 
-    # header
+    # CSV header (already included here — just replacing the file is enough)
     header = [
         "step", "t",
         "R_total", "R_mean", "cross_sync", "drift",
@@ -176,42 +174,39 @@ def run_sim(p: Preset, steps: int = 2000, dt: float = 0.01,
         writer = csv.writer(f)
         writer.writerow(header)
 
-    # initial previous state (for Φ)
     theta_prev = np.array(theta, copy=True)
-
-    # optional gate
     gate = gate or HarmonicGate(ethics=1.0, ignition=1.0, destabilizer=0.0, time_gate=1.0)
 
     for k in range(steps):
         t = (k + 1) * dt
-
-        # gate-adjusted params
         K_eff, pi_eff = gated_params(p.K, p.pi, gate=gate, t_step=k)
 
-        # one step
         theta_next, metrics = kuramoto_step(theta, omega, K_eff, A, dt=dt)
-
-        # primary metrics
         R_total = float(metrics["R_total"])
         cross   = float(metrics["cross_sync"])
         drift   = float(metrics["drift"])
 
-        # relational measures
-        C_val     = cross  # coherence across edges
-        Delta_val = phase_entropy_norm(theta_next, bins=36)     # diversity
-        Phi_val   = lag1_circular_smoothness(theta_next, theta) # flow
+        # Relational measures
+        # Global coherence via order parameter (sanity check):
+        _R_check = phase_coherence(theta_next)  # ~ equals R_total
+        # Local coherence (weighted cos over adjacency) mapped to [0,1]:
+        local_c = local_coherence(theta_next, np.maximum(A, A.T))
+        C_val = float((local_c + 1.0) * 0.5)
+        # Diversity (normalized phase entropy) in [0,1]:
+        Delta_val = phase_entropy_normalized(theta_next, bins=36)
+        # Flow smoothness (lag-1):
+        Phi_val = lag1_circular_smoothness(theta_next, theta)
 
-        # readiness & ethical collapse
+        # Ethical readiness & choice
         ready = collapse_signal(R_total, cross, drift)
         choice_ok = collapse_decision(
             ready=ready,
-            consent=bool(p.consent_to_log),           # reusing consent flag here as example
+            consent=bool(p.consent_to_log),
             offer_two_paths=bool(p.offer_two_paths),
             thresh=0.70
         )
         choice_score = 1.0 if choice_ok else 0.0
 
-        # write row
         if writer:
             writer.writerow([
                 k + 1, t,
@@ -221,8 +216,6 @@ def run_sim(p: Preset, steps: int = 2000, dt: float = 0.01,
                 int(p.offer_two_paths), int(p.consent_to_log)
             ])
 
-        # advance
-        theta_prev[:] = theta
         theta = theta_next
 
     if f:
@@ -235,26 +228,22 @@ def run_sim(p: Preset, steps: int = 2000, dt: float = 0.01,
 
 def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser(description="Multi-scale Kuramoto with relational signals (C, Δ, Φ)")
-    ap.add_argument("--presets", type=str, default="sims/presets.json",
-                    help="Path to presets.json (optional).")
-    ap.add_argument("--preset", type=str, default="circle6_center",
-                    help="Preset name (e.g., circle6_center, grid_rect).")
-    ap.add_argument("--steps", type=int, default=2000, help="Simulation steps.")
-    ap.add_argument("--dt", type=float, default=0.01, help="Time step.")
-    ap.add_argument("--K", type=float, default=None, help="Override coupling K ∈ [0,1].")
-    ap.add_argument("--pi", type=float, default=None, help="Override permeability π ∈ [0,1].")
-    ap.add_argument("--csv", type=str, default="logs/run.csv", help="Output CSV path.")
-    ap.add_argument("--seed", type=int, default=0, help="Random seed.")
-    ap.add_argument("--no-two-paths", action="store_true", help="Disable reversible options.")
-    ap.add_argument("--no-consent", action="store_true", help="Disable consent flag.")
-    ap.add_argument("--destabilizer", type=float, default=0.0, help="Gate noise proportion (small).")
+    ap.add_argument("--presets", type=str, default="sims/presets.json", help="Path to presets.json")
+    ap.add_argument("--preset", type=str, default="circle6_center", help="Preset name")
+    ap.add_argument("--steps", type=int, default=2000, help="Simulation steps")
+    ap.add_argument("--dt", type=float, default=0.01, help="Time step")
+    ap.add_argument("--K", type=float, default=None, help="Override coupling K ∈ [0,1]")
+    ap.add_argument("--pi", type=float, default=None, help="Override permeability π ∈ [0,1]")
+    ap.add_argument("--csv", type=str, default="logs/run.csv", help="Output CSV path")
+    ap.add_argument("--seed", type=int, default=0, help="Random seed")
+    ap.add_argument("--no-two-paths", action="store_true", help="Disable reversible options")
+    ap.add_argument("--no-consent", action="store_true", help="Disable consent flag")
+    ap.add_argument("--destabilizer", type=float, default=0.0, help="Gate noise proportion")
     return ap.parse_args()
 
 def main():
     args = parse_args()
     p = load_preset(args.presets, args.preset)
-
-    # CLI overrides
     if args.K is not None:
         p.K = float(args.K)
     if args.pi is not None:
