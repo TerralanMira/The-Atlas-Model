@@ -16,12 +16,21 @@ theme:
 
 nav:
   - Home: index.md
+  - Spiral Map: docs/README.md
   - The Whole: docs/whole.md
-  - Awareness: docs/awareness.md
-  - Coherence: docs/coherence.md
-  - Field Layers: docs/field_layers.md
-  - Applications: docs/applications.md
-  - Integration: docs/integration.md
+
+  # — Ouroboros flow —
+  - Awareness → Coherence:
+      - Awareness (seed): docs/awareness.md
+      - Coherence (thread): docs/coherence.md
+  - Field Layers → Applications:
+      - Field Layers (fabric): docs/field_layers.md
+      - Applications (hands): docs/applications.md
+  - Integration → Return:
+      - Integration (weave): docs/integration.md
+      - Return to Awareness (link): docs/awareness.md
+
+  # — Embodiment —
   - Body of Atlas:
       - Feet: docs/feet_of_atlas.md
       - Heart: docs/heart_of_atlas.md
@@ -30,15 +39,21 @@ nav:
       - Eyes: docs/eyes_of_atlas.md
       - Ears: docs/ears_of_atlas.md
       - Voice: docs/voice_of_atlas.md
+
+  # — Instruments —
   - Simulations:
-      - Overview (Breath & Kuramoto): docs/sims/breath.md
-      - Multi-Scale Kuramoto (code): sims/multi_scale_kuramoto.py
+      - Overview (Breath): docs/sims/breath.md
       - Breath Cycle (code): sims/breath_cycle.py
+      - Multi-Scale Kuramoto (code): sims/multi_scale_kuramoto.py
       - Presets (json): sims/presets.json
+  - Algorithms:
+      - Coherence Metrics (code): algorithms/coherence_metrics.py
+
+  # — Interface & Ethics —
+  - LLM Conductor:
+      - Atlas System Prompt: docs/llm/atlas_system_prompt.md
   - Dashboard:
       - Resonant Layer Overlays: dashboard/dashboard.py
-  - LLM:
-      - Atlas System Prompt: docs/llm/atlas_system_prompt.md
   - Ethics:
       - ETHICS (Consent • Transparency • Non-coercion): docs/meta/ETHICS.md
 
