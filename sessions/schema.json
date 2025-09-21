@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Atlas Session Summary",
+  "title": "Atlas Session Suggestions",
+  "description": "Summary of sim runs plus gentle Return-Spiral deltas.",
   "type": "object",
   "properties": {
     "runs": {
@@ -8,26 +9,66 @@
       "items": {
         "type": "object",
         "properties": {
-          "R_total_mean": { "type": "number" },
-          "R_total_std":  { "type": "number" },
-          "R_total_last": { "type": "number" },
-          "cross_sync_mean": { "type": "number" },
-          "drift_mean": { "type": "number" },
-          "ready_mean": { "type": "number" }
+          "file": { "type": "string" },
+          "rows": { "type": "integer", "minimum": 0 },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "mean_R": { "type": "number" },
+              "last_R": { "type": "number" },
+              "mean_cross": { "type": "number" },
+              "last_cross": { "type": "number" },
+              "mean_drift": { "type": "number" },
+              "last_drift": { "type": "number" },
+              "mean_C": { "type": "number" },
+              "last_C": { "type": "number" },
+              "mean_Delta": { "type": "number" },
+              "last_Delta": { "type": "number" },
+              "mean_Phi": { "type": "number" },
+              "last_Phi": { "type": "number" },
+              "mean_ready": { "type": "number" },
+              "last_ready": { "type": "number" },
+              "mean_choice": { "type": "number" },
+              "last_choice": { "type": "number" }
+            },
+            "additionalProperties": false
+          },
+          "suggestions": {
+            "type": "object",
+            "properties": {
+              "dK": { "type": "number" },
+              "dPi": { "type": "number" },
+              "notes": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "required": ["dK", "dPi", "notes"],
+            "additionalProperties": false
+          }
         },
-        "additionalProperties": true
+        "required": ["file", "rows", "metrics", "suggestions"],
+        "additionalProperties": false
       }
     },
-    "suggestions": {
+    "aggregate": {
       "type": "object",
       "properties": {
-        "suggest_pi_delta": { "type": "number" },
-        "suggest_intraK_delta": { "type": "number" },
-        "note": { "type": "string" }
+        "dK": { "type": "number" },
+        "dPi": { "type": "number" },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
       },
-      "required": ["note"],
+      "required": ["dK", "dPi", "notes"],
       "additionalProperties": false
+    },
+    "schema": {
+      "type": "object",
+      "additionalProperties": true
     }
   },
-  "required": ["runs"]
+  "required": ["runs", "aggregate"],
+  "additionalProperties": false
 }
