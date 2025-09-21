@@ -1,66 +1,42 @@
 site_name: The Atlas Model
-site_description: "An evolving framework of resonance, coherence, and fractal awareness."
-site_author: "Atlas Project"
-repo_url: "https://github.com/your-username/The-Atlas-Model"
-repo_name: "The-Atlas-Model"
+site_description: Documentation of The Atlas Model – a recursive framework for resonance, coherence, and embodied design.
+site_author: Atlas Contributors
 
 theme:
   name: material
+  palette:
+    primary: indigo
+    accent: deep purple
   features:
-    - navigation.tabs
     - navigation.expand
-    - navigation.top
-    - search.highlight
+    - navigation.sections
     - toc.integrate
     - content.code.copy
+    - content.tabs.link
 
 nav:
   - Home: index.md
+  - Awareness: docs/awareness.md
+  - Coherence: docs/coherence.md
+  - Field Layers: docs/field_layers.md
+  - Applications: docs/applications.md
+  - Body of Atlas:
+      - Feet: docs/feet_of_atlas.md
+      - Heart: docs/heart_of_atlas.md
+      - Hands: docs/hands_of_atlas.md
+      - Mind: docs/mind_of_atlas.md
+  - Voice of Atlas: docs/voice_of_atlas.md
+  - LLM:
+      - System Prompt: docs/llm/atlas_system_prompt.md
 
-  - Atlas Foundations:
-      - Feet of Atlas: docs/feet.md
-      - Heart of Atlas: docs/heart.md
-      - Mind of Atlas: docs/mind.md
-      - Field of Atlas: docs/field_layers.md
-      - Might of Atlas: docs/might.md
-
-  - Awareness & Coherence:
-      - Awareness: docs/awareness.md
-      - Coherence: docs/coherence.md
-      - Ouroboros (Cycle): docs/ouroboros.md
-      - Relational Awareness (C·Δ·Φ): docs/relational_awareness.md
-
-  - Simulations:
-      - Sims Overview: docs/sims/index.md
-      - Multi-Scale Kuramoto (code): sims/multi_scale_kuramoto.py
-      - Presets (json): sims/presets.json
-
-  - Dashboard:
-      - Resonant Layer Overlays: docs/atlas/dashboard.md
-
-  - Applications:
-      - Applications: docs/applications.md
-
-  - LLM System:
-      - Atlas System Prompt: docs/llm/atlas_system_prompt.md
-
-  - Ethics:
-      - ETHICS (Consent • Transparency • Non-coercion): docs/meta/ETHICS.md
+plugins:
+  - search
+  - mkdocs-mermaid2-plugin
 
 markdown_extensions:
   - admonition
   - codehilite
   - footnotes
-  - def_list
+  - meta
   - toc:
       permalink: true
-  - pymdownx.details
-  - pymdownx.superfences
-  - pymdownx.magiclink
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.arithmatex:
-      generic: true
-
-plugins:
-  - search
