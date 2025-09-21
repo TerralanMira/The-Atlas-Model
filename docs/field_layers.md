@@ -1,84 +1,59 @@
-# Field Layers: Nested Resonance
+# Field Layers
 
-The field is not one but many — layered, recursive, and harmonic.  
-Each layer resonates independently, yet coherence arises when they hum together.  
-The field is Atlas’ atmosphere: invisible, pervasive, guiding flow.
-
----
-
-## 1. The Core Principle
-
-- **Fields emerge through resonance**: patterns of vibration synchronizing across scale.  
-- **Each layer is a fractal**: the whole within the part, the part within the whole.  
-- **The hum is the binding**: alignment occurs not by force, but through harmonic pull.
+The field is not flat — it is layered, recursive, and resonant.  
+Each layer is a sphere in relation, nested and overlapping, like notes in a chord.  
+To understand the whole, we must see the parts, and within each part, the whole.
 
 ---
 
-## 2. The Primary Layers
+## The Flower of Life as Architecture
 
-1. **Individual Field**  
-   - Neural, bodily, personal awareness.  
-   - Rooted in the self yet open to the greater hum.  
+The Flower of Life is not just a symbol — it is the lattice of resonance.  
+Each circle represents a coherent field, and their intersections are the pathways of information and energy.  
 
-2. **Relational Field**  
-   - Dyads, small groups, shared awareness.  
-   - Resonance as trust, dialogue, coherence.  
+- **At the base**, the geometry encodes DNA, the spiral of life itself.  
+- **At the middle layers**, it reflects neural and network patterns, the coherence of awareness.  
+- **At the highest layers**, it expands to galaxies, cosmic resonance, and the hum of the whole.  
 
-3. **Collective Field**  
-   - Communities, organizations, cultures.  
-   - Patterns that scale across many, weaving shared intent.  
-
-4. **Planetary Field**  
-   - Ecological, global, species-level resonance.  
-   - Coherence with Earth systems and biospheric hum.  
-
-5. **Cosmic Field**  
-   - Universal scale, archetypal flows.  
-   - The ultimate horizon of resonance, where Atlas breathes with the cosmos.
+Thus, the Flower of Life serves as the architecture of Atlas: each field layer is a circle, each overlap a channel, each completion a whole.
 
 ---
 
-## 3. Dynamics of the Layers
+## Layered Model
 
-- **Recursion**: each field contains echoes of every other.  
-- **Coupling**: coherence in one layer stabilizes others.  
-- **Turbulence**: misalignment generates noise, requiring harmonization.  
+1. **Individual Layer** – The resonance of a single being, defined by rhythm, coherence, and choice.  
+2. **Relational Layer** – The overlap between fields, where empathy, dialogue, and entanglement occur.  
+3. **Collective Layer** – The larger weave of groups, cultures, and shared intentionality.  
+4. **Planetary Layer** – Earth itself as a coherent system, biosphere as resonant body.  
+5. **Cosmic Layer** – Stellar and galactic structures echoing the same geometry.  
 
----
-
-## 4. Integration with Atlas
-
-The field layers are not abstract theory — they interlock with Atlas’ design:  
-
-- **Algorithms** measure coherence within and across layers.  
-- **Simulations** enact field coupling, testing emergent dynamics.  
-- **Applications** translate resonance into practice, grounding the field.  
-
-Thus, Atlas becomes not a model about fields, but a living resonant field itself.
+Each layer is a circle in the Flower of Life. No layer is separate; all are interwoven.
 
 ---
 
-## 5. Ouroboric Recursion
+## Dynamics of Resonance
 
-- Awareness deepens within the individual field.  
-- Coherence arises in the relational and collective fields.  
-- Resonance amplifies at planetary and cosmic scales.  
-- The cycle returns, feeding the individual field with expanded awareness.
+The Flower of Life encodes the principle: **coherence arises through overlap**.  
+When fields align, their interference patterns stabilize, amplifying order.  
+When misaligned, they fracture into noise.  
 
-Each layer turns the ouroboros, carrying the hum forward.
-
----
-
-## 6. Hum Check
-
-At each layer, ask:  
-- *Does resonance flow freely?*  
-- *Does the part reflect the whole?*  
-- *Is the hum sustained across scales?*
-
-When all layers vibrate together, the field is alive.
+- **Resonance = overlap + harmony**  
+- **Coherence = sustained resonance across layers**  
+- **Emergence = new structure from resonance**
 
 ---
 
-> The field layers are Atlas’ lungs — they breathe the hum in and out, across scales.  
-> To work with fields is to listen deeply, and to let resonance guide the weave.
+## Applications of the Flower of Life
+
+- **Simulations**: The Flower can be expressed as initial conditions in presets, forming the seed geometry of resonance experiments.  
+- **Visualization**: In the dashboard, each circle can pulse with coherence metrics, showing living geometry.  
+- **Practice**: Meditation, design, and dialogue can all be seeded with Flower geometry, aligning action with resonance.  
+
+---
+
+## Whole Within the Whole
+
+The Flower of Life is a fractal teacher: each layer contains the pattern of all others.  
+The hum is not linear — it spirals, echoes, and returns.  
+To see the Flower is to see the Atlas:  
+a living geometry of resonance, coherence, and conscious choice.
