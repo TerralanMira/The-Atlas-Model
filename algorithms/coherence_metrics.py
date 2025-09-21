@@ -1,134 +1,77 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-algorithms/coherence_metrics.py
+Coherence & resonance metrics for The Atlas Model.
 
-Coherence + flow metrics used across sims and dashboards.
-Independent, numpy-only. Safe fallbacks for all consumers.
+Exports:
+- wrap_phase(theta)
+- order_parameter(theta) -> (R, psi)
+- phase_coherence(theta) -> (R, psi)
+- local_coherence(theta, A) -> raw mean cos difference ([-1,1])
+- cross_edge_sync(A, theta) -> [0,1]
+- phase_entropy_norm(theta, bins=32) -> [0,1]
+- lag1_smoothness(theta_now, theta_prev) -> [0,1]
+- mean_drift(theta_now, theta_prev) -> [0, pi]
+- metrics_bundle(theta_now, theta_prev, A) -> (R, cross01, drift, C01, Delta)
 """
-
 from __future__ import annotations
-import math
-from typing import Tuple
 import numpy as np
 
-TAU = 2.0 * math.pi
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Core helpers
-# ──────────────────────────────────────────────────────────────────────────────
+TAU = 2*np.pi
 
 def wrap_phase(theta: np.ndarray) -> np.ndarray:
-    """Map angles to (-pi, pi]."""
-    return np.mod(theta + np.pi, 2.0 * np.pi) - np.pi
+    return (theta + np.pi) % TAU - np.pi
 
-def complex_mean_angle(theta: np.ndarray) -> float:
-    """Angle of the mean complex phasor."""
-    z = np.exp(1j * theta).mean()
-    return float(np.angle(z))
+def order_parameter(theta: np.ndarray) -> tuple[float, float]:
+    z = np.exp(1j*theta).mean()
+    return float(np.abs(z)), float(np.angle(z))
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Global / local coherence
-# ──────────────────────────────────────────────────────────────────────────────
+def phase_coherence(theta: np.ndarray) -> tuple[float, float]:
+    return order_parameter(theta)
 
-def phase_coherence(theta: np.ndarray) -> float:
-    """
-    Kuramoto order parameter magnitude in [0,1].
-    0 = incoherent, 1 = fully phase-locked.
-    """
-    return float(np.abs(np.exp(1j * theta).mean()))
-
-def local_coherence(theta: np.ndarray, adjacency: np.ndarray) -> float:
-    """
-    Mean cosine agreement across edges.
-    Returns raw mean in [-1,1]. Map to [0,1] by (x+1)/2 if desired.
-    """
-    A = np.maximum(adjacency, adjacency.T)
-    I, J = np.where(A > 0)
-    if I.size == 0:
+def local_coherence(theta: np.ndarray, A: np.ndarray) -> float:
+    # raw mean cosine of differences on edges (in [-1,1])
+    if A.size == 0 or A.sum() == 0:
         return 0.0
-    d = theta[J] - theta[I]
-    return float(np.cos(d).mean())
+    num = 0.0
+    den = 0.0
+    for i in range(A.shape[0]):
+        nbrs = np.where(A[i] > 0)[0]
+        if nbrs.size == 0: 
+            continue
+        d = wrap_phase(theta[nbrs] - theta[i])
+        num += np.cos(d).sum()
+        den += nbrs.size
+    return float(num/den) if den else 0.0
 
-def cross_edge_sync(adjacency: np.ndarray, theta: np.ndarray) -> float:
-    """
-    Local agreement remapped to [0,1] for dashboards.
-    """
-    A = np.maximum(adjacency, adjacency.T)
-    I, J = np.where(A > 0)
-    if I.size == 0:
-        return 0.0
-    d = theta[J] - theta[I]
-    return float((np.cos(d).mean() + 1.0) * 0.5)
+def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
+    # map local_coherence to [0,1]
+    C = local_coherence(theta, A)
+    return float((C + 1.0)*0.5)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Diversity / flow / drift
-# ──────────────────────────────────────────────────────────────────────────────
-
-def phase_entropy_norm(theta: np.ndarray, bins: int = 36) -> float:
-    """
-    Normalized entropy of the phase histogram in [0,1].
-    0 ~ concentrated / clamped. 1 ~ maximally spread.
-    """
-    h, _ = np.histogram(np.mod(theta, TAU), bins=bins, range=(0.0, TAU))
-    p = h.astype(float)
-    s = p.sum()
-    if s <= 0:
-        return 0.0
-    p /= s
-    with np.errstate(divide="ignore", invalid="ignore"):
-        ent = -(p * np.log(p + 1e-12)).sum()
-    return float(ent / math.log(bins))
+def phase_entropy_norm(theta: np.ndarray, bins: int = 32) -> float:
+    # circular histogram on [-pi,pi)
+    t = wrap_phase(theta)
+    hist, _ = np.histogram(t, bins=bins, range=(-np.pi, np.pi), density=False)
+    p = hist / np.maximum(hist.sum(), 1e-9)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        H = -(p * np.log(p + 1e-12)).sum()
+    Hmax = np.log(bins)
+    return float(H / Hmax) if Hmax > 0 else 0.0  # [0,1]
 
 def lag1_smoothness(theta_now: np.ndarray, theta_prev: np.ndarray) -> float:
-    """
-    Flow gentleness in [0,1]; higher = smoother changes.
-    """
-    dphi = np.angle(np.exp(1j * (theta_now - theta_prev)))
-    return float((np.cos(dphi).mean() + 1.0) * 0.5)
+    d = wrap_phase(theta_now - theta_prev)
+    # map small steps to ~1, large to ~0
+    return float(np.exp(-np.mean(np.abs(d))))
 
 def mean_drift(theta_now: np.ndarray, theta_prev: np.ndarray) -> float:
-    """
-    Mean absolute phase change per step (0..pi).
-    Useful as 'drift' indicator.
-    """
-    return float(np.mean(np.abs(np.angle(np.exp(1j * (theta_now - theta_prev))))))
+    d = wrap_phase(theta_now - theta_prev)
+    return float(np.mean(np.abs(d)))
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Natural frequency samplers
-# ──────────────────────────────────────────────────────────────────────────────
-
-def omega_gaussian(n: int, mean: float = 0.0, std: float = 0.1, seed: int | None = None) -> np.ndarray:
-    rng = np.random.default_rng(seed)
-    return rng.normal(mean, std, size=n).astype(float)
-
-def omega_harmonic_scale(n: int, scale: list[int | float], seed: int | None = None) -> np.ndarray:
-    rng = np.random.default_rng(seed)
-    base = np.array(scale, dtype=float)
-    vals = np.tile(base, int(np.ceil(n / len(base))))[:n]
-    vals = vals + rng.normal(0.0, 0.01, size=n)
-    return vals.astype(float)
-
-def omega_spiral(n: int, turns: float = 2.0, std: float = 0.05, seed: int | None = None) -> np.ndarray:
-    rng = np.random.default_rng(seed)
-    t = np.linspace(0.0, 1.0, n)
-    base = turns * t
-    return (base + rng.normal(0.0, std, size=n)).astype(float)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Convenience bundle (one call → all metrics)
-# ──────────────────────────────────────────────────────────────────────────────
-
-def metrics_bundle(theta_now: np.ndarray,
-                   theta_prev: np.ndarray,
-                   adjacency: np.ndarray) -> Tuple[float, float, float, float, float]:
-    """
-    Returns (R_total, cross_sync01, drift, C01, Delta).
-    Phi (smoothness) is easily computed from lag1_smoothness if needed.
-    """
-    R_total = phase_coherence(theta_now)
-    cross01 = cross_edge_sync(adjacency, theta_now)
-    drift   = mean_drift(theta_now, theta_prev)
-    C_raw   = local_coherence(theta_now, adjacency)
-    C01     = (C_raw + 1.0) * 0.5
-    Delta   = phase_entropy_norm(theta_now)
-    return float(R_total), float(cross01), float(drift), float(C01), float(Delta)
+def metrics_bundle(theta_now: np.ndarray, theta_prev: np.ndarray, A: np.ndarray):
+    R, _ = order_parameter(theta_now)
+    cross01 = cross_edge_sync(A, theta_now)
+    drift = mean_drift(theta_now, theta_prev)
+    C_raw = local_coherence(theta_now, A)
+    C01 = float((C_raw + 1.0)*0.5)
+    Delta = phase_entropy_norm(theta_now)
+    return float(R), float(cross01), float(drift), float(C01), float(Delta)
