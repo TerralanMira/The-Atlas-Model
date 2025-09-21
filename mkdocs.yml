@@ -9,53 +9,58 @@ theme:
   features:
     - navigation.tabs
     - navigation.expand
+    - navigation.top
     - search.highlight
-    - search.share
     - toc.integrate
     - content.code.copy
-    - content.action.edit
 
 nav:
   - Home: index.md
+
+  - Atlas Foundations:
+      - Feet of Atlas: docs/feet.md
+      - Heart of Atlas: docs/heart.md
+      - Mind of Atlas: docs/mind.md
+      - Field of Atlas: docs/field_layers.md
+      - Might of Atlas: docs/might.md
+
   - Awareness & Coherence:
       - Awareness: docs/awareness.md
       - Coherence: docs/coherence.md
-  - Field Layers:
-      - Field Structure: docs/field_layers.md
-      - Resonant Layer Overlays: docs/overlays.md
+      - Ouroboros (Cycle): docs/ouroboros.md
+      - Relational Awareness (C·Δ·Φ): docs/relational_awareness.md
+
+  - Simulations:
+      - Sims Overview: docs/sims/index.md
+      - Multi-Scale Kuramoto (code): sims/multi_scale_kuramoto.py
+      - Presets (json): sims/presets.json
+
+  - Dashboard:
+      - Resonant Layer Overlays: docs/atlas/dashboard.md
+
   - Applications:
       - Applications: docs/applications.md
-      - Dashboard: docs/dashboard.md
-  - Algorithms:
-      - Coherence Metrics: algorithms/coherence_metrics.py
-  - Simulations:
-      - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
-      - Presets: sims/presets.json
+
   - LLM System:
       - Atlas System Prompt: docs/llm/atlas_system_prompt.md
-  - Resonant Reality:
-      - Overview: docs/resonant_reality.md
+
+  - Ethics:
+      - ETHICS (Consent • Transparency • Non-coercion): docs/meta/ETHICS.md
 
 markdown_extensions:
   - admonition
   - codehilite
   - footnotes
-  - meta
+  - def_list
   - toc:
       permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.magiclink
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
 
 plugins:
   - search
-  - mkdocstrings:
-      handlers:
-        python:
-          setup_commands:
-            - import sys
-            - sys.path.append(".")
-
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/your-username/The-Atlas-Model
-    - icon: fontawesome/solid/globe
-      link: https://atlas-resonance.org
