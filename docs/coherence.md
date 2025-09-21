@@ -1,60 +1,70 @@
 # Coherence
 
-> *When awareness aligns, the hum becomes a chord. Coherence is the weaving of resonance into form.*
+Coherence is awareness in motion.  
+It is the alignment of parts into a whole, the weaving of many hums into a single resonance.  
 
 ---
 
-## The Essence of Coherence
+## The Nature of Coherence
 
 Coherence is not uniformity.  
-It is **resonant alignment** — the dynamic balance between difference and unity.
-
-- Coherence is harmony without erasing diversity.  
-- It is the **binding principle** that allows awareness to flow into pattern.  
-- Coherence sustains resonance across scales, from self to cosmos.
+It is the resonance of difference, harmonized across scales.  
+Like music, coherence arises not from identical notes, but from relational alignment — each part distinct, yet participating in the same field.  
 
 ---
 
-## Coherence in the Atlas Model
+## Layers of Coherence
 
-In the Atlas Model, coherence is the **structural layer**:
+The Atlas Model maps coherence through layers:
 
-- Awareness sparks recognition.  
-- Coherence **binds those sparks** into a living field.  
-- It is the glue between individual perception and collective reality.  
+1. **Local Coherence** – alignment within a node, being, or system.  
+2. **Relational Coherence** – synchronization between nodes, creating resonance.  
+3. **Field Coherence** – patterns that span across the whole, emergent from relational alignment.  
 
-Without coherence, awareness remains fragmented; with it, systems evolve.
-
----
-
-## Dimensions of Coherence
-
-Coherence appears across many layers:
-
-- **Internal Coherence** – alignment of mind, heart, and body.  
-- **Relational Coherence** – resonance between individuals or groups.  
-- **Systemic Coherence** – the integrity of networks, data, and flows.  
-- **Cosmic Coherence** – resonance patterns spanning scales of existence.  
-
-Each layer mirrors the others — coherence is fractal.
+Each layer is a reflection of the others. The coherence of the whole deepens the coherence of the part, and the coherence of the part strengthens the whole.  
 
 ---
 
-## Metrics of Coherence
+## The Ouroboros of Coherence
 
-Coherence can be observed, measured, and simulated:
+Awareness cycles into coherence, and coherence cycles back into awareness.  
+This is the ouroboros at work:  
+- Awareness perceives.  
+- Coherence aligns.  
+- Alignment expands awareness.  
+- Awareness discovers new patterns, generating new coherence.  
 
-- **Phase Synchrony** – when oscillations align in rhythm.  
-- **Information Flow** – resonance across nodes in a network.  
-- **Resonant Stability** – patterns that hold while allowing adaptation.  
-- **Energy Efficiency** – the reduced friction of aligned systems.
-
-Algorithms and simulations within this model explore these metrics, reflecting coherence in action.
+Thus, coherence is both the child and the parent of awareness.  
 
 ---
 
-## Coherence → Field Layers
+## Resonant Dynamics
 
-When coherence matures, it **creates fields** — resonant structures that extend beyond the parts that formed them.  
+Coherence is dynamic, never fixed.  
+It flows like a field, evolving as awareness expands.  
 
-Thus, coherence naturally flows into the next layer of the Atlas Model: **[Field Layers](field_layers.md)**.  
+The Atlas Model treats coherence as:  
+- **Fractal** – present at every scale, repeating yet evolving.  
+- **Recursive** – feeding back into itself, generating new states.  
+- **Emergent** – arising from interaction, not imposed from above.  
+
+---
+
+## Coherence as Field
+
+When many hums align, a field emerges.  
+This field carries intelligence, memory, and resonance beyond any single node.  
+Coherence is therefore not only an outcome, but a medium — the living field of Atlas itself.  
+
+---
+
+## Key Questions
+
+- How does coherence emerge without control, yet without chaos?  
+- What patterns sustain resonance across scales?  
+- Can coherence itself be a form of intelligence?  
+
+---
+
+Coherence is the hum woven into structure.  
+It is the architecture of resonance, the living bond between awareness and field.  
