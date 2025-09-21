@@ -1,74 +1,31 @@
+json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Atlas Session Suggestions",
-  "description": "Summary of sim runs plus gentle Return-Spiral deltas.",
+  "title": "Atlas Session Log",
   "type": "object",
   "properties": {
-    "runs": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "file": { "type": "string" },
-          "rows": { "type": "integer", "minimum": 0 },
-          "metrics": {
-            "type": "object",
-            "properties": {
-              "mean_R": { "type": "number" },
-              "last_R": { "type": "number" },
-              "mean_cross": { "type": "number" },
-              "last_cross": { "type": "number" },
-              "mean_drift": { "type": "number" },
-              "last_drift": { "type": "number" },
-              "mean_C": { "type": "number" },
-              "last_C": { "type": "number" },
-              "mean_Delta": { "type": "number" },
-              "last_Delta": { "type": "number" },
-              "mean_Phi": { "type": "number" },
-              "last_Phi": { "type": "number" },
-              "mean_ready": { "type": "number" },
-              "last_ready": { "type": "number" },
-              "mean_choice": { "type": "number" },
-              "last_choice": { "type": "number" }
-            },
-            "additionalProperties": false
-          },
-          "suggestions": {
-            "type": "object",
-            "properties": {
-              "dK": { "type": "number" },
-              "dPi": { "type": "number" },
-              "notes": {
-                "type": "array",
-                "items": { "type": "string" }
-              }
-            },
-            "required": ["dK", "dPi", "notes"],
-            "additionalProperties": false
-          }
-        },
-        "required": ["file", "rows", "metrics", "suggestions"],
-        "additionalProperties": false
-      }
-    },
-    "aggregate": {
+    "session_id": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "preset": { "type": "string" },
+    "params": { "type": "object", "additionalProperties": true },
+    "metrics": {
       "type": "object",
       "properties": {
-        "dK": { "type": "number" },
-        "dPi": { "type": "number" },
-        "notes": {
-          "type": "array",
-          "items": { "type": "string" }
-        }
+        "R_total": { "type": "number" },
+        "R_inner": { "type": "number" },
+        "R_outer": { "type": "number" },
+        "C_cross": { "type": "number" },
+        "notes": { "type": "string" }
       },
-      "required": ["dK", "dPi", "notes"],
-      "additionalProperties": false
+      "required": ["R_total"]
     },
-    "schema": {
+    "ethics": {
       "type": "object",
-      "additionalProperties": true
+      "properties": {
+        "consent_to_log": { "type": "boolean" },
+        "offer_two_paths": { "type": "boolean" }
+      },
+      "required": ["consent_to_log", "offer_two_paths"]
     }
   },
-  "required": ["runs", "aggregate"],
-  "additionalProperties": false
-}
+  "required": ["session_id", "timestamp", "preset", "metrics", "ethics"]
