@@ -1,64 +1,53 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-dashboard/overlay_loader.py
+Overlay loader: summarize a CSV log produced by sims/* runners.
 
-Tiny helper: load sim CSV, compute quick indicators, and
-print a human-readable summary so you can sanity-check runs
-from a phone or minimal environment.
-
-No plotting; just numbers.
+Expected headers (order flexible):
+  step, t, R_total, R_inner, R_outer, C_cross, drift, Delta, Phi, choice_score
 """
-
 from __future__ import annotations
 import csv
 from pathlib import Path
-from typing import Dict, Any, List, Tuple
+from statistics import mean
 
-def load_csv(path: str) -> List[Dict[str, Any]]:
-    rows: List[Dict[str, Any]] = []
-    with open(path, "r", newline="") as f:
+FIELDS = ["R_total","R_inner","R_outer","C_cross","drift","Delta","Phi","choice_score"]
+
+def summary(csv_path: str | Path) -> str:
+    p = Path(csv_path)
+    rows = []
+    with p.open("r", newline="") as f:
         r = csv.DictReader(f)
         for row in r:
             rows.append(row)
-    return rows
+    if not rows:
+        return f"{p.name}: empty"
 
-def to_float(row: Dict[str, Any], key: str, default: float = 0.0) -> float:
-    try:
-        return float(row.get(key, default))
-    except Exception:
-        return default
+    agg = {}
+    for k in FIELDS:
+        vals = []
+        for row in rows:
+            if k in row and row[k] not in (None, ""):
+                try:
+                    vals.append(float(row[k]))
+                except ValueError:
+                    pass
+        agg[k] = mean(vals) if vals else None
 
-def summary(path: str) -> str:
-    data = load_csv(path)
-    if not data:
-        return f"[overlay] empty log: {path}"
+    clamp = (agg.get("R_total",0) > 0.80) and (agg.get("Delta",1) < 0.25)
+    gentle = (agg.get("R_total",0) > 0.55) and (agg.get("Phi",0) > 0.6) and (agg.get("Delta",0.3) >= 0.25)
 
-    # last row view
-    last = data[-1]
-    R = to_float(last, "R_total")
-    C = to_float(last, "C")
-    D = to_float(last, "Delta")
-    Phi = to_float(last, "Phi")
-    drift = to_float(last, "drift")
-    k_eff = last.get("K_eff", "")
-
-    lines = []
-    lines.append(f"[overlay] {Path(path).name} — steps={len(data)} preset={last.get('preset','?')} K_eff={k_eff}")
-    lines.append(f"  R_total={R:.3f}  C={C:.3f}  Δ={D:.3f}  Φ={Phi:.3f}  drift={drift:.3f}")
-
-    # quick qualitative reads
-    if R > 0.8 and D < 0.25 and drift < 0.02:
-        lines.append("  note: clamp risk — high order with low diversity and low drift.")
-    elif C > 0.6 and Phi > 0.6 and D > 0.35:
-        lines.append("  note: gentle learning — coherence rising while diversity preserved.")
-    else:
-        lines.append("  note: mixed state — adjust K, geometry, or ω spread.")
-
-    return "\n".join(lines)
+    note = "gentle lift" if gentle else "watch clamp" if clamp else "breathing"
+    parts = [p.name]
+    for k in ("R_total","C_cross","Delta","Phi","choice_score"):
+        v = agg.get(k, None)
+        if v is not None:
+            parts.append(f"{k}={v:.3f}")
+    parts.append(note)
+    return " | ".join(parts)
 
 if __name__ == "__main__":
-    import argparse
-    ap = argparse.ArgumentParser(description="Read sim CSV and print overlay summary.")
-    ap.add_argument("csv_path", help="Path to logs/*.csv produced by sims/")
-    args = ap.parse_args()
-    print(summary(args.csv_path))
+    import sys
+    if len(sys.argv) < 2:
+        print("usage: python dashboard/overlay_loader.py logs/multi_scale.csv")
+        sys.exit(1)
+    print(summary(sys.argv[1]))
