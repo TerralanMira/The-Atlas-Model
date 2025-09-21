@@ -1,7 +1,13 @@
-numpy>=1.24
-scipy>=1.10
-matplotlib>=3.7
-jsonschema>=4.17
-mkdocs>=1.5
-mkdocs-material>=9.1
-pytest>=7.4
+# Core scientific stack
+numpy==1.26.4
+scipy==1.11.4
+
+# Testing
+pytest==7.4.4
+
+# Docs
+mkdocs==1.5.3
+mkdocs-material==9.5.18
+
+# Validation / utilities
+jsonschema==4.21.1
