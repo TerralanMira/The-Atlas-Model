@@ -1,17 +1,13 @@
-# Dashboard (Reading the Hum)
+# Dashboard (reading the hum)
 
-You don’t need plots to hear the field — start with numbers.
-
-**CSV columns** (from sims):
-- `R_total` — global order (0..1)
-- `R_inner`, `R_outer` — layer orders
+**CSV columns from sims**
+- `R_total`, `R_inner`, `R_outer` — coherence at each scale
 - `C_cross` — inner↔outer alignment proxy (0..1)
 
 **Quick reads**
-- **Clamp risk**: R_total high while diversity (spread you feel) is low and change is tiny.
-- **Gentle lift**: R_total↑ with smooth steps; cross-alignment rises without flattening.
+- **Clamp risk**: R_total high *and* diversity low (you’ll feel it) *and* drift tiny.
+- **Gentle lift**: R_total↑ while steps are smooth; cross rises without Δ collapse.
 
 **CLI helper**
 ```bash
 python dashboard/overlay_loader.py logs/multi_scale.csv
-Expect a one-line summary + qualitative note (clamp risk / gentle learning / mixed).
