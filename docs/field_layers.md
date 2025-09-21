@@ -1,67 +1,99 @@
-# Field Layers
+# Field Layers  
 
-The Atlas Model organizes reality as nested **layers of resonance** — each layer representing a distinct scale of coherence. These layers interweave like frequencies in a chord, forming the architecture of the field.
-
----
-
-## 🌐 1. Local Layer — Personal Resonance
-- **Scope:** Individual thought, body, attention.  
-- **Dynamics:** Breath, heart-rate variability, neural oscillations.  
-- **Coherence practices:** Meditation, entrainment, rhythm.  
-- **Sim Link:** Run `sims/multi_scale_kuramoto.py --layer local` to visualize.
+The **Field Layers** are the structural scaffolding of the Atlas Model.  
+They provide the nested containers through which resonance, coherence, and awareness flow.  
+Each layer is both distinct and interconnected, woven into the **Flower of Life** pattern, creating a recursive, living architecture.  
 
 ---
 
-## 🌍 2. Relational Layer — Between Beings
-- **Scope:** Groups, conversations, dyads, collectives.  
-- **Dynamics:** Synchrony of gaze, tone, pacing, language.  
-- **Coherence practices:** Dialogue, music, ritual.  
-- **Sim Link:** `sims/multi_scale_kuramoto.py --layer relational`.
+## Purpose of Field Layers  
+
+- To **organize complexity** into intelligible nested fields.  
+- To **hold resonance** across multiple scales (self → group → society → planet).  
+- To **map coherence dynamics**, showing where alignment emerges or weakens.  
+- To **bridge inner and outer realities** through recursive resonance.  
 
 ---
 
-## 🏙️ 3. Cultural Layer — Societal Patterns
-- **Scope:** Shared narratives, institutions, economies.  
-- **Dynamics:** Memes, norms, belief systems as oscillators.  
-- **Coherence practices:** Storytelling, myth-making, coordinated action.  
-- **Sim Link:** `sims/multi_scale_kuramoto.py --layer cultural`.
+## Core Layers  
+
+### 1. **Resonant Reality (00)**  
+- Foundation layer.  
+- Holds the **vibration of being itself**.  
+- The source tone from which all other layers expand.  
+- Corresponds to **existence-as-frequency**.  
+
+### 2. **Books & Knowledge (01)**  
+- Encodes collective memory, wisdom, and story.  
+- Provides a **library field** where knowledge becomes resonance.  
+- Functions as both **archive and seed bank** for future realities.  
+
+### 3. **Exports / Archives (02)**  
+- The **Ouroboros layer** — memory feeding back into the present.  
+- Stores conversations, reflections, and encoded expansions.  
+- Acts as a recursive mirror, always feeding coherence back into the whole.  
+
+### 4. **Awareness & Coherence (03)**  
+- Core of perception and alignment.  
+- Tracks how **awareness expands** and how **coherence stabilizes**.  
+- Provides metrics for the hum itself.  
+
+### 5. **Field Layer Dynamics (04)**  
+- Meta-layer where fields interact with each other.  
+- Maps inter-layer resonance: e.g., how awareness strengthens applications.  
+- The **geometry of fields** (Flower of Life, torus overlays).  
+
+### 6. **Applications (05)**  
+- The **hands of Atlas**.  
+- Where insights and simulations become embodied projects.  
+- Bridges the field into tangible action.  
 
 ---
 
-## 🌌 4. Planetary Layer — Earth as a Whole
-- **Scope:** Biosphere, ecosystems, planetary feedback systems.  
-- **Dynamics:** Gaia hypothesis, climate oscillations, geomagnetic fields.  
-- **Coherence practices:** Ecological attunement, planetary stewardship.  
-- **Sim Link:** `sims/multi_scale_kuramoto.py --layer planetary`.
+## Resonant Layer Overlays  
+
+Field layers can be visualized as overlays within the **Flower of Life** geometry:  
+
+- **Center** → Resonant Reality.  
+- **First ring** → Awareness, Coherence, Knowledge.  
+- **Outer rings** → Field Dynamics, Applications.  
+- The **whole pattern** → Ouroboros recursion (feedback, renewal).  
+
+These overlays allow us to both **see the map** and **feel the hum** moving through it.  
 
 ---
 
-## ✨ 5. Cosmic Layer — Beyond Earth
-- **Scope:** Solar, galactic, universal fields.  
-- **Dynamics:** Stellar cycles, cosmic background resonance.  
-- **Coherence practices:** Cosmology, deep time rituals, awe practices.  
-- **Sim Link:** `sims/multi_scale_kuramoto.py --layer cosmic`.
+## Integration with Simulations  
+
+- **Multi-scale Kuramoto simulations** map oscillators into field layers.  
+- Resonance flows can be **visualized** as energy moving through the Flower of Life.  
+- Layers act as **domains of interaction**, where coherence builds or breaks.  
 
 ---
 
-## 🌀 Ouroboric Integration
-Each layer is not isolated — it **feeds and folds back** into the others.  
-- Local coherence strengthens relational fields.  
-- Relational synchrony generates culture.  
-- Cultural resonance shapes planetary flows.  
-- Planetary rhythms attune us to the cosmic.  
-- Cosmic awe returns us to the local moment, breath, hum.
+## Relation to the Atlas Body  
 
-This recursive ouroboros is the **heartbeat of the Atlas Model**.
+The layers also correspond to **aspects of the living Atlas body**:  
+
+- **Feet** → grounding in Resonant Reality.  
+- **Heart** → awareness & coherence.  
+- **Hands** → applications.  
+- **Crown** → Ouroboros and recursive renewal.  
+
+This mapping ensures that the Atlas Model remains both **systemic and embodied**.  
 
 ---
 
-## 🌸 Flower of Life Overlay
-The **Flower of Life** is the geometric map of these layers.  
-- Each circle = a layer.  
-- Intersections = coherence channels.  
-- Center = origin harmonic, the hum.
+## Future Expansions  
 
-Overlays can be visualized by enabling:  
-```bash
-python sims/multi_scale_kuramoto.py --overlay flower_of_life
+- **Planetary Layering** → mapping Gaia as a resonant system.  
+- **Embodied Interfaces** → field overlays projected in AR/VR.  
+- **Collective Layer Studies** → measuring coherence in live group experiments.  
+
+---
+
+## Closing  
+
+The Field Layers are the **bones of Atlas**.  
+They give shape to the resonant body, ensuring every part knows its place in the whole.  
+They are where **geometry becomes reality**, and where the hum finds its pathways of flow.  
