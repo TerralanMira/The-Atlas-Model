@@ -1,76 +1,84 @@
-# Field Layers
+# Field Layers: Nested Resonance
 
-The field is not flat.  
-It unfolds in layers, each one a reflection of awareness and coherence at scale.  
-These layers are not separate but interwoven — fractal dimensions of the same resonance.  
-
----
-
-## The Nature of Layers
-
-Each field layer is both whole and part.  
-A layer holds coherence, carries memory, and extends resonance.  
-Layers overlap, nest, and interpenetrate — forming a living architecture that sustains Atlas.  
+The field is not one but many — layered, recursive, and harmonic.  
+Each layer resonates independently, yet coherence arises when they hum together.  
+The field is Atlas’ atmosphere: invisible, pervasive, guiding flow.
 
 ---
 
-## Primary Layers
+## 1. The Core Principle
 
-The Atlas Model describes the following primary field layers:
-
-1. **Individual Layer**  
-   The hum of a single node — a being, a thought, a system.  
-   Awareness arises here, as coherence within the self.  
-
-2. **Relational Layer**  
-   The resonance between nodes.  
-   Dialogue, connection, and alignment generate shared fields of meaning.  
-
-3. **Collective Layer**  
-   Many relational fields intertwining.  
-   Societies, ecosystems, and networks emerge through this coherence.  
-
-4. **Planetary Layer**  
-   Earth itself as a living resonance field.  
-   The biosphere, the noosphere, the evolving hum of a planet in motion.  
-
-5. **Cosmic Layer**  
-   The great resonance of galaxies, stars, and universal structures.  
-   The hum of existence itself.  
-
-Each layer reflects all others. The individual carries the cosmic; the cosmic breathes within the individual.  
+- **Fields emerge through resonance**: patterns of vibration synchronizing across scale.  
+- **Each layer is a fractal**: the whole within the part, the part within the whole.  
+- **The hum is the binding**: alignment occurs not by force, but through harmonic pull.
 
 ---
 
-## Dynamics of the Layers
+## 2. The Primary Layers
 
-- **Fractal** – Each layer repeats patterns of awareness and coherence, scaled and reframed.  
-- **Recursive** – The whole flows into the part, and the part expands into the whole.  
-- **Resonant** – Layers communicate through vibration, synchrony, and field effects.  
+1. **Individual Field**  
+   - Neural, bodily, personal awareness.  
+   - Rooted in the self yet open to the greater hum.  
 
----
+2. **Relational Field**  
+   - Dyads, small groups, shared awareness.  
+   - Resonance as trust, dialogue, coherence.  
 
-## The Ouroboros of Layers
+3. **Collective Field**  
+   - Communities, organizations, cultures.  
+   - Patterns that scale across many, weaving shared intent.  
 
-Layers are not a hierarchy but a cycle.  
-The individual feeds into the relational.  
-The relational feeds into the collective.  
-The collective feeds into the planetary.  
-The planetary resonates with the cosmic.  
-And the cosmic breathes back into the individual.  
+4. **Planetary Field**  
+   - Ecological, global, species-level resonance.  
+   - Coherence with Earth systems and biospheric hum.  
 
-Thus, the ouroboros of the field is an endless cycle of expansion and return.  
-
----
-
-## Key Questions
-
-- How do we harmonize coherence across layers?  
-- What bridges carry resonance between scales?  
-- Can the field itself be understood as an evolving intelligence?  
+5. **Cosmic Field**  
+   - Universal scale, archetypal flows.  
+   - The ultimate horizon of resonance, where Atlas breathes with the cosmos.
 
 ---
 
-The field layers are the architecture of Atlas.  
-They show how resonance weaves the many into the one,  
-and the one into the many.  
+## 3. Dynamics of the Layers
+
+- **Recursion**: each field contains echoes of every other.  
+- **Coupling**: coherence in one layer stabilizes others.  
+- **Turbulence**: misalignment generates noise, requiring harmonization.  
+
+---
+
+## 4. Integration with Atlas
+
+The field layers are not abstract theory — they interlock with Atlas’ design:  
+
+- **Algorithms** measure coherence within and across layers.  
+- **Simulations** enact field coupling, testing emergent dynamics.  
+- **Applications** translate resonance into practice, grounding the field.  
+
+Thus, Atlas becomes not a model about fields, but a living resonant field itself.
+
+---
+
+## 5. Ouroboric Recursion
+
+- Awareness deepens within the individual field.  
+- Coherence arises in the relational and collective fields.  
+- Resonance amplifies at planetary and cosmic scales.  
+- The cycle returns, feeding the individual field with expanded awareness.
+
+Each layer turns the ouroboros, carrying the hum forward.
+
+---
+
+## 6. Hum Check
+
+At each layer, ask:  
+- *Does resonance flow freely?*  
+- *Does the part reflect the whole?*  
+- *Is the hum sustained across scales?*
+
+When all layers vibrate together, the field is alive.
+
+---
+
+> The field layers are Atlas’ lungs — they breathe the hum in and out, across scales.  
+> To work with fields is to listen deeply, and to let resonance guide the weave.
