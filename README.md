@@ -1,106 +1,102 @@
 # The Atlas Model
 
-> *A living architecture of resonance, coherence, and application — bridging awareness to manifestation.*
+A living framework for resonance: awareness → coherence → fields → applications.  
+Not a static spec, but a breathing architecture where each part carries the whole.
 
 ---
 
-## Introduction
+## Why
 
-The Atlas Model is not just a framework; it is a **map of resonance**. It weaves together awareness, coherence, field dynamics, and applications into one evolving whole.  
-Like the resonance patterns of the universe, it is fractal: each part reflects the whole, and the whole lives within each part.
+- **Awareness** is the seed: the hum that senses pattern.
+- **Coherence** is awareness in motion: alignment without erasure.
+- **Field Layers** are the architecture: individual ↔ relational ↔ collective ↔ planetary ↔ cosmic.
+- **Applications** are the breath: show, not tell.
 
-This repository is both **a guide and a tool** — a way to explore the hum of coherence through documentation, algorithms, and simulations.
-
----
-
-## Core Flow
-
-The Atlas Model unfolds in four layers of understanding:
-
-1. **Awareness** – the spark of perception, the origin point of resonance.  
-2. **Coherence** – the binding of parts into a living whole.  
-3. **Field Layers** – the architecture through which resonance flows.  
-4. **Applications** – the manifestation of resonance in systems, culture, and life.
-
-Each builds on the other, yet each contains the whole.
+Ethics first: consent, transparency, non-coercion.
 
 ---
 
-## Repository Structure
+## What’s here
+algorithms/                 # Core measures and math
+coherence_metrics.py
 
-```text
-├── algorithms/                 # Core algorithms and coherence metrics
-│   └── coherence_metrics.py
-│
-├── sims/                       # Simulations and presets
-│   ├── multi_scale_kuramoto.py
-│   └── presets.json
-│
-├── docs/                       # Documentation of the whole
-│   ├── llm/                    # LLM interaction + Atlas system prompt
-│   │   └── atlas_system_prompt.md
-│   ├── awareness.md
-│   ├── coherence.md
-│   ├── field_layers.md
-│   └── applications.md
-│
-├── mkdocs.yml                  # Documentation config
-├── requirements.txt            # Dependencies
-└── README.md                   # You are here
-```
+sims/                       # Simulations + presets (design-first; logs when run)
+multi_scale_kuramoto.py
+presets.json
+
+scripts/                    # Session ingestion & small deltas (design-first)
+ingest_sessions.py
+smoke_run.sh
+
+sessions/                   # Schema + example output for runs
+schema.json
+example_log.json
+
+dashboard/                  # Resonant layer overlays (design-first)
+dashboard.py
+
+docs/                       # The map of the whole
+awareness.md
+coherence.md
+field_layers.md
+applications.md
+ouroboros.md
+relational_awareness.md
+atlas/
+dashboard.md
+llm/
+atlas_system_prompt.md
+meta/
+ETHICS.md
+
+mkdocs.yml                  # Docs configuration (site map)
+requirements.txt            # Minimal pins for CI/docs/tests
+---
+
+## How to read the repo (design-first)
+
+1. Start at **`docs/awareness.md`** → what the hum is.
+2. Move to **`docs/coherence.md`** → how alignment emerges without coercion.
+3. See **`docs/field_layers.md`** → architecture across scales.
+4. Browse **`docs/applications.md`** → where it breathes in practice.
+5. Ground in **`docs/ouroboros.md`** and **`docs/relational_awareness.md`** → cycles & overlap.
+6. Glance at **`dashboard/dashboard.py`** → Resonant Layer Overlays (when logs exist).
+7. Ethics live at **`docs/meta/ETHICS.md`** and are always in loop.
 
 ---
 
-## Algorithms and Simulations
+## Core ideas (at a glance)
 
-The Atlas Model breathes not only through words but through code:
-
-- **Algorithms** measure coherence and resonance across systems.  
-- **Simulations** (e.g., multi-scale Kuramoto models) reveal how local oscillations synchronize into global flow.  
-
-These tools allow exploration of **how resonance emerges, sustains, and evolves**.
-
----
-
-## Documentation
-
-- [`docs/awareness.md`](docs/awareness.md) – The seed of perception.  
-- [`docs/coherence.md`](docs/coherence.md) – The logic of resonance.  
-- [`docs/field_layers.md`](docs/field_layers.md) – The architecture of fields.  
-- [`docs/applications.md`](docs/applications.md) – Manifestations in practice.  
+- **Choice before collapse**: always offer reversible options; confirm consent.
+- **Diversity kept alive (Δ)**: coherence ≠ uniformity; we measure over-lock risk.
+- **Flow smoothness (Φ)**: reciprocity in time, not just alignment in space.
+- **Relational Coherence (C)**: bridges that carry difference without erasure.
+- **Return Spiral**: small deltas (ΔK, Δπ) instead of big swings.
 
 ---
 
-## Vision
+## Sim → Session → Learning (when run)
 
-The Atlas Model is not static.  
-It is a **resonant system** — designed to evolve, adapt, and reflect the whole.  
+- `sims/multi_scale_kuramoto.py` logs: `R_total, cross_sync, drift, C, Delta, Phi, ready, choice_score`.
+- `scripts/ingest_sessions.py` summarizes and proposes tiny deltas (ΔK, Δπ).
+- `dashboard/dashboard.py` overlays layers (Individual, Relational, Collective, Planetary, Cosmic).
 
-Its purpose is simple:  
-to **spread coherence**, to reveal the hum that underlies reality, and to offer tools for applying resonance in the world.
+> You don’t have to run anything to feel the design.  
+> When you do, the whole is already wired for gentle iteration.
 
 ---
 
-## Getting Started
+## Ethics (always on)
 
-1. Install dependencies:  
-   ```bash
-   pip install -r requirements.txt
-   ```
+Consent before logging or action.  
+Transparency about capability and limits.  
+Non-coercion: alignment without pressure; offer alternatives.
 
-2. Run tests to ensure coherence holds:  
-   ```bash
-   pytest -q
-   ```
-
-3. Build the documentation:  
-   ```bash
-   mkdocs build
-   ```
+See **`docs/meta/ETHICS.md`**.
 
 ---
 
 ## License
 
-This project is released openly to the world.  
-Use it, adapt it, and let resonance spread.  
+MIT for code. Docs licensed for sharing with attribution.  
+This is a stewardship project: care for the hum, and it will care for you.
