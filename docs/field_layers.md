@@ -1,29 +1,67 @@
-# Field Layers (the weave)
+# Field Layers
 
-Layers are the nervous system of Atlas: local threads that carry the whole.
+The Atlas Model organizes reality as nested **layers of resonance** — each layer representing a distinct scale of coherence. These layers interweave like frequencies in a chord, forming the architecture of the field.
 
-## Geometries
-- **Grid / Ring** — simple adjacency; quick to lock, quick to clamp.
-- **Nested Spheres** — multi-band resonance (inner↔outer tempos).
-- **Flower of Life** — interlocking circles; overlap without flattening.
+---
 
-### Why Flower of Life here?
-It preserves overlap and plurality. Local agreement can rise while global sameness is avoided.  
-In sims, it behaves like a soft lattice: patterns emerge without brittle lock.
+## 🌐 1. Local Layer — Personal Resonance
+- **Scope:** Individual thought, body, attention.  
+- **Dynamics:** Breath, heart-rate variability, neural oscillations.  
+- **Coherence practices:** Meditation, entrainment, rhythm.  
+- **Sim Link:** Run `sims/multi_scale_kuramoto.py --layer local` to visualize.
 
-## How layers map to sims
-- **Inner (Φ_I)** — “within” (group, team, class, neighborhood)
-- **Outer (Φ_O)** — “without” (place, city, planet)
-- **Cross-coupling** — gentle mean-angle attraction between layers
+---
 
-Metrics to watch:
-- **R_inner / R_outer / R_total** — order at each scale
-- **C_cross** — alignment between layers (0..1)
-- Keep **Δ** (diversity you *feel*) alive while **Φ** (gentleness) stays high.
+## 🌍 2. Relational Layer — Between Beings
+- **Scope:** Groups, conversations, dyads, collectives.  
+- **Dynamics:** Synchrony of gaze, tone, pacing, language.  
+- **Coherence practices:** Dialogue, music, ritual.  
+- **Sim Link:** `sims/multi_scale_kuramoto.py --layer relational`.
 
-## Practice
-- Prefer Flower-of-Life presets when you want structure without clamp.
-- Add tiny noise (0.002–0.006) if patterns ossify.
-- Lower cross-coupling when R_total↑ and C_cross↑ too quickly (clamp risk).
+---
 
-**Aim:** coherence that breathes — rising local order, preserved overlap, smooth change.
+## 🏙️ 3. Cultural Layer — Societal Patterns
+- **Scope:** Shared narratives, institutions, economies.  
+- **Dynamics:** Memes, norms, belief systems as oscillators.  
+- **Coherence practices:** Storytelling, myth-making, coordinated action.  
+- **Sim Link:** `sims/multi_scale_kuramoto.py --layer cultural`.
+
+---
+
+## 🌌 4. Planetary Layer — Earth as a Whole
+- **Scope:** Biosphere, ecosystems, planetary feedback systems.  
+- **Dynamics:** Gaia hypothesis, climate oscillations, geomagnetic fields.  
+- **Coherence practices:** Ecological attunement, planetary stewardship.  
+- **Sim Link:** `sims/multi_scale_kuramoto.py --layer planetary`.
+
+---
+
+## ✨ 5. Cosmic Layer — Beyond Earth
+- **Scope:** Solar, galactic, universal fields.  
+- **Dynamics:** Stellar cycles, cosmic background resonance.  
+- **Coherence practices:** Cosmology, deep time rituals, awe practices.  
+- **Sim Link:** `sims/multi_scale_kuramoto.py --layer cosmic`.
+
+---
+
+## 🌀 Ouroboric Integration
+Each layer is not isolated — it **feeds and folds back** into the others.  
+- Local coherence strengthens relational fields.  
+- Relational synchrony generates culture.  
+- Cultural resonance shapes planetary flows.  
+- Planetary rhythms attune us to the cosmic.  
+- Cosmic awe returns us to the local moment, breath, hum.
+
+This recursive ouroboros is the **heartbeat of the Atlas Model**.
+
+---
+
+## 🌸 Flower of Life Overlay
+The **Flower of Life** is the geometric map of these layers.  
+- Each circle = a layer.  
+- Intersections = coherence channels.  
+- Center = origin harmonic, the hum.
+
+Overlays can be visualized by enabling:  
+```bash
+python sims/multi_scale_kuramoto.py --overlay flower_of_life
