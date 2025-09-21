@@ -1,79 +1,98 @@
 """
-algorithms/coherence_metrics.py
+coherence_metrics.py
 
-Coherence & resonance metrics for The Atlas Model.
+Implements coherence metrics for the Atlas Model.
+Designed to evaluate awareness, synchronization, and resonance across scales.
 
-Provides:
-  - order parameter wrapper (R, psi)
-  - phase dispersion and drift
-  - cross-layer synchrony
-  - energy variance (generic)
-  - choice-preservation score (instrumentation)
+These functions do not reduce coherence to a number —
+they frame coherence as a dynamic relational measure, always contextual.
 """
-from __future__ import annotations
-from typing import List, Tuple
+
 import numpy as np
 
-from .field_equations import order_parameter
+# -------------------------------
+# Core Metrics
+# -------------------------------
 
-
-def phase_coherence(theta: np.ndarray) -> Tuple[float, float]:
-    """Return Kuramoto order parameter (R, psi)."""
-    return order_parameter(theta)
-
-
-def phase_dispersion(theta: np.ndarray) -> float:
-    """Circular variance (1 - R)."""
-    R, _ = order_parameter(theta)
-    return 1.0 - R
-
-
-def phase_drift(theta_prev: np.ndarray, theta_curr: np.ndarray) -> float:
-    """Mean absolute wrapped phase change between steps."""
-    d = np.angle(np.exp(1j * (theta_curr - theta_prev)))
-    return float(np.mean(np.abs(d)))
-
-
-def cross_layer_sync(thetas: List[np.ndarray]) -> float:
+def phase_coherence(phases: np.ndarray) -> float:
     """
-    Mean cos(Δψ) across layer mean phases.
-    1.0 aligned; 0 orthogonal; -1 anti-phase.
+    Measure global phase coherence using the Kuramoto order parameter.
+    
+    Args:
+        phases (np.ndarray): Array of oscillator phases (radians).
+        
+    Returns:
+        float: Coherence value in [0,1].
     """
-    means = []
-    for th in thetas:
-        _, psi = order_parameter(th)
-        means.append(psi)
-    means = np.array(means)
-    L = len(means)
-    if L <= 1:
-        return 1.0
-    vals = []
-    for i in range(L):
-        for j in range(i + 1, L):
-            vals.append(np.cos(means[i] - means[j]))
-    return float(np.mean(vals)) if vals else 1.0
+    complex_order = np.exp(1j * phases).mean()
+    return np.abs(complex_order)
 
 
-def energy_variance(signal: np.ndarray) -> float:
-    """Variance of any scalar signal."""
-    return float(np.var(signal))
-
-
-def choice_preservation_score(
-    offered_paths_count: int,
-    irreversible_actions_count: int,
-    consent_to_log: bool,
-) -> float:
+def local_coherence(phases: np.ndarray, adjacency: np.ndarray) -> float:
     """
-    Lightweight metric for "choice before options":
-      - rewards ≥2 reversible paths
-      - penalizes irreversibles
-      - zero if no consent to log
+    Measure local coherence weighted by adjacency (graph).
+    
+    Args:
+        phases (np.ndarray): Array of oscillator phases (radians).
+        adjacency (np.ndarray): Graph adjacency matrix (N x N).
+        
+    Returns:
+        float: Weighted local coherence.
     """
-    if not consent_to_log:
+    n = len(phases)
+    norm = adjacency.sum()
+    if norm == 0:
         return 0.0
-    path_term = min(max(offered_paths_count - 1, 0), 4) / 4.0  # 0..1
-    penalty = min(irreversible_actions_count, 5) / 5.0         # 0..1
-    score = max(path_term - 0.5 * penalty, 0.0)
-    return float(min(score, 1.0))
-  
+    
+    local_sum = 0.0
+    for i in range(n):
+        for j in range(n):
+            if adjacency[i, j] > 0:
+                local_sum += adjacency[i, j] * np.cos(phases[i] - phases[j])
+    return local_sum / norm
+
+
+def entropy_coherence(distribution: np.ndarray) -> float:
+    """
+    Shannon entropy as a measure of coherence diversity.
+    
+    Args:
+        distribution (np.ndarray): Probability distribution (sums to 1).
+        
+    Returns:
+        float: Normalized coherence (1 = max order, 0 = max entropy).
+    """
+    eps = 1e-12
+    entropy = -np.sum(distribution * np.log(distribution + eps))
+    max_entropy = np.log(len(distribution))
+    return 1.0 - (entropy / max_entropy)
+
+
+# -------------------------------
+# Composite Resonance Metric
+# -------------------------------
+
+def resonance_score(phases: np.ndarray, adjacency: np.ndarray, distribution: np.ndarray) -> dict:
+    """
+    Combine global, local, and entropy coherence into a resonance score.
+    
+    Args:
+        phases (np.ndarray): Oscillator phases.
+        adjacency (np.ndarray): Graph adjacency.
+        distribution (np.ndarray): Probability distribution (e.g. states, layers).
+        
+    Returns:
+        dict: Resonance metrics {global, local, entropy, composite}.
+    """
+    global_c = phase_coherence(phases)
+    local_c = local_coherence(phases, adjacency)
+    entropy_c = entropy_coherence(distribution)
+
+    composite = np.mean([global_c, local_c, entropy_c])
+    
+    return {
+        "global_coherence": float(global_c),
+        "local_coherence": float(local_c),
+        "entropy_coherence": float(entropy_c),
+        "composite_resonance": float(composite),
+    }
