@@ -1,274 +1,136 @@
-"""
-algorithms/resonance_dynamics.py
-
-The Atlas Model — Resonance Dynamics (core laws as callable utilities)
-
-This module turns field laws into small, testable functions that other parts
-(algorithms, sims, LLM conductor) can compose. It is NumPy-only.
-
-Implements:
-  • Mirror Law: residual attraction to mean phase
-  • Choice Collapse Readiness: collapse signal & decision
-  • Harmonic Infinity Gate: ethics/ignition/destabilizer/time gating for K and π
-  • Resonance vs Entropy: windowed metrics for coherence vs disorder
-  • Return Spiral: gentle nudge back toward prior coherent attractor
-  • Geometry Helpers: circle-6-center and grid adjacencies (for graph sims)
-
-Intended use:
-  - Sims call these to *shape* dynamics (not replace physics).
-  - Conductor can reference collapse readiness for decision timing.
-  - Learning scripts can compute R↔E and spiral back toward better presets.
-
-License: MIT
+"""The Atlas Model — Resonance Dynamics
+NumPy utilities that encode small, testable field laws.
 """
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Tuple, Optional
 import numpy as np
 
+TAU = 2.0 * np.pi
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Basics (shared helpers)
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Basics ─────────────────────────────────────────────────────────────────────
 
 def wrap_phase(x: np.ndarray) -> np.ndarray:
-    """Wrap real values to [0, 2π)."""
-    return np.mod(x, 2.0 * np.pi)
-
+    """Wrap angles to [0, 2π)."""
+    return np.mod(x, TAU)
 
 def mean_phase(theta: np.ndarray) -> float:
-    """Mean phase angle ψ (radians)."""
-    z = np.exp(1j * theta)
-    return float(np.angle(np.mean(z)))
-
-
-def order_parameter(theta: np.ndarray) -> Tuple[float, float]:
-    """Kuramoto order parameter (R, ψ)."""
+    """Circular mean angle of a 1D array of phases."""
     z = np.exp(1j * theta)
     mean = np.mean(z)
-    return float(np.abs(mean)), float(np.angle(mean))
+    return float(np.angle(mean))
 
+def order_parameter(theta: np.ndarray) -> Tuple[float, float]:
+    """Return Kuramoto order parameter magnitude R and mean phase ψ."""
+    z = np.exp(1j * theta)
+    mean = np.mean(z)
+    R = np.abs(mean)
+    psi = float(np.angle(mean))
+    return float(R), psi
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Mirror Law
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Mirror law ─────────────────────────────────────────────────────────────────
 
-def mirror_delta(theta: np.ndarray, psi: float, gain: float = 0.02) -> np.ndarray:
-    """
-    Residual attraction to mean phase ψ.
-    Returns Δθ to add to theta (wrap outside if needed).
-
-    - gain is small (e.g., 0.01–0.05) so this remains a nudge, not a clamp.
-    """
+def mirror_delta(theta: np.ndarray, gain: float = 0.05) -> np.ndarray:
+    """Delta to nudge each phase toward the circular mean."""
     if gain == 0.0:
         return np.zeros_like(theta)
-    dev = np.angle(np.exp(1j * (psi - theta)))  # wrapped deviation
-    return gain * dev
+    _, psi = order_parameter(theta)
+    d = np.angle(np.exp(1j * (psi - theta)))
+    return gain * d
 
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Choice Collapse (readiness + decision)
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Choice collapse ────────────────────────────────────────────────────────────
 
 def collapse_signal(R: float, cross_sync: float, drift: float) -> float:
-    """
-    Readiness for choice-collapse: high coherence + cross-layer alignment, low drift.
+    drift_term = np.exp(-3.0 * float(drift))
+    val = 0.5 * float(R) + 0.4 * float(cross_sync) + 0.1 * drift_term
+    return float(np.clip(val, 0.0, 1.0))
 
-    Returns a score ~[0,1]: larger means more ready to collapse a superposition.
-    """
-    drift_term = np.exp(-3.0 * drift)         # low drift → large term
-    score = 0.5 * R + 0.4 * cross_sync + 0.1 * drift_term
-    return float(np.clip(score, 0.0, 1.0))
+def collapse_decision(ready: float, consent: bool = True, offer_two_paths: bool = True, thresh: float = 0.7) -> bool:
+    """True only when readiness exceeds threshold AND consent AND reversible options exist."""
+    return bool((ready >= thresh) and consent and offer_two_paths)
 
-
-def collapse_decision(score: float, threshold: float = 0.72) -> bool:
-    """
-    Decide whether to collapse. Keep a slight hysteresis margin by choosing a
-    threshold >= 0.7 in practice.
-    """
-    return bool(score >= threshold)
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Harmonic Infinity Gate (ethics × ignition × destabilizer ÷ time kernel)
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Harmonic Infinity Gate ─────────────────────────────────────────────────────
 
 @dataclass
 class HarmonicGate:
-    """
-    Parameters for gating coupling (K) and permeability (π).
+    ethics: float = 1.0        # [0..1] diminish params if below 1
+    ignition: float = 1.0      # multiplier for activation
+    destabilizer: float = 0.0  # small noise proportion
+    time_gate: float = 1.0     # optional time scaling
 
-    integrity, stamina, humility ∈ [0,1]      → ethical/energetic scalars
-    destabilizer ∈ [0,1]                      → chaos pressure (0 calm … 1 high)
-    time_kernel > 0                           → longer horizon = smoother gating
-    """
-    integrity: float = 1.0
-    stamina: float = 1.0
-    humility: float = 1.0
-    destabilizer: float = 0.0
-    time_kernel: float = 1.0  # >0
+def gated_params(K: float, pi: float, gate: Optional[HarmonicGate] = None, t_step: Optional[int] = None) -> Tuple[float, float]:
+    """Apply simple gating to K and π (permissive, bounded)."""
+    if gate is None:
+        return float(np.clip(K, 0.0, 1.0)), float(np.clip(pi, 0.0, 1.0))
+    K2 = K * gate.ignition * gate.ethics
+    pi2 = pi * gate.ignition * gate.ethics
+    if gate.destabilizer > 0.0:
+        rng = np.random.default_rng(t_step or 0)
+        K2 += gate.destabilizer * rng.normal(0.0, 0.01)
+        pi2 += gate.destabilizer * rng.normal(0.0, 0.01)
+    K2 = float(np.clip(K2, 0.0, 1.0))
+    pi2 = float(np.clip(pi2, 0.0, 1.0))
+    return K2, pi2
 
-    def gate(self, K: float, pi: float) -> Tuple[float, float]:
-        """
-        Gate K (coupling) and π (inter-layer permeability).
-        - Ethics/ignition raise the ceiling.
-        - Destabilizer reduces them.
-        - Time kernel smooths the effect (acts as denominator).
-        """
-        base = self.integrity * self.stamina * self.humility
-        damp = (1.0 - 0.6 * self.destabilizer)  # retain some agency under stress
-        denom = max(self.time_kernel, 1e-6)
-        factor = np.clip((base * damp) / denom, 0.0, 1.5)  # allow mild >1 boost
+# ── Resonance vs Entropy window ────────────────────────────────────────────────
 
-        K_g = float(np.clip(K * factor, 0.0, 2.0))
-        pi_g = float(np.clip(pi * factor, 0.0, 1.5))
-        return K_g, pi_g
+def _hist_entropy(ph: np.ndarray, bins: int = 36) -> float:
+    h, _ = np.histogram(np.mod(ph, TAU), bins=bins, range=(0.0, TAU), density=False)
+    p = h.astype(float)
+    if p.sum() == 0:
+        return 0.0
+    p = p / p.sum()
+    with np.errstate(divide='ignore', invalid='ignore'):
+        ent = -(p * np.log(p + 1e-12)).sum()
+    return float(ent / np.log(bins))  # normalized
 
+def resonance_entropy_window(theta: np.ndarray, win: int = 128, bins: int = 36) -> np.ndarray:
+    """Return 1 - normalized entropy over a sliding window (higher = more resonant)."""
+    T = theta.shape[0]
+    out = np.full(T, np.nan, dtype=float)
+    if win <= 1 or T < win:
+        return out
+    for t in range(win - 1, T):
+        ent = _hist_entropy(theta[t - win + 1 : t + 1], bins=bins)
+        out[t] = 1.0 - ent  # coherence proxy
+    return out
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Resonance vs Entropy (windowed metrics)
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Return Spiral ──────────────────────────────────────────────────────────────
 
-def resonance_entropy_window(
-    R_series: np.ndarray,
-    drift_series: np.ndarray,
-    window: int = 100,
-) -> Tuple[float, float, float]:
-    """
-    Compute windowed resonance/entropy metrics.
+def spiral_nudge(x: float, target: float, rate: float = 0.05) -> float:
+    """Gentle exponential approach to target without overshoot."""
+    x = float(x); target = float(target)
+    dx = (target - x) * rate
+    return float(x + dx)
 
-    Inputs:
-      R_series      : coherence per step (0..1)
-      drift_series  : mean absolute wrapped phase change per step
-      window        : tail length to compute statistics
-
-    Returns:
-      (R_mean, E_mean, balance) where
-        R_mean = mean(R) over window
-        E_mean = normalized entropy proxy = mean(sigmoid(drift))
-        balance = R_mean - E_mean  (positive → resonance leading)
-    """
-    w = max(1, int(window))
-    Rw = R_series[-w:]
-    Dw = drift_series[-w:]
-
-    R_mean = float(np.mean(Rw)) if Rw.size else 0.0
-    # map drift to [0,1] via logistic to get an "entropy-ish" proxy
-    E_mean = float(np.mean(1.0 / (1.0 + np.exp(-6.0 * (Dw - 0.2))))) if Dw.size else 0.0
-    balance = R_mean - E_mean
-    return R_mean, E_mean, float(balance)
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Return Spiral (nudge toward known coherent attractor)
-# ──────────────────────────────────────────────────────────────────────────────
-
-def spiral_nudge(
-    current: float,
-    target: float,
-    rate: float = 0.02,
-    band: Tuple[float, float] = (0.0, 1.5),
-) -> float:
-    """
-    Gentle exponential nudge of a scalar parameter (e.g., π or K) toward a
-    prior known coherent target. Returns the updated value, clamped to band.
-    """
-    new = current + rate * (target - current)
-    return float(np.clip(new, band[0], band[1]))
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Geometry helpers (adjacency builders)
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Geometry helpers ──────────────────────────────────────────────────────────
 
 def adjacency_circle6_center() -> np.ndarray:
-    """
-    Build adjacency for 7-node flower: 6 around 1 center (index 0 = center).
-    Connect center to all petals; ring neighbors to each other (hexagon).
-    """
-    n = 7
-    A = np.zeros((n, n), dtype=float)
-    # center connections
-    for i in range(1, n):
-        A[0, i] = A[i, 0] = 1.0
-    # ring connections (1..6 in a loop)
-    for i in range(1, n):
-        j = 1 + (i % 6)
-        A[i, j] = A[j, i] = 1.0
+    """Adjacency for 7 nodes: node 0 center connected to 1..6; symmetric, zero diag."""
+    A = np.zeros((7,7), dtype=float)
+    for i in range(1,7):
+        A[0,i] = 1.0
+        A[i,0] = 1.0
     return A
-
 
 def adjacency_grid(rows: int, cols: int, diagonal: bool = False) -> np.ndarray:
-    """
-    2D rectangular grid adjacency (rows×cols). 4-neighbor by default; set
-    diagonal=True for 8-neighbor.
-    """
+    """Rect grid adjacency (4-neigh if diagonal=False, else 8-neigh)."""
     N = rows * cols
-    A = np.zeros((N, N), dtype=float)
-
-    def idx(r, c): return r * cols + c
-
+    A = np.zeros((N,N), dtype=float)
+    def idx(r,c): return r*cols + c
     for r in range(rows):
         for c in range(cols):
-            i = idx(r, c)
-            # 4-neighbors
-            for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):
-                rr, cc = r + dr, c + dc
-                if 0 <= rr < rows and 0 <= cc < cols:
-                    j = idx(rr, cc)
-                    A[i, j] = A[j, i] = 1.0
-            if diagonal:
-                for dr, dc in ((-1, -1), (-1, 1), (1, -1), (1, 1)):
-                    rr, cc = r + dr, c + dc
+            i = idx(r,c)
+            for dr in (-1,0,1):
+                for dc in (-1,0,1):
+                    if dr == 0 and dc == 0:
+                        continue
+                    if not diagonal and abs(dr)+abs(dc) != 1:
+                        continue
+                    rr, cc = r+dr, c+dc
                     if 0 <= rr < rows and 0 <= cc < cols:
-                        j = idx(rr, cc)
-                        A[i, j] = A[j, i] = 1.0
+                        j = idx(rr,cc)
+                        A[i,j] = 1.0
+    A = np.maximum(A, A.T)
+    np.fill_diagonal(A, 0.0)
     return A
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Example “apply-gates” helper (optional convenience for sims)
-# ──────────────────────────────────────────────────────────────────────────────
-
-def gated_params(
-    K: float,
-    pi: float,
-    integrity: float = 1.0,
-    stamina: float = 1.0,
-    humility: float = 1.0,
-    destabilizer: float = 0.0,
-    time_kernel: float = 1.0,
-) -> Tuple[float, float]:
-    """
-    Convenience wrapper around HarmonicGate().gate for one-off calls.
-    """
-    return HarmonicGate(
-        integrity=integrity,
-        stamina=stamina,
-        humility=humility,
-        destabilizer=destabilizer,
-        time_kernel=time_kernel,
-    ).gate(K, pi)
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# __all__
-# ──────────────────────────────────────────────────────────────────────────────
-
-__all__ = [
-    # basics
-    "wrap_phase", "mean_phase", "order_parameter",
-    # mirror
-    "mirror_delta",
-    # choice collapse
-    "collapse_signal", "collapse_decision",
-    # harmonic gate
-    "HarmonicGate", "gated_params",
-    # resonance vs entropy
-    "resonance_entropy_window",
-    # return spiral
-    "spiral_nudge",
-    # geometry
-    "adjacency_circle6_center", "adjacency_grid",
-]
