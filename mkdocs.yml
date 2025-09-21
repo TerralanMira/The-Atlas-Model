@@ -1,73 +1,61 @@
 site_name: The Atlas Model
-site_description: Fractal resonance, coherence, and conscious choice through The Atlas Model
-site_author: Atlas Collective
+site_description: "An evolving framework of resonance, coherence, and fractal awareness."
+site_author: "Atlas Project"
+repo_url: "https://github.com/your-username/The-Atlas-Model"
+repo_name: "The-Atlas-Model"
 
 theme:
   name: material
   features:
     - navigation.tabs
     - navigation.expand
+    - search.highlight
+    - search.share
+    - toc.integrate
     - content.code.copy
     - content.action.edit
 
-repo_url: https://github.com/terralanmira/The-Atlas-Model
-repo_name: The-Atlas-Model
-
 nav:
-  - Home: docs/index.md
-
-  - Atlas:
-      - Overview: docs/atlas/index.md
-      - Model Index: docs/atlas/Model_Index.md
-      - Conscious Choice: docs/atlas/conscious_choice.md
-      - Awareness Levels: docs/atlas/awareness_levels.md
-      - Bridge (Handshake): docs/atlas/bridge_handshake.md
-      - Resonant Reality Bridge: docs/atlas/ResonantReality_Bridge.md
-      - Scan: docs/atlas/scan.md
-
-  - Maps:
+  - Home: index.md
+  - Awareness & Coherence:
       - Awareness: docs/awareness.md
       - Coherence: docs/coherence.md
-      - Field Layers: docs/field_layers.md
+  - Field Layers:
+      - Field Structure: docs/field_layers.md
+      - Resonant Layer Overlays: docs/overlays.md
+  - Applications:
       - Applications: docs/applications.md
-      - Integration: docs/integration.md
-      - Vision: docs/vision.md
-      - Roadmap: docs/roadmap.md
+      - Dashboard: docs/dashboard.md
+  - Algorithms:
+      - Coherence Metrics: algorithms/coherence_metrics.py
+  - Simulations:
+      - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
+      - Presets: sims/presets.json
+  - LLM System:
+      - Atlas System Prompt: docs/llm/atlas_system_prompt.md
+  - Resonant Reality:
+      - Overview: docs/resonant_reality.md
 
-  - Field Layer:
-      - 01 — Ley Lines: docs/field/01_Ley_Lines.md
-      - 02 — Geomagnetic: docs/field/02_Geomagnetic.md
-      - 03 — Sacred Nodes: docs/field/03_Sacred_Nodes.md
-      - 04 — Axis Mundi: docs/field/04_Axis_Mundi.md
-      - 05 — Resonant Architecture: docs/field/05_Resonant_Architecture.md
-      - 06 — Cosmic Alignments: docs/field/06_Cosmic_Alignments.md
-      - 07 — Suppression & Rediscovery: docs/field/07_Suppression_Rediscovery.md
-      - 08 — The Whole Field: docs/field/08_The_Whole_Field.md
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
 
-  - Sims:
-      - Overview: docs/sims/index.md
-      - Kuramoto–Schumann Hybrid: docs/sims/kuramoto_schumann_hybrid.md
-      - LC Grid Modes: docs/sims/lc_grid_modes.md
-      - Multi-Scale Kuramoto: docs/sims/multi_scale_kuramoto.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append(".")
 
-  - LLM:
-      - Overview: docs/llm/index.md
-      - Router Rules: docs/llm/router_rules.md
-      - Scorer Rules: docs/llm/scorer_rules.md
-      - System Persona: docs/llm/system_persona.md
-      - System Prompt: llm/system/atlas_system_prompt.md
-
-  - API & Spec:
-      - API Index: docs/api/index.md
-      - Resonance Interfaces: docs/spec/resonance_interfaces.md
-      - Infinity Equation: docs/spec/infinity_equation.md
-      - Might: docs/might/index.md
-      - Mind: docs/mind/index.md
-
-  - Sessions:
-      - Schema: sessions/schema.json
-      - Example Log: sessions/example_log.json
-
-  - Meta:
-      - Contributing: docs/meta/CONTRIBUTING.md
-      - Ethics: docs/meta/ETHICS.md
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/your-username/The-Atlas-Model
+    - icon: fontawesome/solid/globe
+      link: https://atlas-resonance.org
