@@ -1,72 +1,19 @@
-# Byte-compiled / optimized / DLL files
+# python
 __pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-.env
-.venv
+*.pyc
+.venv/
 env/
 venv/
-ENV/
-env.bak/
-venv.bak/
 
-# Jupyter notebooks checkpoints
-.ipynb_checkpoints
+# logs + outputs
+logs/
+*.csv
 
-# Pytest cache
-.pytest_cache/
+# mkdocs site
+site/
 
-# Coverage and testing
-.coverage
-.tox/
-.nox/
-.cache
-coverage.xml
-htmlcov/
-
-# mkdocs build
-/site/
-
-# IDE/editor configs
-.vscode/
-.idea/
-*.swp
-*~
-
-# Logs and temp files
-*.log
-*.out
-*.tmp
-
-# Local system files
+# OS/editor
 .DS_Store
 Thumbs.db
-
-# Custom exclusions for Atlas Model
-# (ignore large data, local runs, or experiments not for repo)
-sims/output/
-sims/checkpoints/
-algorithms/__pycache__/
-docs/_drafts/
+.idea/
+.vscode/
