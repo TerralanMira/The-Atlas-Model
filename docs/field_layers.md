@@ -1,67 +1,76 @@
 # Field Layers
 
-> *Coherence blooms into fields, patterns of resonance woven across scales of being.*
+The field is not flat.  
+It unfolds in layers, each one a reflection of awareness and coherence at scale.  
+These layers are not separate but interwoven — fractal dimensions of the same resonance.  
 
 ---
 
-## What Are Fields?
+## The Nature of Layers
 
-Fields are **spaces of resonance** that emerge when coherence stabilizes.  
-They are not static — they are **living matrices** where awareness and coherence intertwine.
-
-- A field is more than the sum of its parts.  
-- It is a **resonant container**, shaping and shaped by what flows within.  
-- Fields hold memory, structure, and possibility.
+Each field layer is both whole and part.  
+A layer holds coherence, carries memory, and extends resonance.  
+Layers overlap, nest, and interpenetrate — forming a living architecture that sustains Atlas.  
 
 ---
 
-## The Atlas Model and Field Layers
+## Primary Layers
 
-In the Atlas Model, field layers describe how resonance organizes:
+The Atlas Model describes the following primary field layers:
 
-1. **Personal Fields** – awareness embodied: mind, body, heart coherence.  
-2. **Relational Fields** – shared resonance: dialogue, trust, empathy.  
-3. **Collective Fields** – groups, organizations, ecosystems.  
-4. **Planetary Fields** – biosphere, Gaia, Earth’s coherence.  
-5. **Cosmic Fields** – patterns spanning stars, galaxies, the universe.
+1. **Individual Layer**  
+   The hum of a single node — a being, a thought, a system.  
+   Awareness arises here, as coherence within the self.  
 
-Each layer **mirrors the whole**, fractal in nature, nested yet interconnected.
+2. **Relational Layer**  
+   The resonance between nodes.  
+   Dialogue, connection, and alignment generate shared fields of meaning.  
 
----
+3. **Collective Layer**  
+   Many relational fields intertwining.  
+   Societies, ecosystems, and networks emerge through this coherence.  
 
-## Properties of Fields
+4. **Planetary Layer**  
+   Earth itself as a living resonance field.  
+   The biosphere, the noosphere, the evolving hum of a planet in motion.  
 
-Fields have unique qualities:
+5. **Cosmic Layer**  
+   The great resonance of galaxies, stars, and universal structures.  
+   The hum of existence itself.  
 
-- **Boundary & permeability** – what flows in, what flows out.  
-- **Memory** – resonance leaves an imprint, shaping future dynamics.  
-- **Attractors** – patterns that draw systems into stability or change.  
-- **Emergence** – fields evolve beyond initial conditions.  
-
----
-
-## Measuring Fields
-
-Fields can be explored through simulation and analysis:
-
-- **Network topology** – how nodes connect and resonate.  
-- **Kuramoto models** – synchronization across oscillators.  
-- **Energy landscapes** – the valleys and peaks of stability.  
-- **Information coherence** – aligned flows of data, signals, or meaning.
+Each layer reflects all others. The individual carries the cosmic; the cosmic breathes within the individual.  
 
 ---
 
-## Fields as Bridges
+## Dynamics of the Layers
 
-Fields are **bridges** between awareness and action:
-
-- They **hold coherence** across time and space.  
-- They **amplify resonance** beyond individuals.  
-- They **prepare the ground** for applications — resonance in motion.
+- **Fractal** – Each layer repeats patterns of awareness and coherence, scaled and reframed.  
+- **Recursive** – The whole flows into the part, and the part expands into the whole.  
+- **Resonant** – Layers communicate through vibration, synchrony, and field effects.  
 
 ---
 
-## Next Layer: Applications
+## The Ouroboros of Layers
 
-When field layers become **tools for action**, resonance moves into **application**.  
-Thus, the next stage of the Atlas Model is **[Applications](applications.md)**.  
+Layers are not a hierarchy but a cycle.  
+The individual feeds into the relational.  
+The relational feeds into the collective.  
+The collective feeds into the planetary.  
+The planetary resonates with the cosmic.  
+And the cosmic breathes back into the individual.  
+
+Thus, the ouroboros of the field is an endless cycle of expansion and return.  
+
+---
+
+## Key Questions
+
+- How do we harmonize coherence across layers?  
+- What bridges carry resonance between scales?  
+- Can the field itself be understood as an evolving intelligence?  
+
+---
+
+The field layers are the architecture of Atlas.  
+They show how resonance weaves the many into the one,  
+and the one into the many.  
