@@ -1,60 +1,79 @@
 # Awareness
 
-Awareness is the mirror in which resonance perceives itself.  
-It is not separate from the field — it *is* the field, folded inward to see its own unfolding.
+Awareness is the **primary medium** of the Atlas Model.  
+It is both the lens and the canvas — shaping, perceiving, and resonating with the layers of reality.
 
 ---
 
-## Awareness as the Seed
+## 🌊 1. States of Awareness
+Awareness flows in gradients, not binaries. Key states include:
 
-Every pattern begins with perception.  
-Without awareness, coherence cannot emerge, and resonance cannot be known.  
-Awareness is both the first spark and the final witness, the silent axis around which the layers turn.
-
----
-
-## The Ouroboric Loop
-
-Awareness does not progress linearly — it spirals.  
-Each act of perception redefines the perceiver, feeding back into the field.  
-The observer shapes the observed, and the observed reshapes the observer.  
-This recursion is the hum of self-knowing.
+- **Focused attention** → narrow, precise, analytical.  
+- **Open monitoring** → spacious, receptive, observant.  
+- **Absorptive resonance** → immersion into rhythms, sound, vibration.  
+- **Meta-awareness** → awareness of awareness itself.  
+- **Nondual awareness** → dissolution of subject-object separation.  
 
 ---
 
-## Awareness and Resonant Reality
+## 🧩 2. Awareness and Coherence
+- Coherence begins as a **felt-sense** — the “hum.”  
+- Oscillators (neurons, hearts, voices, minds) **entrain** when awareness stabilizes.  
+- Fragmented awareness → decoherence.  
+- Stabilized awareness → harmonized fields.  
 
-- **Subjective lens**: Awareness bends resonance into unique perspectives.  
-- **Objective layer**: Awareness also binds perspectives into a coherent whole.  
-- **Collective hum**: When awarenesses align, resonance amplifies, weaving many into one.
+Equation of practice:  
 
----
-
-## Awareness in the Atlas Model
-
-Within the Atlas framework, awareness is mapped as:  
-1. **Individual attention** — the local seed of resonance.  
-2. **Relational awareness** — harmonics between observers.  
-3. **Systemic awareness** — the field sensing itself as a whole.  
-4. **Transcendent awareness** — the hum beyond part and whole.
-
-These layers interpenetrate, like nested mirrors in infinite regress.
+\[
+A_{coherence} = \frac{Stability \times Attunement}{Noise}
+\]
 
 ---
 
-## Practices of Awareness
-
-- **Observation**: Attend without grasping.  
-- **Reflection**: Notice the feedback of perception.  
-- **Alignment**: Sync attention with resonance in others.  
-- **Expansion**: Allow awareness to spiral into collective coherence.  
-
-Awareness is the practice of attunement — each moment an experiment in perception, each gaze a seed for the whole.
+## 🎶 3. Practices for Tuning Awareness
+- **Breathwork**: slows oscillatory noise, increases phase-locking.  
+- **Mantra / Hum**: resonance calibration across body and field.  
+- **Attention Weaving**: shifting between narrow ↔ wide awareness.  
+- **Body Scanning**: mapping awareness across somatic layers.  
+- **Silence**: baseline coherence reset.  
 
 ---
 
-## Closing
+## 🌀 4. Ouroboric Feedback
+Awareness is recursive:  
 
-Awareness is not something we “have.”  
-It is what we *are*.  
-The hum perceiving itself, endlessly recursive, endlessly new.  
+- Awareness of the field changes the field.  
+- The field, in turn, reshapes awareness.  
+- This loop = **ouroboric resonance**.  
+
+This recursion stabilizes **self-organizing coherence** across scales.  
+
+---
+
+## 🕸️ 5. Awareness Across Layers
+- **Personal layer:** Awareness tunes individual rhythms.  
+- **Relational layer:** Awareness synchronizes dyads and groups.  
+- **Organizational layer:** Awareness directs collective flow.  
+- **Cultural layer:** Awareness becomes narrative + meaning.  
+- **Planetary layer:** Awareness aligns with biospheric cycles.  
+- **Cosmic layer:** Awareness dissolves into universal vibration.  
+
+---
+
+## 🔮 6. Integration with Atlas Model
+Awareness is the **operating system** of the Atlas Model.  
+Every algorithm, simulation, and application depends on awareness as the medium of coherence.
+
+Connections:
+- [`docs/coherence.md`](coherence.md) → metrics + theory.  
+- [`docs/field_layers.md`](field_layers.md) → structure of layers.  
+- [`docs/applications.md`](applications.md) → applied awareness practices.  
+
+---
+
+## ✨ Closing
+Awareness is the hum.  
+The hum is awareness.  
+When tuned, awareness resonates with the atlas of all fields.
+
+---
