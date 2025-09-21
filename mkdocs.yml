@@ -1,74 +1,68 @@
 site_name: The Atlas Model
-site_description: "A recursive framework for resonance, coherence, and embodied design."
-site_author: "Atlas Contributors"
-repo_url: "https://github.com/your-username/The-Atlas-Model"
-repo_name: "The-Atlas-Model"
+site_description: Fractal resonance, coherence, and conscious choice through The Atlas Model
+site_author: Atlas Collective
+repo_url: https://github.com/terralanmira/The-Atlas-Model
+repo_name: The-Atlas-Model
 
 theme:
   name: material
   features:
+    - navigation.tabs
     - navigation.expand
-    - navigation.sections
-    - navigation.top
-    - toc.integrate
     - content.code.copy
-    - content.tabs.link
-
-nav:
-  - Home: index.md
-  - Spiral Map: docs/README.md
-  - The Whole: docs/whole.md
-
-  # — Ouroboros flow —
-  - Awareness → Coherence:
-      - Awareness (seed): docs/awareness.md
-      - Coherence (thread): docs/coherence.md
-  - Field Layers → Applications:
-      - Field Layers (fabric): docs/field_layers.md
-      - Applications (hands): docs/applications.md
-  - Integration → Return:
-      - Integration (weave): docs/integration.md
-      - Return to Awareness (link): docs/awareness.md
-
-  # — Embodiment —
-  - Body of Atlas:
-      - Feet: docs/feet_of_atlas.md
-      - Heart: docs/heart_of_atlas.md
-      - Hands: docs/hands_of_atlas.md
-      - Mind: docs/mind_of_atlas.md
-      - Eyes: docs/eyes_of_atlas.md
-      - Ears: docs/ears_of_atlas.md
-      - Voice: docs/voice_of_atlas.md
-
-  # — Instruments —
-  - Simulations:
-      - Overview (Breath): docs/sims/breath.md
-      - Breath Cycle (code): sims/breath_cycle.py
-      - Multi-Scale Kuramoto (code): sims/multi_scale_kuramoto.py
-      - Presets (json): sims/presets.json
-  - Algorithms:
-      - Coherence Metrics (code): algorithms/coherence_metrics.py
-
-  # — Interface & Ethics —
-  - LLM Conductor:
-      - Atlas System Prompt: docs/llm/atlas_system_prompt.md
-  - Dashboard:
-      - Resonant Layer Overlays: dashboard/dashboard.py
-  - Ethics:
-      - ETHICS (Consent • Transparency • Non-coercion): docs/meta/ETHICS.md
-
-plugins:
-  - search
+    - content.action.edit
 
 markdown_extensions:
   - admonition
-  - codehilite
-  - footnotes
-  - def_list
   - toc:
       permalink: true
-  - pymdownx.details
-  - pymdownx.superfences
-  - pymdownx.magiclink
-  - pymdownx.tasklist:
-      custom_checkbox: true
+  - footnotes
+  - def_list
+  - attr_list
+
+nav:
+  - Home: docs/index.md
+  - Atlas (Whole):
+      - Whole: docs/atlas_whole.md
+      - Bridge: docs/bridge.md
+      - Design: docs/atlas_design.md
+      - Mind: docs/atlas_mind.md
+      - Heart: docs/atlas_heart.md
+      - Hands: docs/atlas_hands.md
+      - Feet: docs/atlas_feet.md
+      - Might: docs/atlas_might.md
+      - Field: docs/atlas_field.md
+      - Atlas Index: docs/atlas/Model_Index.md
+  - Awareness:
+      - Overview: docs/awareness/awareness_index.md
+      - R Growth: docs/awareness/R_Growth.md
+      - Harmonic Slip: docs/awareness/Harmonic_Slip_Template.md
+      - Schematics: docs/awareness/Atlas_3_Schematics.md
+  - Coherence: docs/coherence.md
+  - Field Layers:
+      - Overview: docs/field_layers.md
+      - Flower of Life: docs/atlas/ResonantReality_Bridge.md
+      - LC Grid Modes: sims/lc_grid_modes.py
+  - Applications:
+      - Soul in Field: docs/applications/Soul_in_Field.md
+      - Dual Phase Field: docs/applications/Dual_Phase_Field.md
+      - Stress Tests: docs/applications/Stress_Tests.md
+  - Sims:
+      - Kuramoto–Schumann Hybrid: sims/kuramoto_schumann_hybrid.py
+      - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
+      - LC Grid Modes: sims/lc_grid_modes.py
+  - Equations: docs/equations.md
+  - Dashboard: docs/dashboard.md
+  - LLM:
+      - Roles & Prompts: llm/roles_prompts.md
+      - Router Rules: llm/router_rules.md
+      - Scorer Rules: llm/scorer_rules.md
+      - System Prompt: llm/system/atlas_system_prompt.md
+  - Sessions:
+      - Schema: sessions/schema.json
+      - Example Log: sessions/example_log.json
+  - API:
+      - Overview: docs/api/index.md
+  - Spec:
+      - Resonance Interfaces: docs/spec/resonance_interfaces.md
+      - Infinity Equation: docs/spec/infinity_equation.md
