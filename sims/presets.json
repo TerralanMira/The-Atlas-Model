@@ -4,7 +4,6 @@
     "N_inner": 72, "N_outer": 36,
     "K_inner": 0.38, "K_outer": 0.24, "K_cross": 0.12,
     "omega_inner_std": 0.11, "omega_outer_std": 0.06,
-    "driver_amp": 0.00, "noise_std": 0.004,
     "steps": 1200, "dt": 0.05
   },
   "multi_scale_field": {
@@ -12,15 +11,13 @@
     "N_inner": 80, "N_outer": 40,
     "K_inner": 0.40, "K_outer": 0.26, "K_cross": 0.15,
     "omega_inner_std": 0.12, "omega_outer_std": 0.06,
-    "driver_amp": 0.02, "driver_omega": 7.83, "driver_phase": 0.0,
-    "noise_std": 0.004, "steps": 1400, "dt": 0.05
+    "steps": 1400, "dt": 0.05
   },
   "conscious_choice": {
     "description": "Decision tension without collapse.",
     "N_inner": 48, "N_outer": 24,
     "K_inner": 0.34, "K_outer": 0.20, "K_cross": 0.14,
     "omega_inner_std": 0.13, "omega_outer_std": 0.07,
-    "driver_amp": 0.00, "noise_std": 0.005,
     "steps": 900, "dt": 0.05
   },
   "ouroboros_loop": {
@@ -28,7 +25,6 @@
     "N_inner": 60, "N_outer": 30,
     "K_inner": 0.42, "K_outer": 0.24, "K_cross": 0.18,
     "omega_inner_std": 0.10, "omega_outer_std": 0.05,
-    "driver_amp": 0.00, "noise_std": 0.003,
     "steps": 1100, "dt": 0.05
   }
 }
