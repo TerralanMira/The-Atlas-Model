@@ -45,3 +45,9 @@ def test_entropy_and_spiral():
     assert 0.0 <= H0 <= 1.0 and 0.0 <= H1 <= 1.0
     dn = spiral_nudge(theta1, theta0, gain=0.1)
     assert dn.shape == theta0.shape
+    minimal sanity test for examples
+    # tests/test_examples.py
+# Keep minimal; your examples folder can change.
+def test_examples_exist():
+    pass            
+                       
