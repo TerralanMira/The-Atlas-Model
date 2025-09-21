@@ -60,3 +60,36 @@ forest[0].send_signal(100)
 # Check distribution
 for node in forest:
     print(f"Node {node.id} resources: {node.resources}")
+This simple algorithm shows how one node’s signal is distributed, rerouted, and shared — much like the hum of mycelium.
+
+⸻
+
+Simulation Dynamics
+	•	Resource Redistribution
+Trees in need (low-value nodes) receive signals, stabilizing the whole system.
+	•	Whispered Warnings
+Disturbances spread quietly, giving other nodes time to adapt.
+	•	Resonant Coherence
+As signals flow, the network aligns into harmony without external direction.
+
+⸻
+
+Visual Mapping
+	•	Nodes = Roots, trees, or individuals.
+	•	Edges = Mycelial threads.
+	•	Signals = Nutrients, water, or awareness.
+
+Visualizing these as dynamic graphs shows the pulsing hum of life beneath the soil.
+
+⸻
+
+Reflection: Simulating the Hum
+	•	What happens when one node floods the network with resonance?
+	•	How does scarcity alter cooperation?
+	•	Can the simulation itself hum — a feedback loop of digital mycelium?
+
+The answers are not in the code, but in the resonance the code reveals.
+
+⸻
+
+“Algorithms are modern mycelium — invisible threads guiding flows of meaning and energy.”
