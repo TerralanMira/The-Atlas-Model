@@ -2,41 +2,33 @@
 """
 sims/breath_cycle.py
 
-The Breath of Atlas — a cyclic expansion/contraction driver that modulates
-coupling (K) and permeability (pi) over an inhale/exhale and logs the field's
-response. Designed to complement multi_scale_kuramoto.py and the dashboard
-overlays (Individual/Relational/Collective/Planetary/Cosmic).
+Breath-modulated resonance runner.
+- Modulates coupling K(t) (and optional permeability π(t)) over an inhale/exhale cycle
+  using cosine easing (smooth start/stop).
+- Emits dashboard-aligned metrics per step:
+  R_total, cross_sync, drift, C, Delta, Phi, plus ethics flags.
+- Geometry adapters: grid, circular, nested_spheres, flower_of_life.
 
-If core helpers (algorithms.field_equations / algorithms.resonance_dynamics)
-aren't present, we fall back to local implementations so this file remains
-drop-in.
+Matches schema keys used in sims/presets.json (e.g., 'breath_flower' preset).
+If algorithms/ helpers are absent, safe fallbacks are used.
 
-Outputs: CSV with columns aligned to the dashboard + ingest scripts:
-  step,t,R_total,cross_sync,drift,C,Delta,Phi,ready,choice_score,
-  phase,phase_pos,K_eff,pi_eff
-
-Usage (example):
-  python sims/breath_cycle.py --geometry circle6_center --period 20.0 --steps 4000 \
-      --csv logs/breath_circle.csv
+Usage:
+  python sims/breath_cycle.py --preset breath_flower --presets-file sims/presets.json
 """
 
 from __future__ import annotations
-import argparse, csv, math, os
-from dataclasses import dataclass
-from typing import Optional, Tuple
-
+import argparse, json, math, os, csv
+from typing import Dict, Any, Optional, List, Tuple
 import numpy as np
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Optional imports from the broader repo; fall back to local definitions
+# Optional imports (fallbacks if repo-local modules missing)
 # ──────────────────────────────────────────────────────────────────────────────
-
 try:
     from algorithms.coherence_metrics import phase_coherence, local_coherence
 except Exception:
     def phase_coherence(phases: np.ndarray) -> float:
         return float(np.abs(np.exp(1j * phases).mean()))
-
     def local_coherence(phases: np.ndarray, adjacency: np.ndarray) -> float:
         A = np.maximum(adjacency, adjacency.T)
         I, J = np.where(A > 0)
@@ -45,91 +37,24 @@ except Exception:
         return float(np.cos(phases[J] - phases[I]).mean())
 
 try:
-    from algorithms.field_equations import (
-        adjacency_circle6_center, adjacency_grid, wrap_phase
-    )
+    from algorithms.field_equations import wrap_phase
 except Exception:
-    def adjacency_circle6_center() -> np.ndarray:
-        # 7 nodes: one center (0), six around it (1..6), ring & spokes
-        N = 7
-        A = np.zeros((N, N), float)
-        # spokes
-        for j in range(1, 7):
-            A[0, j] = A[j, 0] = 1.0
-        # ring
-        for j in range(1, 7):
-            A[j, 1 + (j - 2) % 6] = 1.0
-            A[j, 1 + (j % 6)] = 1.0
-        return A
-
-    def adjacency_grid(rows: int, cols: int, diagonal: bool = False) -> np.ndarray:
-        N = rows * cols
-        A = np.zeros((N, N), float)
-        def idx(r, c): return r * cols + c
-        for r in range(rows):
-            for c in range(cols):
-                i = idx(r, c)
-                for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
-                    rr, cc = r + dr, c + dc
-                    if 0 <= rr < rows and 0 <= cc < cols:
-                        j = idx(rr, cc)
-                        A[i, j] = A[j, i] = 1.0
-                if diagonal:
-                    for dr, dc in [(1,1), (1,-1), (-1,1), (-1,-1)]:
-                        rr, cc = r + dr, c + dc
-                        if 0 <= rr < rows and 0 <= cc < cols:
-                            j = idx(rr, cc)
-                            A[i, j] = A[j, i] = 1.0
-        return A
-
     def wrap_phase(theta: np.ndarray) -> np.ndarray:
         return np.mod(theta + np.pi, 2.0 * np.pi) - np.pi
 
-try:
-    from algorithms.resonance_dynamics import (
-        collapse_signal, collapse_decision, HarmonicGate, gated_params
-    )
-except Exception:
-    def collapse_signal(R_total: float, cross_sync: float, drift: float) -> float:
-        # Heuristic readiness: coherence high, drift not clamped, bridges decent
-        r = 0.5 * R_total + 0.3 * cross_sync + 0.2 * max(0.0, 1.0 - min(1.0, drift * 10.0))
-        return float(max(0.0, min(1.0, r)))
-
-    def collapse_decision(ready: float, consent: bool, offer_two_paths: bool, thresh: float = 0.7) -> bool:
-        if not consent or not offer_two_paths:
-            return False
-        return ready >= thresh
-
-    class HarmonicGate:
-        def __init__(self, ethics: float = 1.0, ignition: float = 1.0, destabilizer: float = 0.0, time_gate: float = 1.0):
-            self.ethics = float(ethics)
-            self.ignition = float(ignition)
-            self.destabilizer = float(destabilizer)
-            self.time_gate = float(time_gate)
-
-    def gated_params(K: float, pi: float, gate: HarmonicGate, t_step: int) -> Tuple[float, float]:
-        # Simple passthrough; real implementation may adapt over time
-        return float(K), float(pi)
-
 TAU = 2.0 * math.pi
 
-
 # ──────────────────────────────────────────────────────────────────────────────
-# Geometry / Omega
+# Small utilities
 # ──────────────────────────────────────────────────────────────────────────────
+def ensure_dir(p: str) -> None:
+    d = os.path.dirname(p)
+    if d and not os.path.exists(d):
+        os.makedirs(d, exist_ok=True)
 
-def make_adjacency(geometry: str, rows: int, cols: int) -> np.ndarray:
-    if geometry == "circle6_center":
-        return adjacency_circle6_center()
-    if geometry == "grid":
-        if rows <= 0 or cols <= 0:
-            raise ValueError("grid geometry requires positive --rows and --cols")
-        return adjacency_grid(rows, cols, diagonal=False)
-    raise ValueError(f"unknown geometry: {geometry}")
-
-def make_omega(N: int, mean: float = 0.0, std: float = 0.1, seed: int = 0) -> np.ndarray:
-    rng = np.random.default_rng(seed)
-    return rng.normal(mean, std, size=N).astype(float)
+def complex_mean_angle(ang: np.ndarray) -> float:
+    z = np.exp(1j * ang).mean()
+    return float(np.angle(z))
 
 def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
     A = np.maximum(A, A.T)
@@ -142,9 +67,10 @@ def cross_edge_sync(A: np.ndarray, theta: np.ndarray) -> float:
 def phase_entropy_norm(theta: np.ndarray, bins: int = 36) -> float:
     h, _ = np.histogram(np.mod(theta, TAU), bins=bins, range=(0.0, TAU))
     p = h.astype(float)
-    if p.sum() == 0:
+    s = p.sum()
+    if s == 0:
         return 0.0
-    p /= p.sum()
+    p /= s
     with np.errstate(divide="ignore", invalid="ignore"):
         ent = -(p * np.log(p + 1e-12)).sum()
     return float(ent / math.log(bins))
@@ -153,193 +79,237 @@ def lag1_smoothness(theta_now: np.ndarray, theta_prev: np.ndarray) -> float:
     dphi = np.angle(np.exp(1j * (theta_now - theta_prev)))
     return float((np.cos(dphi).mean() + 1.0) * 0.5)
 
+def gaussian_omega(n: int, mean: float = 0.0, std: float = 0.1, seed: Optional[int] = None) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    return rng.normal(mean, std, size=n).astype(float)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Kuramoto integrator (local, simple)
-# dθ_i = ω_i + K_eff * Σ_j A_ij * sin(θ_j - θ_i) + noise
+# Geometries
 # ──────────────────────────────────────────────────────────────────────────────
+def adjacency_grid(rows: int, cols: int, diagonal: bool = False) -> np.ndarray:
+    N = rows * cols
+    A = np.zeros((N, N), float)
+    def idx(r, c): return r * cols + c
+    for r in range(rows):
+        for c in range(cols):
+            i = idx(r, c)
+            for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+                rr, cc = r + dr, c + dc
+                if 0 <= rr < rows and 0 <= cc < cols:
+                    j = idx(rr, cc)
+                    A[i, j] = A[j, i] = 1.0
+            if diagonal:
+                for dr, dc in [(1,1), (1,-1), (-1,1), (-1,-1)]:
+                    rr, cc = r + dr, c + dc
+                    if 0 <= rr < rows and 0 <= cc < cols:
+                        j = idx(rr, cc)
+                        A[i, j] = A[j, i] = 1.0
+    return A
 
-def step_kuramoto(theta: np.ndarray, omega: np.ndarray, K_eff: float, A: np.ndarray,
-                  dt: float, noise_std: float = 0.0, rng: Optional[np.random.Generator] = None) -> np.ndarray:
-    if rng is None:
-        rng = np.random.default_rng()
-    dtheta = omega.copy()
-    # coupling
-    A_sym = np.maximum(A, A.T)
-    for i in range(len(theta)):
-        dtheta[i] += K_eff * np.sum(A_sym[i] * np.sin(theta - theta[i]))
-    # noise
-    if noise_std > 0.0:
-        dtheta += rng.normal(0.0, noise_std, size=len(theta))
-    theta_next = wrap_phase(theta + dt * dtheta)
-    return theta_next
+def adjacency_circular(nodes: int) -> np.ndarray:
+    N = nodes
+    A = np.zeros((N, N), float)
+    for i in range(N):
+        j1 = (i + 1) % N
+        j2 = (i - 1 + N) % N
+        A[i, j1] = A[j1, i] = 1.0
+        A[i, j2] = A[j2, i] = 1.0
+    return A
 
+def adjacency_nested_spheres(layer_sizes: List[int], inter_strength: float = 0.2) -> np.ndarray:
+    n_total = sum(layer_sizes)
+    A = np.zeros((n_total, n_total), float)
+    offset = 0
+    anchors = []
+    for size in layer_sizes:
+        for i in range(size):
+            j1 = (i + 1) % size
+            A[offset + i, offset + j1] = 1.0
+            A[offset + j1, offset + i] = 1.0
+        anchors.append(offset)
+        offset += size
+    for a, b in zip(anchors[:-1], anchors[1:]):
+        A[a, b] = A[b, a] = inter_strength
+    return A
+
+def adjacency_flower_of_life(rings: int = 3) -> np.ndarray:
+    coords = [(0.0, 0.0)]
+    for k in range(1, rings + 1):
+        m = 6 * k
+        for j in range(m):
+            angle = 2.0 * math.pi * (j / m)
+            x = k * math.cos(angle)
+            y = k * math.sin(angle)
+            coords.append((x, y))
+    pts = np.array(coords, dtype=float)
+    N = len(coords)
+    A = np.zeros((N, N), float)
+    for i in range(N):
+        for j in range(i + 1, N):
+            d = np.linalg.norm(pts[i] - pts[j])
+            if d <= 1.05 + 1e-9:
+                A[i, j] = A[j, i] = 1.0
+    return A
+
+def make_adjacency(geom: Dict[str, Any], fallback_n: int | None = None) -> np.ndarray:
+    name = geom.get("name", "grid")
+    if name == "grid":
+        return adjacency_grid(int(geom.get("rows", 8)), int(geom.get("cols", 8)), bool(geom.get("diagonal", False)))
+    if name == "circular":
+        return adjacency_circular(int(geom.get("nodes", fallback_n or 64)))
+    if name == "nested_spheres":
+        return adjacency_nested_spheres([30, 60, 120, 240], inter_strength=0.2)
+    if name == "flower_of_life":
+        return adjacency_flower_of_life(int(geom.get("rings", 3)))
+    raise ValueError(f"Unknown geometry: {name}")
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Breath cycle driver
+# Breath profile
 # ──────────────────────────────────────────────────────────────────────────────
+def cosine_ease_01(x: float) -> float:
+    """0..1 → 0..1 with smooth start/end (cosine)."""
+    return 0.5 - 0.5 * math.cos(math.pi * max(0.0, min(1.0, x)))
 
-@dataclass
-class BreathConfig:
-    period: float = 20.0          # seconds per full breath (inhale+exhale)
-    inhale_ratio: float = 0.5     # fraction of period spent inhaling
-    K_min: float = 0.4
-    K_max: float = 1.0
-    pi_min: float = 0.4
-    pi_max: float = 1.0
-    phase_offset: float = 0.0     # radians in [0, 2π)
-
-def breath_phase(t: float, cfg: BreathConfig) -> Tuple[str, float]:
+def breath_envelope(t: float, period: float, inhale_ratio: float) -> float:
     """
-    Returns ('inhale'|'exhale', phase_pos in [0,1]) for time t given period & ratio.
-    phase_pos counts 0→1 within the current half-cycle.
+    Returns e(t) in [0,1].
+    0..T*inhale_ratio → inhale ramp up
+    T*inhale_ratio..T → exhale ramp down
     """
-    T = max(1e-6, cfg.period)
-    pos = (t % T) / T
-    cut = cfg.inhale_ratio
-    if pos < cut:
-        # inhale half
-        seg = pos / cut
-        return "inhale", float(seg)
+    T = period
+    Ti = max(1e-9, inhale_ratio) * T
+    t_mod = t % T
+    if t_mod <= Ti:  # inhale
+        return cosine_ease_01(t_mod / Ti)
+    # exhale
+    return 1.0 - cosine_ease_01((t_mod - Ti) / max(1e-9, T - Ti))
+
+def K_over_time(K_min: float, K_max: float, t: float, period: float, inhale_ratio: float) -> float:
+    e = breath_envelope(t, period, inhale_ratio)
+    return (1.0 - e) * K_min + e * K_max
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Preset loading
+# ──────────────────────────────────────────────────────────────────────────────
+def load_presets(path: str) -> Dict[str, Any]:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def pick_preset(blob: Dict[str, Any], name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    # supports both schema’d (meta/defaults/presets) and simple (top-level dict) files
+    if "presets" in blob:
+        meta = blob.get("meta", {})
+        defaults = meta.get("defaults", {})
+        presets = blob["presets"]
+        if name not in presets:
+            raise KeyError(f"Preset '{name}' not found. Available: {list(presets.keys())}")
+        return defaults, presets[name]
     else:
-        # exhale half
-        seg = (pos - cut) / max(1e-6, (1.0 - cut))
-        return "exhale", float(seg)
-
-def modulate_params(phase_name: str, phase_pos: float, cfg: BreathConfig) -> Tuple[float, float]:
-    """
-    Smoothly modulate K, pi across inhale/exhale with a cosine easing.
-    Inhale: ramp from min → max; Exhale: ramp max → min.
-    """
-    def ease(x):  # cosine ease (0..1)
-        return 0.5 * (1.0 - math.cos(math.pi * max(0.0, min(1.0, x))))
-    w = ease(phase_pos)
-    if phase_name == "inhale":
-        K = cfg.K_min + (cfg.K_max - cfg.K_min) * w
-        pi = cfg.pi_min + (cfg.pi_max - cfg.pi_min) * w
-    else:
-        K = cfg.K_max - (cfg.K_max - cfg.K_min) * w
-        pi = cfg.pi_max - (cfg.pi_max - cfg.pi_min) * w
-    return float(K), float(pi)
-
+        if name not in blob:
+            raise KeyError(f"Preset '{name}' not found. Available: {list(blob.keys())}")
+        return {}, blob[name]
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Runner
 # ──────────────────────────────────────────────────────────────────────────────
+def run_breath_preset(preset_name: str, presets_path: str) -> None:
+    blob = load_presets(presets_path)
+    defaults, preset = pick_preset(blob, preset_name)
 
-def run_breath(geometry: str = "circle6_center",
-               rows: int = 8, cols: int = 8,
-               steps: int = 4000, dt: float = 0.01,
-               period: float = 20.0, inhale_ratio: float = 0.5,
-               noise_std: float = 0.0,
-               csv_path: Optional[str] = "logs/breath.csv",
-               seed: int = 0,
-               offer_two_paths: bool = True,
-               consent_to_log: bool = True) -> None:
+    # geometry
+    geom = preset.get("geometry", {"name": "grid", "rows": 10, "cols": 10})
+    N_hint = int(preset.get("num_oscillators", 64))
+    A = make_adjacency(geom, fallback_n=N_hint)
+    if A.shape[0] != N_hint:
+        # if mismatch, rebuild simple grid close to N_hint
+        side = int(max(1, round(math.sqrt(N_hint))))
+        A = adjacency_grid(side, max(1, N_hint // max(1, side)))
 
-    A = make_adjacency(geometry, rows, cols)
     N = A.shape[0]
+
+    # frequencies & initial phases
+    omega_spec = preset.get("omega", {"distribution": "gaussian", "mean": 0.0, "std": 0.08})
+    seed = int(preset.get("seed", defaults.get("seed", 0)))
     rng = np.random.default_rng(seed)
+    omega = gaussian_omega(N, float(omega_spec.get("mean", 0.0)), float(omega_spec.get("std", 0.08)), seed)
     theta = wrap_phase(rng.uniform(-math.pi, math.pi, size=N))
     theta_prev = theta.copy()
-    omega = make_omega(N, std=0.1, seed=seed)
 
-    cfg = BreathConfig(period=float(period), inhale_ratio=float(inhale_ratio),
-                       K_min=0.4, K_max=1.0, pi_min=0.4, pi_max=1.0)
+    # breath params
+    period = float(preset.get("period", defaults.get("period", 20.0)))
+    inhale_ratio = float(preset.get("inhale_ratio", defaults.get("inhale_ratio", 0.5)))
 
-    header = [
-        "step","t",
-        "R_total","cross_sync","drift","C","Delta","Phi",
-        "ready","choice_score",
-        "phase","phase_pos","K_eff","pi_eff",
-        "offer_two_paths","consent_to_log"
-    ]
-    writer = None
-    f = None
-    if csv_path:
-        os.makedirs(os.path.dirname(csv_path), exist_ok=True)
-        f = open(csv_path, "w", newline="")
-        writer = csv.writer(f)
-        writer.writerow(header)
+    # K min/max (if only one provided, use ±20% band)
+    K_base = float(preset.get("coupling_strength", 0.6))
+    K_min = float(preset.get("K_min", K_base * 0.8))
+    K_max = float(preset.get("K_max", K_base * 1.2))
 
-    gate = HarmonicGate(ethics=1.0, ignition=1.0, destabilizer=noise_std, time_gate=1.0)
+    # numerics / IO
+    steps = int(preset.get("steps", defaults.get("steps", 6000)))
+    dt = float(preset.get("dt", defaults.get("dt", 0.01)))
+    noise_std = float(preset.get("noise_std", defaults.get("noise_std", 0.002)))
+    output_csv = str(preset.get("output_csv", defaults.get("output_csv", "logs/breath.csv")))
+
+    # ethics context flags
+    offer_two_paths = bool(preset.get("offer_two_paths", defaults.get("offer_two_paths", True)))
+    consent_to_log  = bool(preset.get("consent_to_log",  defaults.get("consent_to_log",  True)))
+
+    # writer
+    ensure_dir(output_csv)
+    header = ["preset","step","t","K_eff",
+              "R_total","cross_sync","drift","C","Delta","Phi",
+              "offer_two_paths","consent_to_log"]
+    f = open(output_csv, "w", newline="")
+    writer = csv.writer(f)
+    writer.writerow(header)
+
+    A_sym = np.maximum(A, A.T)
 
     for k in range(steps):
         t = (k + 1) * dt
-        phase_name, phase_pos = breath_phase(t, cfg)
-        K_target, pi_target = modulate_params(phase_name, phase_pos, cfg)
-        K_eff, pi_eff = gated_params(K_target, pi_target, gate=gate, t_step=k)
+        # breath-modulated K(t)
+        K_t = K_over_time(K_min, K_max, t, period, inhale_ratio)
 
-        theta_next = step_kuramoto(theta, omega, K_eff, A, dt=dt, noise_std=noise_std, rng=rng)
+        # Kuramoto update with K(t)
+        dtheta = omega.copy()
+        # coupling term
+        for i in range(N):
+            dtheta[i] += K_t * np.sum(A_sym[i] * np.sin(theta - theta[i]))
+        # noise
+        if noise_std > 0.0:
+            dtheta += rng.normal(0.0, noise_std, size=N)
+        theta_next = wrap_phase(theta + dt * dtheta)
 
-        # Metrics
+        # metrics
         R_total = phase_coherence(theta_next)
-        cross   = cross_edge_sync(A, theta_next)
+        cross   = cross_edge_sync(A_sym, theta_next)
         drift   = float(np.mean(np.abs(np.angle(np.exp(1j * (theta_next - theta))))))
-        C_raw   = local_coherence(theta_next, np.maximum(A, A.T))
-        C_m01   = float((C_raw + 1.0) * 0.5)  # map [-1,1] → [0,1]
+        C_raw   = local_coherence(theta_next, A_sym)
+        C_m01   = float((C_raw + 1.0) * 0.5)  # [-1,1] → [0,1]
         Delta   = phase_entropy_norm(theta_next)
         Phi     = lag1_smoothness(theta_next, theta)
 
-        ready = collapse_signal(R_total, cross, drift)
-        choice_ok = collapse_decision(
-            ready=ready,
-            consent=bool(consent_to_log),
-            offer_two_paths=bool(offer_two_paths),
-            thresh=0.70
-        )
-        choice_score = 1.0 if choice_ok else 0.0
-
-        if writer:
-            writer.writerow([
-                k + 1, t,
-                R_total, cross, drift, C_m01, Delta, Phi,
-                ready, choice_score,
-                phase_name, phase_pos, K_eff, pi_eff,
-                int(offer_two_paths), int(consent_to_log)
-            ])
+        writer.writerow([preset_name, k + 1, t, K_t,
+                         R_total, cross, drift, C_m01, Delta, Phi,
+                         int(offer_two_paths), int(consent_to_log)])
 
         theta_prev = theta
         theta = theta_next
 
-    if f:
-        f.close()
-
+    f.close()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CLI
 # ──────────────────────────────────────────────────────────────────────────────
-
 def parse_args() -> argparse.Namespace:
-    ap = argparse.ArgumentParser(description="Atlas Breath Cycle — cyclic K,π modulation with resonance logging")
-    ap.add_argument("--geometry", type=str, default="circle6_center", choices=["circle6_center","grid"],
-                    help="Topology of adjacency")
-    ap.add_argument("--rows", type=int, default=8, help="Grid rows (if geometry=grid)")
-    ap.add_argument("--cols", type=int, default=8, help="Grid cols (if geometry=grid)")
-    ap.add_argument("--steps", type=int, default=4000, help="Number of integration steps")
-    ap.add_argument("--dt", type=float, default=0.01, help="Time step")
-    ap.add_argument("--period", type=float, default=20.0, help="Breath period (seconds)")
-    ap.add_argument("--inhale_ratio", type=float, default=0.5, help="Fraction of period spent inhaling (0..1)")
-    ap.add_argument("--noise_std", type=float, default=0.0, help="Additive noise std to dynamics")
-    ap.add_argument("--csv", type=str, default="logs/breath.csv", help="Output CSV path")
-    ap.add_argument("--seed", type=int, default=0, help="Random seed")
-    ap.add_argument("--no-two-paths", action="store_true", help="Disable reversible options")
-    ap.add_argument("--no-consent", action="store_true", help="Disable consent flag")
+    ap = argparse.ArgumentParser(description="Breath-modulated resonance runner")
+    ap.add_argument("--preset", type=str, default="breath_flower", help="Preset name in presets.json")
+    ap.add_argument("--presets-file", type=str, default="sims/presets.json", help="Path to presets JSON")
     return ap.parse_args()
 
 def main():
     args = parse_args()
-    run_breath(
-        geometry=args.geometry,
-        rows=int(args.rows), cols=int(args.cols),
-        steps=int(args.steps), dt=float(args.dt),
-        period=float(args.period), inhale_ratio=float(args.inhale_ratio),
-        noise_std=float(args.noise_std),
-        csv_path=args.csv,
-        seed=int(args.seed),
-        offer_two_paths=(not args.no_two_paths),
-        consent_to_log=(not args.no_consent)
-    )
+    run_breath_preset(args.preset, args.presets_file)
 
 if __name__ == "__main__":
     main()
