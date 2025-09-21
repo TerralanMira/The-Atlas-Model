@@ -14,44 +14,60 @@ repo_url: https://github.com/terralanmira/The-Atlas-Model
 repo_name: The-Atlas-Model
 
 nav:
-  - Home: index.md
-  - Contributing: CONTRIBUTING.md
-  - Ethics: ETHICS.md
-  - Roadmap: docs/roadmap.md
-  - Docs:
-      - Awareness & Coherence:
-          - Overview: docs/awareness/index.md
-      - Field Layer:
-          - Overview: docs/field/index.md
-          - Layer 1: docs/field/layer1.md
-          - Layer 2: docs/field/layer2.md
-          - Layer 3: docs/field/layer3.md
-          - Layer 4: docs/field/layer4.md
-          - Layer 5: docs/field/layer5.md
-          - Layer 6: docs/field/layer6.md
-          - Layer 7: docs/field/layer7.md
-          - Layer 8: docs/field/layer8.md
-      - Applications:
-          - Overview: docs/applications/index.md
-          - Soul Equation: docs/applications/soul_equation.md
-          - Dual-Phase Dynamics: docs/applications/dual_phase.md
-          - Stress Tests: docs/applications/stress_tests.md
-      - Atlas:
-          - Model Specs: docs/atlas/specs.md
-          - Bridge: docs/atlas/bridge.md
-          - Linked Sims:
-              - Kuramoto–Schumann Hybrid: sims/kuramoto_schumann_hybrid.py
-              - LC Grid Modes: sims/lc_grid_modes.py
-              - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
-      - LLM:
-          - Overview: docs/llm/index.md
-          - Requirements: docs/llm/requirements.md
-          - System Prompt: llm/system/atlas_system_prompt.md
+  - Home: docs/index.md
+
+  - Atlas:
+      - Overview: docs/atlas/index.md
+      - Model Index: docs/atlas/Model_Index.md
+      - Conscious Choice: docs/atlas/conscious_choice.md
+      - Awareness Levels: docs/atlas/awareness_levels.md
+      - Bridge (Handshake): docs/atlas/bridge_handshake.md
+      - Resonant Reality Bridge: docs/atlas/ResonantReality_Bridge.md
+      - Scan: docs/atlas/scan.md
+
+  - Maps:
+      - Awareness: docs/awareness.md
+      - Coherence: docs/coherence.md
+      - Field Layers: docs/field_layers.md
+      - Applications: docs/applications.md
+      - Integration: docs/integration.md
+      - Vision: docs/vision.md
+      - Roadmap: docs/roadmap.md
+
+  - Field Layer:
+      - 01 — Ley Lines: docs/field/01_Ley_Lines.md
+      - 02 — Geomagnetic: docs/field/02_Geomagnetic.md
+      - 03 — Sacred Nodes: docs/field/03_Sacred_Nodes.md
+      - 04 — Axis Mundi: docs/field/04_Axis_Mundi.md
+      - 05 — Resonant Architecture: docs/field/05_Resonant_Architecture.md
+      - 06 — Cosmic Alignments: docs/field/06_Cosmic_Alignments.md
+      - 07 — Suppression & Rediscovery: docs/field/07_Suppression_Rediscovery.md
+      - 08 — The Whole Field: docs/field/08_The_Whole_Field.md
+
   - Sims:
       - Overview: docs/sims/index.md
-      - Kuramoto–Schumann Hybrid: sims/kuramoto_schumann_hybrid.py
-      - LC Grid Modes: sims/lc_grid_modes.py
-      - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
+      - Kuramoto–Schumann Hybrid: docs/sims/kuramoto_schumann_hybrid.md
+      - LC Grid Modes: docs/sims/lc_grid_modes.md
+      - Multi-Scale Kuramoto: docs/sims/multi_scale_kuramoto.md
+
+  - LLM:
+      - Overview: docs/llm/index.md
+      - Router Rules: docs/llm/router_rules.md
+      - Scorer Rules: docs/llm/scorer_rules.md
+      - System Persona: docs/llm/system_persona.md
+      - System Prompt: llm/system/atlas_system_prompt.md
+
+  - API & Spec:
+      - API Index: docs/api/index.md
+      - Resonance Interfaces: docs/spec/resonance_interfaces.md
+      - Infinity Equation: docs/spec/infinity_equation.md
+      - Might: docs/might/index.md
+      - Mind: docs/mind/index.md
+
   - Sessions:
       - Schema: sessions/schema.json
       - Example Log: sessions/example_log.json
+
+  - Meta:
+      - Contributing: docs/meta/CONTRIBUTING.md
+      - Ethics: docs/meta/ETHICS.md
