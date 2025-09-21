@@ -1,13 +1,19 @@
-# Dashboard (reading the hum)
+# Dashboard (Reading the Hum)
 
-**CSV columns from sims**
-- `R_total`, `R_inner`, `R_outer` — coherence at each scale
-- `C_cross` — inner↔outer alignment proxy (0..1)
+**CSV headers**  
+`step, t, R_total, R_inner, R_outer, C_cross, drift, Delta, Phi, choice_score`
 
-**Quick reads**
-- **Clamp risk**: R_total high *and* diversity low (you’ll feel it) *and* drift tiny.
-- **Gentle lift**: R_total↑ while steps are smooth; cross rises without Δ collapse.
+**How to read**
+- **R_total**: global order. High is not always good—watch diversity.
+- **C_cross**: inner↔outer alignment (0..1). Rising is good unless Δ collapses.
+- **Delta (Δ)**: phase entropy (diversity). Keep it alive.
+- **Phi (Φ)**: gentleness (lag-1 smoothness). Smooth change breathes.
+- **choice_score**: high order + alignment with low drift → risk of clamp; choose breath.
 
-**CLI helper**
+**Quick view**
 ```bash
 python dashboard/overlay_loader.py logs/multi_scale.csv
+# -> multi_scale.csv | R_total=0.612 | C_cross=0.585 | Δ=0.442 | Φ=0.731 | choice_score=0.634 | gentle lift
+Practice
+	•	If clamp risk: lower K_cross or add tiny noise (0.002–0.006).
+	•	If chaotic: raise K_inner slightly or slow the breath.
