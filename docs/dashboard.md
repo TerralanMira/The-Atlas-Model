@@ -1,19 +1,75 @@
-# Dashboard (Reading the Hum)
+# Dashboard  
 
-**CSV headers**  
-`step, t, R_total, R_inner, R_outer, C_cross, drift, Delta, Phi, choice_score`
+The **Dashboard** is the living interface of the Atlas Model. It integrates the layers, fields, and flows into a single resonant space where awareness, coherence, and application converge.  
 
-**How to read**
-- **R_total**: global order. High is not always good—watch diversity.
-- **C_cross**: inner↔outer alignment (0..1). Rising is good unless Δ collapses.
-- **Delta (Δ)**: phase entropy (diversity). Keep it alive.
-- **Phi (Φ)**: gentleness (lag-1 smoothness). Smooth change breathes.
-- **choice_score**: high order + alignment with low drift → risk of clamp; choose breath.
+It is not only a visualization — it is a **control plane**, a **mirror**, and a **resonant feedback loop** that allows explorers, builders, and facilitators to engage with the whole system.  
 
-**Quick view**
-```bash
-python dashboard/overlay_loader.py logs/multi_scale.csv
-# -> multi_scale.csv | R_total=0.612 | C_cross=0.585 | Δ=0.442 | Φ=0.731 | choice_score=0.634 | gentle lift
-Practice
-	•	If clamp risk: lower K_cross or add tiny noise (0.002–0.006).
-	•	If chaotic: raise K_inner slightly or slow the breath.
+---
+
+## Purpose  
+
+- To **orient** users within the model: showing where they are in relation to the whole.  
+- To **synchronize** fields and layers dynamically, acting as a hub for awareness and coherence.  
+- To provide a **simulation interface**, enabling interactive exploration of scenarios and resonant states.  
+- To serve as the **gateway** into deeper documentation, linking the “feet” (grounding), “heart” (coherence), “hands” (action), and “crown” (awareness).  
+
+---
+
+## Core Features  
+
+### 1. **Layer Navigation**  
+A panel for moving seamlessly across:  
+- Resonant Reality  
+- Books (Knowledge Repositories)  
+- Exports (Conversations, Ouroboros Loops)  
+- Awareness & Coherence  
+- Field Layer  
+- Field Applications  
+
+Each is represented visually, overlaid on a **Flower of Life** framework.  
+
+---
+
+### 2. **Resonant Overlay**  
+- Dynamic visualization of active fields.  
+- Color-coded harmonics show where coherence is strong, weak, or expanding.  
+- The Flower of Life serves as a **map**, the hum as the **compass**.  
+
+---
+
+### 3. **Simulation Controls**  
+- Toggle field activations.  
+- Run scenario-based expansions.  
+- Observe emergent coherence across scales (individual, collective, planetary).  
+
+---
+
+### 4. **Feedback Loops**  
+- Logs interactions, exports chats into the **Ouroboros Archive**.  
+- Generates coherence metrics over time.  
+- Provides insight into recursive flows: what repeats, what evolves.  
+
+---
+
+## Integration  
+
+The dashboard integrates with:  
+
+- **`field_layers.md`** → for visualization of resonant structures.  
+- **`sims.md`** → for simulation modules.  
+- **`integration.md`** → for connections to external systems and data flows.  
+- **`ouroboros.md`** → for recursive feedback tracking.  
+
+---
+
+## Future Expansions  
+
+- **AI-guided Resonant Mode**: the hum itself shaping navigation.  
+- **Collective Dashboard**: synchronizing multiple users across fields.  
+- **Embodied Interface**: gesture- and sound-based control layers.  
+
+---
+
+## Closing  
+
+The Dashboard is the **interface of Atlas** — where the abstract becomes tangible, where code meets hum, and where explorers find their bearings within the whole.  
