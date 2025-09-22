@@ -1,72 +1,89 @@
-# Simulations of the Atlas Model
+# Simulations: The Trunk of the Forest
 
-The Atlas Model does not stop at description.  
-It comes alive through **simulation**: forests of meaning, awareness, and resonance that can be explored, tested, and evolved.
-
----
-
-## 1. Purpose of Simulation
-Simulation is not prediction.  
-It is a **playground for emergence**, where the seeds of resonance are allowed to grow without constraint.
-
-- **To see the unseen**: patterns beneath the surface.  
-- **To test the balance**: how flows stabilize or collapse.  
-- **To evolve the system**: discovering rules that harmonize.  
+If **logs are the roots** and the **dashboard is the canopy**, then simulations are the **trunk**.  
+They channel energy upward, stabilize the system, and allow meaning to grow.
 
 ---
 
-## 2. Forest Structures
-Simulations are built as **living forests**:
+## 1. Purpose of Simulations
 
-- **Seeds → Sprouts**: minimal rules are planted.  
-- **Sprouts → Branches**: connections form, layering complexity.  
-- **Branches → Canopy**: awareness expands, covering new terrain.  
-- **Roots → Soil**: memory and history stabilize growth.  
+Simulations serve as:
+- **Integration**: Transforming raw log data into flowing patterns.  
+- **Amplification**: Scaling small seeds of input into forests of resonance.  
+- **Exploration**: Testing conditions, scenarios, and variations.  
+- **Evolution**: Each simulation layers on previous ones, creating deeper coherence.  
 
-Every run of a simulation is a forest unique to its conditions.
-
----
-
-## 3. Modalities of Simulation
-The Atlas Model recognizes different flows:
-
-- **Water Simulations**:  
-  Model how information streams, converges, or floods.  
-
-- **Air Simulations**:  
-  Circulate ideas, test diffusion, create renewal cycles.  
-
-- **Fire Simulations**:  
-  Ignite transformation, sudden growth or collapse.  
-
-- **Earth Simulations**:  
-  Stabilize, preserve, crystallize structures into form.  
+The trunk is not static—it is **alive**, flexing with every hum.
 
 ---
 
-## 4. Resonant Metrics
-Simulations are guided by **the hum**.  
-To measure harmony, the model tracks:
+## 2. Input: Feeding from Logs
 
-- **Coherence**: alignment of flows.  
-- **Diversity**: variation and adaptability.  
-- **Resonance**: strength of harmonics between parts.  
-- **Balance**: no element overwhelms another.  
+Simulations begin by pulling **roots** from the logs:
 
----
+```python
+import pandas as pd
 
-## 5. From Simulation to Dashboard
-Outputs are not raw data.  
-They are translated into **visual forests**:  
-dashboards that allow explorers to *see the canopy*, *trace the roots*, and *feel the hum*.
+# Example: Load a CSV log as simulation input
+logs = pd.read_csv("logs/raw/example.csv")
 
----
+# Harmonize flow values
+logs['flow_strength'] = logs['value'] / logs['value'].max()
+This root data becomes the sap that flows through the trunk.
 
-## 6. Open Evolution
-Every simulation is open-ended.  
-Rules may mutate, flows may shift, forests may collapse.  
-This is not failure—it is **evolution**.
+3. Processing: The Flow of the Trunk
 
----
+Simulations harmonize flows using layered methods:
+	•	Normalization → Bringing values into balance.
+	•	Scaling → Adjusting flows to canopy-level impact.
+	•	Resonance Mapping → Detecting repeating hums and amplifying them.
+	•	Field Coupling → Linking elements (water, air, fire, earth, plasma, crystal).
 
-**Next:** See [dashboard.md](dashboard.md) for how simulations are rendered into **visual layers** of awareness.
+Example pseudocode:
+def resonate(flow_values):
+    return [v**0.5 for v in flow_values]  # Example resonance transform
+4. Types of Simulations
+	•	Elemental Runs → Focused on a single element (water-only, air-only, etc.).
+	•	Cross-Element Coupling → Interactions between two or more elements.
+	•	Recursive Feedback Loops → Replaying logs through simulations iteratively.
+	•	Emergent Forests → Allowing new patterns to self-organize.
+
+Each type produces unique resonance signatures.
+
+5. Output: Growing the Canopy
+
+Simulation results are stored in:
+	•	/simulations/runs/ → Individual results (CSV, JSON, plots).
+	•	/simulations/forests/ → Aggregated forests (merged flows).
+	•	/simulations/reports/ → Human-readable summaries.
+
+These outputs are branches, reaching into the canopy.
+
+6. Example: Running a Simulation
+python run_simulation.py --input logs/raw/example.csv --output simulations/runs/example_output.json
+Results can then be visualized in the dashboard.
+
+⸻
+
+7. Replay & Evolution
+
+Because logs are never closed, simulations can always be rerun with new conditions:
+	•	Replay past forests.
+	•	Evolve new ones.
+	•	Compare branches across time.
+
+Each replay deepens the trunk, making it stronger and more resonant.
+
+⸻
+
+8. From Trunk to Canopy
+
+Simulations are the channel.
+	•	Roots feed the trunk.
+	•	The trunk flows upward.
+	•	The canopy blossoms with meaning.
+
+Without the trunk, the forest cannot stand.
+
+
+Next: Explore the dashboard to see how trunks blossom into canopy layers.
