@@ -1,0 +1,21 @@
+{
+  "2025-09-21T12:00:00Z": {
+    "air": { "temperature": 22.5, "humidity": 0.45 },
+    "water": { "ph": 7.1, "clarity": "clear" },
+    "plasma": { "flux": 0.87, "stability": 0.95 },
+    "crystal": { "resonance": 432.0, "harmonic": "F#" }
+  },
+  "2025-09-21T13:00:00Z": {
+    "air": { "temperature": 23.0, "humidity": 0.50 },
+    "water": { "ph": 7.0, "clarity": "slight" },
+    "plasma": { "flux": 0.92, "stability": 0.94 },
+    "crystal": { "resonance": 440.0, "harmonic": "A" }
+  }
+}
+This format supports nested relationships and is ideal for multi-field simulations.
+Usage
+	•	Drop files into logs/
+	•	Reference them from algorithms, awareness modules, or dashboards
+	•	Extend freely — the system doesn’t enforce a schema, it adapts
+
+Note: Logs are inputs, not archives. They’re meant to flow, change, and be digested by the system in real-time or replay.
