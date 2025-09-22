@@ -1,68 +1,87 @@
 site_name: The Atlas Model
-site_description: Fractal resonance, coherence, and conscious choice through The Atlas Model
-site_author: Atlas Collective
-repo_url: https://github.com/terralanmira/The-Atlas-Model
-repo_name: The-Atlas-Model
-
+site_url: https://the-atlas-model.org
+repo_url: https://github.com/TerralanMira/The-Atlas-Model
 theme:
   name: material
   features:
-    - navigation.tabs
+    - navigation.instant
+    - navigation.sections
     - navigation.expand
+    - toc.integrate
     - content.code.copy
-    - content.action.edit
+    - content.code.annotate
+  palette:
+    - scheme: default
+      primary: teal
+      accent: cyan
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+nav:
+  - Home: index.md
+  - Dashboard: dashboard.md
+  - Integration: integration.md
+  - Resonant Reality:
+      - Overview: resonant_reality/overview.md
+      - Layers: resonant_reality/layers.md
+      - Harmonics: resonant_reality/harmonics.md
+  - Awareness & Coherence:
+      - Awareness: awareness_coherence/awareness.md
+      - Coherence: awareness_coherence/coherence.md
+  - Field Layers:
+      - Overview: field_layers.md
+      - Water: field_layers/water.md
+      - Air: field_layers/air.md
+      - Fire & Plasma: field_layers/plasma.md
+      - Crystals: field_layers/crystals.md
+  - Field Applications:
+      - Healing: field_applications/healing.md
+      - Communication: field_applications/communication.md
+      - Energy Systems: field_applications/energy.md
+      - Simulations: field_applications/simulations.md
+  - Algorithms:
+      - Overview: algorithms/overview.md
+      - Self-Learning Networks: algorithms/self_learning.md
+      - Water-Air Dynamics: algorithms/water_air.md
+      - Plasma: algorithms/plasma.md
+      - Crystals: algorithms/crystals.md
+      - Simulations: algorithms/simulations.md
+  - Seeds:
+      - Seed 1 – Origins: seeds/origins.md
+      - Seed 2 – Coherence: seeds/coherence.md
+      - Seed 3 – Expansion: seeds/expansion.md
+      - Seed 4 – Applications: seeds/applications.md
+      - Seed 5 – Future: seeds/future.md
+  - Books:
+      - Book I: books/book1.md
+      - Book II: books/book2.md
+      - Book III: books/book3.md
+  - Exports:
+      - Models: exports/models.md
+      - Simulations: exports/simulations.md
+      - Visuals: exports/visuals.md
+
+plugins:
+  - search
+  - mkdocstrings
+  - autorefs
+  - macros
 
 markdown_extensions:
   - admonition
   - toc:
       permalink: true
-  - footnotes
-  - def_list
-  - attr_list
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed
+  - pymdownx.arithmatex:
+      generic: true
 
-nav:
-  - Home: docs/index.md
-  - Atlas (Whole):
-      - Whole: docs/atlas_whole.md
-      - Bridge: docs/bridge.md
-      - Design: docs/atlas_design.md
-      - Mind: docs/atlas_mind.md
-      - Heart: docs/atlas_heart.md
-      - Hands: docs/atlas_hands.md
-      - Feet: docs/atlas_feet.md
-      - Might: docs/atlas_might.md
-      - Field: docs/atlas_field.md
-      - Atlas Index: docs/atlas/Model_Index.md
-  - Awareness:
-      - Overview: docs/awareness/awareness_index.md
-      - R Growth: docs/awareness/R_Growth.md
-      - Harmonic Slip: docs/awareness/Harmonic_Slip_Template.md
-      - Schematics: docs/awareness/Atlas_3_Schematics.md
-  - Coherence: docs/coherence.md
-  - Field Layers:
-      - Overview: docs/field_layers.md
-      - Flower of Life: docs/atlas/ResonantReality_Bridge.md
-      - LC Grid Modes: sims/lc_grid_modes.py
-  - Applications:
-      - Soul in Field: docs/applications/Soul_in_Field.md
-      - Dual Phase Field: docs/applications/Dual_Phase_Field.md
-      - Stress Tests: docs/applications/Stress_Tests.md
-  - Sims:
-      - Kuramoto–Schumann Hybrid: sims/kuramoto_schumann_hybrid.py
-      - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.py
-      - LC Grid Modes: sims/lc_grid_modes.py
-  - Equations: docs/equations.md
-  - Dashboard: docs/dashboard.md
-  - LLM:
-      - Roles & Prompts: llm/roles_prompts.md
-      - Router Rules: llm/router_rules.md
-      - Scorer Rules: llm/scorer_rules.md
-      - System Prompt: llm/system/atlas_system_prompt.md
-  - Sessions:
-      - Schema: sessions/schema.json
-      - Example Log: sessions/example_log.json
-  - API:
-      - Overview: docs/api/index.md
-  - Spec:
-      - Resonance Interfaces: docs/spec/resonance_interfaces.md
-      - Infinity Equation: docs/spec/infinity_equation.md
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/TerralanMira/The-Atlas-Model
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/terralanmira
