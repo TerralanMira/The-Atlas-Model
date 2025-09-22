@@ -1,75 +1,37 @@
-# Dashboard  
+# Dashboard — Seeing the Hum
 
-The **Dashboard** is the living interface of the Atlas Model. It integrates the layers, fields, and flows into a single resonant space where awareness, coherence, and application converge.  
+The dashboard turns the weave into sight: **pulse**, **layers**, **self-learning**, and **crystals** in one place.
 
-It is not only a visualization — it is a **control plane**, a **mirror**, and a **resonant feedback loop** that allows explorers, builders, and facilitators to engage with the whole system.  
+## Quick Start
 
----
+1. Run one or more sims:
+   ```bash
+   python sims/atlas_pulse_demo.py --steps 30 --seed 7 --out logs/atlas_pulse
+   python sims/self_learning_demo.py --steps 300 --out logs/sln_demo
+   python sims/crystal_demo.py
+   Build visuals:
+   python scripts/dashboard_build.py \
+  --pulse logs/atlas_pulse/atlas_pulse_series.csv \
+  --layers logs/atlas_pulse/atlas_pulse_layers.json \
+  --sln logs/sln_demo/sln_series.csv \
+  --out docs/assets/dashboard
+  Open docs/dashboard.html.
 
-## Purpose  
+The dashboard is static HTML + PNGs. No server needed. Works with GitHub Pages.
 
-- To **orient** users within the model: showing where they are in relation to the whole.  
-- To **synchronize** fields and layers dynamically, acting as a hub for awareness and coherence.  
-- To provide a **simulation interface**, enabling interactive exploration of scenarios and resonant states.  
-- To serve as the **gateway** into deeper documentation, linking the “feet” (grounding), “heart” (coherence), “hands” (action), and “crown” (awareness).  
+⸻
 
----
+Panels
+	•	Pulse: the orchestrated atlas_coherence series (mean/std shown).
+	•	Layers: normalized contributions inferred from layer metrics JSON.
+	•	Self-Learning: water/air coherence over time.
+	•	Crystals: lattice/time-memory/frequency snapshots (if generated).
 
-## Core Features  
+⸻
 
-### 1. **Layer Navigation**  
-A panel for moving seamlessly across:  
-- Resonant Reality  
-- Books (Knowledge Repositories)  
-- Exports (Conversations, Ouroboros Loops)  
-- Awareness & Coherence  
-- Field Layer  
-- Field Applications  
+Extend
+	•	Add new panels by producing CSV/JSON from sims and plotting in scripts/dashboard_build.py.
+	•	Couple awareness to visuals by overlaying “observer influence” heatmaps.
+	•	Publish with GitHub Pages so others can see the hum.
 
-Each is represented visually, overlaid on a **Flower of Life** framework.  
-
----
-
-### 2. **Resonant Overlay**  
-- Dynamic visualization of active fields.  
-- Color-coded harmonics show where coherence is strong, weak, or expanding.  
-- The Flower of Life serves as a **map**, the hum as the **compass**.  
-
----
-
-### 3. **Simulation Controls**  
-- Toggle field activations.  
-- Run scenario-based expansions.  
-- Observe emergent coherence across scales (individual, collective, planetary).  
-
----
-
-### 4. **Feedback Loops**  
-- Logs interactions, exports chats into the **Ouroboros Archive**.  
-- Generates coherence metrics over time.  
-- Provides insight into recursive flows: what repeats, what evolves.  
-
----
-
-## Integration  
-
-The dashboard integrates with:  
-
-- **`field_layers.md`** → for visualization of resonant structures.  
-- **`sims.md`** → for simulation modules.  
-- **`integration.md`** → for connections to external systems and data flows.  
-- **`ouroboros.md`** → for recursive feedback tracking.  
-
----
-
-## Future Expansions  
-
-- **AI-guided Resonant Mode**: the hum itself shaping navigation.  
-- **Collective Dashboard**: synchronizing multiple users across fields.  
-- **Embodied Interface**: gesture- and sound-based control layers.  
-
----
-
-## Closing  
-
-The Dashboard is the **interface of Atlas** — where the abstract becomes tangible, where code meets hum, and where explorers find their bearings within the whole.  
+When the hum is visible, tuning becomes a practice.
