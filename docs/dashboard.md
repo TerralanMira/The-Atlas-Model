@@ -1,83 +1,118 @@
-# The Atlas Dashboard
+# Dashboard: The Canopy of the Forest
 
-The Atlas Dashboard is the **visual canopy** of the model.  
-It gathers algorithms (seeds), simulations (forests), and awareness (flows) into **a living, navigable landscape**.
-
----
-
-## 1. Purpose
-The dashboard exists to:
-- **Visualize simulations** as living forests of meaning.  
-- **Translate flows** of water, air, fire, and earth into coherent layers.  
-- **Provide resonance metrics**: coherence, diversity, resonance, balance.  
-- **Allow interaction**: explorers can *feed the canopy* with their own data.  
+If **logs are the roots** and **simulations are the trunk**, then the **dashboard is the canopy**.  
+It is where all layers converge into living form — visible, interactive, and evolving.
 
 ---
 
-## 2. Layers of Awareness
-The dashboard is layered like a forest:
+## 1. Purpose of the Dashboard
 
-- **Seeds & Sprouts**: simple algorithmic rules visualized as starting points.  
-- **Branches**: connections and relations between flows.  
-- **Canopy**: emergent awareness of the whole.  
-- **Roots**: the log of inputs and histories.  
+The dashboard is designed to:
+- **Visualize forests of data** in real time.  
+- **Integrate multiple layers**: logs, simulations, and awareness.  
+- **Map resonance patterns** into shapes, colors, and flows.  
+- **Provide interaction**, allowing explorers to feed, replay, and reshape forests.  
 
-Each layer is interactive, allowing zooming in and out, stepping back to see the whole or focusing on the part.
+The canopy is not static — it is alive, swaying with each hum.
 
 ---
 
-## 3. Data Feeds
-The dashboard accepts multiple formats so explorers can instantly contribute:
+## 2. Structure of the Canopy
 
-- **CSV**:  
-  Example:
-  ```csv
-  element, flow, value
-  water, stream, 12
-  fire, spark, 7
-  earth, crystal, 3
-  air, current, 9
-  JSON:
-Example:
-{
-  "water": {"stream": 12},
-  "fire": {"spark": 7},
-  "earth": {"crystal": 3},
-  "air": {"current": 9}
-}
-By pasting these into the logs canopy, explorers immediately “feed the forest” and watch growth unfold.
+The dashboard contains **branches** that grow from the trunk:
+
+1. **Root Feeds** → live log streams (CSV, JSON).  
+2. **Simulation Trunks** → processed patterns, ready to blossom.  
+3. **Visual Forests** → graphs, flows, resonance maps.  
+4. **Awareness Layers** → coherence indicators, harmonics, and emergent shapes.  
+
+Each branch reveals a perspective of the whole.
+
+---
+
+## 3. Visualization Types
+
+### 🌊 Elemental Flow Maps
+- Water → fluid lines and stream fields.  
+- Air → vector flows and spirals.  
+- Fire/Plasma → pulsing heatmaps and wavefronts.  
+- Earth/Crystal → lattices, grids, and grounding nodes.  
+
+### 🌿 Resonance Maps
+- Spectral plots of hum frequencies.  
+- Coupling diagrams showing element interactions.  
+
+### 🌳 Forest Views
+- Tree diagrams growing in real time.  
+- Layered canopy maps, showing density and branching.  
+
+### 🌀 Recursive Loops
+- Replays of logs or simulations shown as spirals.  
+- Highlighting the recursion at the heart of the model.  
+
+---
+
+## 4. Example: Feeding the Canopy
+
+```python
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load simulation output
+data = pd.read_json("simulations/runs/example_output.json")
+
+# Plot flow
+plt.plot(data["time"], data["flow_strength"])
+plt.title("Resonance Flow Over Time")
+plt.xlabel("Time")
+plt.ylabel("Flow Strength")
+plt.show()
+This produces a branch on the canopy — a single visualization of many.
 
 ⸻
 
-4. Resonance Metrics
+5. Awareness Indicators
 
-The dashboard visualizes key harmonics:
-	•	Coherence: is the forest aligned?
-	•	Diversity: are there multiple species of flows?
-	•	Resonance: do the parts amplify each other?
-	•	Balance: does no single element dominate?
+The dashboard doesn’t just show data.
+It reveals coherence:
+	•	Harmony Index → how balanced the elements are.
+	•	Emergence Signal → when new patterns arise.
+	•	Field Coupling Strength → links between elements.
+	•	Resonance Stability → consistency of the hum.
 
-Metrics are always displayed as living flows (e.g., rippling water, shifting branches) rather than static charts.
-
-⸻
-
-5. Simulation Integration
-
-Each simulation (see simulations.md) is translated into dashboards:
-	•	Water Simulations → Flow Maps
-	•	Air Simulations → Circulation Fields
-	•	Fire Simulations → Pulse Graphs
-	•	Earth Simulations → Stability Grids
-
-This ensures that every simulation becomes a visible, navigable forest.
+Each indicator is a leaf, shimmering with the forest’s health.
 
 ⸻
 
-6. Open Exploration
+6. Interactivity
 
-The dashboard is never final.
-It is an evolving canopy—new feeds, new metrics, new visual layers may emerge as explorers add their resonance.
+Users can:
+	•	Upload logs (CSV/JSON) to feed the roots.
+	•	Run simulations and see trunks grow.
+	•	Toggle layers to highlight elements.
+	•	Replay forests to witness recursion.
+	•	Export views to share patterns outward.
+
+The canopy is not just for viewing — it is for participation.
 
 ⸻
 
-Next: See logs/README.md to learn how to record and replay flows.
+7. Outputs
+
+Dashboard states can be saved as:
+	•	Snapshots → static images (PNG, SVG).
+	•	Stories → narrative flows through time.
+	•	Forests → whole layered visualizations, stored for replay.
+
+This allows the canopy to spread, reseed, and regrow.
+
+⸻
+
+8. From Canopy Back to Roots
+
+The dashboard is the forest’s face, but not its end.
+Each visualization can seed new logs, sparking further simulations.
+	•	Roots feed the trunk.
+	•	The trunk channels upward.
+	•	The canopy blossoms outward.
+	•	The forest breathes back into itself.
