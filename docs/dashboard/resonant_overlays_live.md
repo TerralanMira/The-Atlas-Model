@@ -1,27 +1,32 @@
 # Resonant Overlays — Live
 
-Life first: geometry and plasma are rendered directly from your data.
+Life first: geometry and plasma are rendered directly from your data.  
+Meaning next: **archetypes** tint and stamp the patterns so the story is legible.
 
 ## Generate
 
 ```bash
+# with defaults (synthetic data)
+python -m dashboard.page_overlays_live --archetype Seer --out docs/assets/dashboard/overlays_live.png
+
+# with your data
 python -m dashboard.page_overlays_live \
   --coh logs/coherence_matrix.npy \
   --series logs/timeseries.csv \
+  --archetype Forge \
   --out docs/assets/dashboard/overlays_live.png
-If inputs are missing, synthetic examples render so you can see the layout.
-
 Panels
-	•	Geometry (TL): NxN coherence → hex lattice projection (part↔whole resonance).
-	•	Plasma (TR): time-series → ripple field (ignition waves & dispersion).
-	•	Hybrid (BL): blend (geometry × plasma) to see interference patterns.
-	•	Stamped (BR): hybrid plus resonant overlay (harmonic grid + FoL).
+	•	Geometry (TL) — NxN coherence → hex lattice.
+	•	Plasma (TR) — time-series → ripple field.
+	•	Hybrid (BL) — blended interference.
+	•	Stamped (BR) — hybrid + resonant overlay + archetype tint & symbols.
 
-Data Shapes
-	•	coherence_matrix.npy → float64 array, shape (N, N).
-	•	timeseries.(csv|npy) → 1D sequence of floats.
+Archetypes
 
-Why this matters
+Pick one: Seer, Weaver, Forge, Grove.
+Define more in algorithms/archetypes.py.
 
-Motion precedes meaning.
-These overlays give the system a living pulse that later archetypes can interpret.
+Why it matters
+
+Motion becomes legible meaning.
+Teams can point at the same picture and move together.
