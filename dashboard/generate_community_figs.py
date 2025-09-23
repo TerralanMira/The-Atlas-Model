@@ -1,10 +1,12 @@
-Generate dashboard figures for the multilayer community resonance simulation.
+"""
+Generate dashboard figures for multilayer community resonance.
 
-- Runs sims/multilayer_resonance.simulate(preset)
-- Computes global and group resonance, resource stats, and phase gaps
-- Saves PNG plots to dashboard/out (or --outdir)
+Now includes:
+- env phase trace
+- resource time series (mean +/- band)
+- before/after comparison around first intervention
 
-Matplotlib only; no seaborn, no styles set.
+Matplotlib only; no seaborn, no styles.
 """
 
 import argparse
@@ -13,7 +15,6 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Local imports without installing as package
 try:
     from sims.multilayer_resonance import simulate
 except Exception:
@@ -22,7 +23,6 @@ except Exception:
     from sims.multilayer_resonance import simulate
 
 def complex_R(phases_row):
-    """|R| for one time slice (array of phases)."""
     return np.abs(np.mean(np.exp(1j * phases_row)))
 
 def group_indices(groups):
@@ -32,19 +32,15 @@ def group_indices(groups):
     return by
 
 def mean_abs_phase_gap(phases_row, idx_a, idx_b):
-    """Mean absolute wrapped phase gap between two groups at a timestep."""
     if len(idx_a) == 0 or len(idx_b) == 0:
         return np.nan
     a = np.mean(np.exp(1j * phases_row[idx_a]))
     b = np.mean(np.exp(1j * phases_row[idx_b]))
-    # gap between mean phases
     gap = np.angle(a) - np.angle(b)
-    # wrap to [-pi, pi]
     gap = np.arctan2(np.sin(gap), np.cos(gap))
     return np.abs(gap)
 
 def draw_interventions(ax, interventions, steps):
-    """Shade intervention windows on a time axis [0..steps)."""
     if not interventions:
         return
     for iv in interventions:
@@ -58,7 +54,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--preset", type=str, default="multilayer_demo")
     p.add_argument("--presets_path", type=str, default=str(Path(__file__).with_name("../sims/presets.json")))
-    p.add_argument("--steps", type=int, default=None, help="override steps (optional)")
+    p.add_argument("--steps", type=int, default=None)
     p.add_argument("--outdir", type=str, default=str(Path(__file__).with_name("out")))
     args = p.parse_args()
 
@@ -67,57 +63,25 @@ def main():
         presets = json.load(f)
     if args.preset not in presets:
         raise KeyError(f"Preset '{args.preset}' not found in {presets_path}")
+    preset = presets[argspreset] if False else presets[args.preset]  # keep lints happy
 
-    preset = presets[args.preset]
     if args.steps is not None:
         preset = dict(preset)
         preset["steps"] = int(args.steps)
 
-    # keep groups & interventions for plotting overlays
-    groups = preset.get("groups", None)
-    interventions = preset.get("interventions", [])
-
-    # run simulation
     result = simulate(preset)
     TH_comm = result["community_layer_phases"]  # (T, N)
+    r_hist = result.get("r_history", None)
+    env_phase = result.get("env_phase", None)
+    interventions = result.get("interventions", [])
+    groups = result.get("groups", None)
     steps, N = TH_comm.shape
-
-    # compute global R(t)
-    R = np.array([complex_R(TH_comm[t]) for t in range(steps)])
-
-    # compute per-group R_g(t) if groups present
-    group_R = {}
-    idx_map = {}
-    if groups is not None and len(groups) == N:
-        idx_map = group_indices(groups)
-        for g, idxs in idx_map.items():
-            grp_curve = []
-            for t in range(steps):
-                grp_curve.append(complex_R(TH_comm[t, idxs]))
-            group_R[g] = np.array(grp_curve)
-
-    # compute phase gaps if at least two groups
-    gaps_curve = None
-    if len(idx_map) >= 2:
-        # order groups deterministically by name
-        group_names = sorted(idx_map.keys())
-        # average absolute gap across all unique pairs
-        all_pairs = []
-        for i in range(len(group_names)):
-            for j in range(i+1, len(group_names)):
-                all_pairs.append((group_names[i], group_names[j]))
-        gaps = []
-        for t in range(steps):
-            vals = []
-            for ga, gb in all_pairs:
-                vals.append(mean_abs_phase_gap(TH_comm[t], idx_map[ga], idx_map[gb]))
-            gaps.append(np.nanmean(vals))
-        gaps_curve = np.array(gaps)
 
     outdir = Path(args.outdir).resolve()
     outdir.mkdir(parents=True, exist_ok=True)
 
-    # 1) Global R(t)
+    # Global R(t)
+    R = np.array([complex_R(TH_comm[t]) for t in range(steps)])
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(R)
@@ -129,11 +93,15 @@ def main():
     fig.savefig(outdir / "resonance_over_time.png", dpi=160)
     plt.close(fig)
 
-    # 2) Group curves
-    if group_R:
+    # Groups
+    idx_map = {}
+    if groups is not None and len(groups) == N:
+        for i, g in enumerate(groups):
+            idx_map.setdefault(g, []).append(i)
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        for g, curve in sorted(group_R.items()):
+        for g, idxs in sorted(idx_map.items()):
+            curve = [complex_R(TH_comm[t, idxs]) for t in range(steps)]
             ax.plot(curve, label=str(g))
         draw_interventions(ax, interventions, steps)
         ax.set_xlabel("Time")
@@ -144,11 +112,18 @@ def main():
         fig.savefig(outdir / "group_resonance.png", dpi=160)
         plt.close(fig)
 
-    # 3) Phase gaps
-    if gaps_curve is not None:
+    # Phase gaps (avg across all pairs)
+    if len(idx_map) >= 2:
+        names = sorted(idx_map.keys())
+        pairs = [(names[i], names[j]) for i in range(len(names)) for j in range(i+1, len(names))]
+        gaps = []
+        for t in range(steps):
+            vals = [mean_abs_phase_gap(TH_comm[t], idx_map[a], idx_map[b]) for a, b in pairs]
+            gaps.append(np.nanmean(vals))
+        gaps = np.array(gaps)
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(gaps_curve)
+        ax.plot(gaps)
         draw_interventions(ax, interventions, steps)
         ax.set_xlabel("Time")
         ax.set_ylabel("Mean Phase Gap |Δψ|")
@@ -157,28 +132,59 @@ def main():
         fig.savefig(outdir / "phase_gaps.png", dpi=160)
         plt.close(fig)
 
-    # 4) Resource health — we only have final mean from simulate; for a plot,
-    # we can approximate by re-running shorter windows or extend simulator to return r(t).
-    # For now: render a placeholder bar using final mean so the panel exists.
-    final_r_mean = result.get("final_resources_mean", None)
-    if final_r_mean is not None:
+    # Environment phase
+    if env_phase is not None:
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.bar([0], [final_r_mean])
-        ax.set_xticks([0])
-        ax.set_xticklabels(["final mean r"])
-        ax.set_ylim(0, 1)
-        ax.set_ylabel("Resource Level")
-        ax.set_title("Resource Health (Final Mean)")
+        ax.plot(env_phase)
+        draw_interventions(ax, interventions, steps)
+        ax.set_xlabel("Time")
+        ax.set_ylabel("φ_env(t) [rad]")
+        ax.set_title("Environment Phase Over Time")
         fig.tight_layout()
-        fig.savefig(outdir / "resource_health.png", dpi=160)
+        fig.savefig(outdir / "environment_phase.png", dpi=160)
         plt.close(fig)
 
-    # Console summary: handy for quick read
+    # Resource time series (mean ± band)
+    if r_hist is not None:
+        mean_r = np.mean(r_hist, axis=1)
+        std_r = np.std(r_hist, axis=1)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(mean_r)
+        ax.fill_between(np.arange(len(mean_r)), mean_r - std_r, mean_r + std_r, alpha=0.15)
+        draw_interventions(ax, interventions, steps)
+        ax.set_xlabel("Time")
+        ax.set_ylabel("Resource level r(t)")
+        ax.set_title("Resource Health Over Time (mean ± std)")
+        fig.tight_layout()
+        fig.savefig(outdir / "resource_over_time.png", dpi=160)
+        plt.close(fig)
+
+    # Before/After comparator around first intervention (if windows available)
+    windows = result.get("windows", None)
+    if windows is not None:
+        pre = slice(windows["pre"][0], windows["pre"][1])
+        post = slice(windows["post"][0], windows["post"][1])
+        R_pre = R[pre].mean() if pre.stop > pre.start else np.nan
+        R_post = R[post].mean() if post.stop > post.start else np.nan
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.bar([0, 1], [R_pre, R_post])
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(["pre", "post"])
+        ax.set_ylim(0, 1)
+        ax.set_ylabel("Mean R")
+        ax.set_title("Before / After (first intervention)")
+        fig.tight_layout()
+        fig.savefig(outdir / "before_after_intervention.png", dpi=160)
+        plt.close(fig)
+
+    # Console summary
     print("Saved figures to:", outdir)
     print("Global R(t): min={:.3f}  max={:.3f}  mean={:.3f}".format(R.min(), R.max(), R.mean()))
-    if group_R:
-        for g, curve in sorted(group_R.items()):
-            print(f"  {g:>10s}  mean R={curve.mean():.3f}  max={curve.max():.3f}")
-    if gaps_curve is not None:
-        print("Mean |Δψ| over time:", np.nanmean(gaps_curve))
+    if len(idx_map) >= 1:
+        for g, idxs in sorted(idx_map.items()):
+            curve = [complex_R(TH_comm[t, idxs]) for t in range(steps)]
+            print(f"  {g:>10s}  mean R={np.mean(curve):.3f}  max={np.max(curve):.3f}")
