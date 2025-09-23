@@ -1,68 +1,49 @@
 site_name: The Atlas Model
-site_description: Resonance engine for civic coherence — equations, signals, simulations, and practice.
-site_url: https://terralanmira.github.io/The-Atlas-Model
-repo_name: TerralanMira/The-Atlas-Model
-repo_url: https://github.com/TerralanMira/The-Atlas-Model
 theme:
   name: material
   features:
     - navigation.tabs
-    - navigation.top
-    - navigation.instant
-    - content.code.copy
+    - navigation.sections
+    - navigation.expand
     - toc.integrate
     - search.suggest
     - search.highlight
-  palette:
-    - scheme: slate
-      primary: indigo
-      accent: amber
-markdown_extensions:
-  - admonition
-  - footnotes
-  - md_in_html
-  - toc:
-      permalink: true
-  - pymdownx.details
-  - pymdownx.critic
-  - pymdownx.highlight
-  - pymdownx.superfences
-  - pymdownx.snippets
+
 nav:
   - Home: index.md
-  - Atlas:
-      - Overview: atlas/overview.md
-      - ResonantReality Bridge: atlas/ResonantReality_Bridge.md
-      - System Prompt (LLM): llm/atlas_system_prompt.md
-  - Layers:
-      - Awareness: awareness.md
-      - Coherence Metrics: coherence.md
-      - Field Layers (whole view): field_layers.md
-      - Integration (flows): integration.md
-      - Integration Layer (evolved): integration_layer.md
-      - Practice Layer: practice_layer.md
-      - Synthesis Layer: synthesis_layer.md
-      - Synthesis Patterns: synthesis_patterns.md
-  - Applications:
-      - Ecology: applications/ecology.md
-      - Health: applications/health.md
-      - Community: applications/community.md
-      - City: applications/city.md
-  - Sims:
-      - Running Sims: sims/index.md
-      - Multi-Scale Kuramoto: sims/multi_scale_kuramoto.md
-      - Presets (JSON): sims/presets.md
-  - Dashboard:
-      - Visual Layers: dashboard.md
-      - Logs & Canopy: logs/README.md
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/TerralanMira/The-Atlas-Model
-plugins:
-  - search
-  - mkdocs_material
-watch:
-  - docs
-  - algorithms
-  - sims
+  - Resonant Reality: docs/resonant_reality.md
+  - Books: docs/books.md
+  - Awareness & Coherence:
+      - Awareness: docs/awareness.md
+      - Coherence: docs/coherence.md
+  - Field Layer:
+      - Overview: docs/field_layer.md
+      - Water: docs/water.md
+      - Air: docs/air.md
+      - Fire & Plasma: docs/fire_plasma.md
+      - Crystals: docs/crystals.md
+  - Field Applications:
+      - Overview: docs/field_applications.md
+      - Ecology: docs/ecology.md
+      - Health: docs/health.md
+      - Community: docs/community.md
+      - Algorithms & Simulations: docs/simulations.md
+  - Synthesis:
+      - Synthesis Layer: docs/synthesis_layer.md
+      - Synthesis Patterns: docs/synthesis_patterns.md
+  - Practice:
+      - Practice Layer: docs/practice_layer.md
+      - Integration: docs/integration.md
+      - Integration Layer: docs/integration_layer.md
+  - Convergence: docs/convergence.md
+  - Emergence: docs/emergence_layer.md
+  - Dashboard: docs/dashboard.md
+  - Logs: docs/logs.md
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
