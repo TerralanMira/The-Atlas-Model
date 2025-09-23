@@ -1,87 +1,92 @@
 site_name: The Atlas Model
-site_url: https://the-atlas-model.org
-repo_url: https://github.com/TerralanMira/The-Atlas-Model
+site_description: "Signal → Meaning → Form → Story → Action → Feedback → Integration → Meta-Coherence — a living, resonant model."
+site_url: ""
+repo_url: "https://github.com/TerralanMira/The-Atlas-Model"
+repo_name: "TerralanMira/The-Atlas-Model"
+copyright: "© The Atlas Model"
+
 theme:
   name: material
+  language: en
   features:
     - navigation.instant
     - navigation.sections
-    - navigation.expand
+    - navigation.tracking
+    - navigation.top
     - toc.integrate
     - content.code.copy
-    - content.code.annotate
+    - content.action.edit
   palette:
     - scheme: default
-      primary: teal
-      accent: cyan
-  font:
-    text: Roboto
-    code: Roboto Mono
-
-nav:
-  - Home: index.md
-  - Dashboard: dashboard.md
-  - Integration: integration.md
-  - Resonant Reality:
-      - Overview: resonant_reality/overview.md
-      - Layers: resonant_reality/layers.md
-      - Harmonics: resonant_reality/harmonics.md
-  - Awareness & Coherence:
-      - Awareness: awareness_coherence/awareness.md
-      - Coherence: awareness_coherence/coherence.md
-  - Field Layers:
-      - Overview: field_layers.md
-      - Water: field_layers/water.md
-      - Air: field_layers/air.md
-      - Fire & Plasma: field_layers/plasma.md
-      - Crystals: field_layers/crystals.md
-  - Field Applications:
-      - Healing: field_applications/healing.md
-      - Communication: field_applications/communication.md
-      - Energy Systems: field_applications/energy.md
-      - Simulations: field_applications/simulations.md
-  - Algorithms:
-      - Overview: algorithms/overview.md
-      - Self-Learning Networks: algorithms/self_learning.md
-      - Water-Air Dynamics: algorithms/water_air.md
-      - Plasma: algorithms/plasma.md
-      - Crystals: algorithms/crystals.md
-      - Simulations: algorithms/simulations.md
-  - Seeds:
-      - Seed 1 – Origins: seeds/origins.md
-      - Seed 2 – Coherence: seeds/coherence.md
-      - Seed 3 – Expansion: seeds/expansion.md
-      - Seed 4 – Applications: seeds/applications.md
-      - Seed 5 – Future: seeds/future.md
-  - Books:
-      - Book I: books/book1.md
-      - Book II: books/book2.md
-      - Book III: books/book3.md
-  - Exports:
-      - Models: exports/models.md
-      - Simulations: exports/simulations.md
-      - Visuals: exports/visuals.md
+      primary: indigo
+      accent: indigo
+  icon:
+    repo: fontawesome/brands/github
 
 plugins:
   - search
-  - mkdocstrings
-  - autorefs
-  - macros
+  - mermaid2
+  - git-revision-date-localized:
+      fallback_to_build_date: true
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
   - toc:
       permalink: true
-  - pymdownx.highlight
-  - pymdownx.superfences
   - pymdownx.details
-  - pymdownx.tabbed
-  - pymdownx.arithmatex:
-      generic: true
+  - pymdownx.emoji
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/TerralanMira/The-Atlas-Model
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/terralanmira
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
+  - javascripts/mermaid-init.js
+
+nav:
+  - Home: index.md
+
+  - Foundations:
+      - Awareness: awareness.md
+      - Coherence: coherence.md
+      - Field Layers: field_layers.md
+      - Applications (Overview): applications.md
+
+  - Meaning-Making:
+      - Translation (Signal → Meaning): translation.md
+      - Visualization (Meaning → Form): visualization.md
+      - Narrative (Form → Story): narrative.md
+
+  - Praxis:
+      - Action (Story → Practice): action.md
+      - Feedback (Closing the Loop): feedback.md
+      - Integration (Concept): integration.md
+      - Integration Layer (Operational): integration_layer.md
+
+  - Evolution:
+      - Meta-Coherence (Awareness of Awareness): meta_coherence.md
+      - Atlas as Organism: atlas_as_organism.md
+      - Embodiment Layer: embodiment_layer.md
+      - Practice Layer: practice_layer.md
+      - Transcendence & Grounding: transcendence_grounding.md
+      - Transcendence Layer: transcendence_layer.md
+
+  - Interfaces:
+      - Dashboard: dashboard.md
+      - Logs (Feed the Canopy): logs/README.md
+
+  - LLM:
+      - Atlas System Prompt: llm/atlas_system_prompt.md
