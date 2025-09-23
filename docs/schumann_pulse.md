@@ -1,54 +1,76 @@
-# Schumann Pulse — Background Rhythm & Entrainment
+# Schumann Pulse
 
-The Schumann pulse in Atlas is the canonical background rhythm:  
-a low-frequency carrier that other flows may entrain to, measure against, or diverge from.  
-It is both a **metric** and a **scaffold** for coherence.
-
----
-
-## Why it matters
-- Provides a consistent temporal reference across simulations and logs.  
-- Allows measurement of entrainment: how closely fields (water, air, plasma, crystal) lock to a shared rhythm.  
-- Makes coherence visible as phase-locking, amplitude alignment, and spectral overlap.
+The **Schumann Resonance** is Earth’s heartbeat: a set of natural electromagnetic resonances generated between the planet’s surface and the ionosphere.  
+These resonances, centered around **7.83 Hz**, act as a planetary metronome that synchronizes rhythms across life, environment, and consciousness.
 
 ---
 
-## Inputs
-- `logs/timeseries.csv` or `logs/coherence_matrix.npy` — base signals to analyze.
-- Optional: `logs/schumann_reference.npy` — previously saved reference pulse (1D).
+## 🌍 The Pulse of Earth
+
+- **Fundamental Mode (7.83 Hz):** Often called Earth’s “hum,” aligning with alpha brain waves and states of calm focus.
+- **Harmonics (14 Hz, 20 Hz, 26 Hz…):** Higher-order resonances extending into beta and gamma brain ranges, influencing activity and awareness.
+- **Global Conductor:** Lightning strikes excite the cavity, refreshing the planetary waveform continuously.
+
+The Schumann pulse is not constant — it breathes. Solar activity, ionospheric density, and atmospheric change all shift its amplitude and frequency.
 
 ---
 
-## Outputs
-- `logs/schumann/pulse.npy` — the canonical pulse series used by sims.  
-- `logs/schumann/entrainment.csv` — per-element entrainment metrics (phase_lock, amp_sync, coherence_score).  
-- Real-time overlay asset: `docs/assets/dashboard/schumann_overlay.png`.
+## 🧬 Biological Resonance
+
+Human biology is deeply tuned to this planetary hum:
+
+- **Brain Rhythms:** Alpha wave entrainment at ~8 Hz aligns with the fundamental resonance, supporting relaxation, memory integration, and intuition.
+- **Heart Rate Variability (HRV):** The autonomic nervous system synchronizes with Schumann oscillations, stabilizing stress responses.
+- **Circadian Regulation:** Melatonin cycles and cellular repair rhythms resonate with daily shifts in Schumann intensity.
+
+When the planetary hum destabilizes (e.g., geomagnetic storms), humans often report sleep disruption, anxiety, or altered cognition.
 
 ---
 
-## Algorithms (concept)
-1. Extract dominant low-frequency band (e.g., 0.5–8 Hz range conceptually; scale to simulation cadence).  
-2. Compute instantaneous phase (Hilbert transform) and amplitude envelope.  
-3. Measure phase-locking value (PLV) and amplitude correlation between pulse and each element flow.  
-4. Produce entrainment score (0–1) and a short-term rolling coherence metric.
+## 📡 Measurement & Monitoring
 
----
+Field layers and dashboards can integrate real-time Schumann data to anchor coherence:
 
-## Quick example (use)
-- Generate a Schumann pulse from logs:
-```bash
-python -m sims.schumann_sim --input logs/timeseries.csv --out logs/schumann/pulse.npy
-Compute entrainment:
-python -m algorithms.schumann --pulse logs/schumann/pulse.npy --flows logs/raw/example.csv --out logs/schumann/entrainment.csv
-Visualize in dashboard by generating overlay:
-python -m sims.schumann_sim --input logs/timeseries.csv --overlay docs/assets/dashboard/schumann_overlay.png
-Interpretation
-	•	High entrainment: field is locked to background rhythm (stability, communal alignment).
-	•	Low entrainment: field is independent or chaotic (innovation, drift).
-	•	Transient drops in entrainment may mark turning points; watch them alongside docs/awareness.md and docs/coherence.md.
+- **Inputs:** ELF (extremely low frequency) sensors, magnetometers, and publicly available space-weather data.
+- **Outputs:** Time-series graphs, harmonic overlays, entrainment indices.
+- **Applications:** Meditation timing, resilience training, energy forecasting.
+
+```json
+{
+  "schumann_pulse": {
+    "timestamp": "2025-09-23T12:00:00Z",
+    "fundamental_hz": 7.83,
+    "amplitude": 1.25,
+    "harmonics": [14.1, 20.3, 26.4],
+    "coherence_index": 0.82
+  }
+}
+The above JSON is a sample payload for feeding into the dashboard canopy, enabling simulations or personal entrainment practices.
 
 ⸻
 
-Next steps
-	•	Tune pulse extraction parameters to your cadence (seconds/minutes/steps).
-	•	Hook the entrainment.csv into docs/dashboard as a live indicator (harmony leaf).
+🌐 Layered Integration
+
+The Schumann pulse bridges field layers and awareness:
+	•	With Field Layers: Resonance maps can overlay on plasma, water, air, and crystal simulations to detect entrainment potential.
+	•	With Awareness & Coherence: Dashboards display real-time planetary rhythm alongside user logs, fostering alignment between personal and planetary states.
+	•	With Simulations: Adaptive algorithms can simulate “what-if” scenarios of resonance shifts on biological or ecological systems.
+
+⸻
+
+🔮 Evolutionary Context
+
+The hum is both ancient and emergent:
+	•	Ancient: A stabilizing signal that has guided evolution across millions of years.
+	•	Emergent: As human networks intensify, new harmonics may appear in global resonance — a “collective Schumann layer.”
+
+⸻
+
+🌱 Seed to Forest
+
+This file is a seed. Future expansions may include:
+	•	Machine-learning models predicting Schumann resonance fluctuations.
+	•	Biofeedback devices aligning HRV with planetary rhythms.
+	•	Community dashboards where logs from individuals contribute to a global resonance map.
+
+The hum begins here — but grows into coherence across all layers of The Atlas Model.
