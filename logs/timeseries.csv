@@ -1,0 +1,4 @@
+python -m sims.schumann_sim --input logs/timeseries.csv --out logs/schumann/pulse.npy --overlay docs/assets/dashboard/schumann_overlay.png
+python -m algorithms.schumann --pulse logs/schumann/pulse.npy --flows logs/raw/example.csv --out logs/schumann/entrainment.csv
+Confirm logs/schumann/pulse.npy, docs/assets/dashboard/schumann_overlay.png, and logs/schumann/entrainment.csv exist.
+mkdocs serve and check the docs pages & dashboard overlay.
