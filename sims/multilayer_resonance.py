@@ -1,23 +1,13 @@
 """
-Multilayer Community Resonance Simulator
+Multilayer Community Resonance Simulator (extended)
 
-Features:
-- Multilayer graph: L layers, each with its adjacency matrix A[l].
-- Interlayer coupling γ that links node i across layers (represents roles/contexts).
-- Adaptive agents: natural frequency omega_i drifts toward local phase centroid.
-- Resource coupling: per-node resource r_i modulates effective coupling K_i.
-- External driver: environment phase phi_env(t) entrains nodes with K_env.
-- Interventions: time-bounded changes to K, noise, bridges, resources, etc.
+Adds:
+- r_history[t, i]: per-node resource over time
+- env_phase_history[t]: environment driver phase over time
+- before/after comparison helpers (returned in result['windows'])
 
 Run:
     python sims/multilayer_resonance.py --preset multilayer_demo
-
-Outputs:
-- Prints summary metrics (mean R, entropy, inter-group phase gaps if groups provided).
-- Ready for dashboard hooks via logs or stdout parsing.
-
-Note:
-- Requires numpy and algorithms.community_metrics/environment_drivers modules.
 """
 
 import argparse
@@ -38,10 +28,6 @@ except Exception:
 TWOPI = 2 * np.pi
 
 def make_default_layers(N: int, L: int, k_ring: int, p_rewire: float, rng: np.random.Generator):
-    """
-    Build L small-world layers (Watts-Strogatz-like ring + random rewire).
-    Returns list of A[l] (N x N).
-    """
     layers = []
     for _ in range(L):
         A = np.zeros((N, N))
@@ -63,15 +49,6 @@ def make_default_layers(N: int, L: int, k_ring: int, p_rewire: float, rng: np.ra
     return layers
 
 def euler_step_multilayer(theta, omega, K_node, layers, gamma, noise_std, dt):
-    """
-    One Euler step for multilayer Kuramoto with interlayer coupling (diagonal across layers).
-
-    theta: (L, N) phases
-    omega: (N,) natural frequencies (shared across layers)
-    K_node: (N,) per-node effective coupling (resource-modulated)
-    layers: list of A[l] shape (N, N)
-    gamma: interlayer coupling strength (align same node across layers)
-    """
     L, N = theta.shape
     dtheta = np.zeros((L, N))
     for l in range(L):
@@ -80,36 +57,21 @@ def euler_step_multilayer(theta, omega, K_node, layers, gamma, noise_std, dt):
         for i in range(N):
             coupling = np.sum(A[i] * np.sin(theta[l] - theta[l, i])) / deg[i]
             dtheta[l, i] = omega[i] + K_node[i] * coupling
-
-    # interlayer: pull a node's phases together across layers
+    # interlayer diagonal align
     for i in range(N):
         mean_i = np.angle(np.mean(np.exp(1j * theta[:, i])))
         for l in range(L):
             dtheta[l, i] += gamma * np.sin(mean_i - theta[l, i])
-
     if noise_std > 0:
         dtheta += np.random.normal(0, noise_std, size=(L, N))
-
     return (theta + dt * dtheta) % TWOPI
 
 def adaptive_frequency_update(omega, theta_layer, alpha, dt):
-    """
-    Drift omega_i toward local layer phase centroid psi_local.
-    theta_layer: (N,) chosen layer's phases to adapt against (e.g., 'community' layer)
-    """
     psi_local = np.angle(np.mean(np.exp(1j * theta_layer)))
-    # project angular error wrapped to [-pi, pi]
     err = np.angle(np.exp(1j * (psi_local - theta_layer)))
-    # mean error per node sign drives adjustment
-    # Here, we use each node's own phase error for gentle convergence
     return omega + alpha * err * dt
 
 def resource_update(r, R_local, params, dt):
-    """
-    Simple resource dynamics:
-    dr/dt = a * R_local * (1 - r) - b * (1 - R_local) * r
-    where R_local ~ local coherence proxy in [0,1]
-    """
     a = float(params.get("gain", 0.5))
     b = float(params.get("leak", 0.3))
     dr = a * R_local * (1.0 - r) - b * (1.0 - R_local) * r
@@ -117,9 +79,6 @@ def resource_update(r, R_local, params, dt):
     return r_new
 
 def apply_environment(theta, env_phase, K_env, layer_index):
-    """
-    Entrain chosen layer toward external phase: add sin(env - theta).
-    """
     return (theta[layer_index] + K_env * np.sin(env_phase - theta[layer_index])) % TWOPI
 
 def simulate(preset: dict, seed: int = 11):
@@ -131,8 +90,8 @@ def simulate(preset: dict, seed: int = 11):
     steps = int(preset.get("steps", 2000))
     dt = float(preset.get("dt", 0.05))
     noise_std = float(preset.get("noise_std", 0.03))
-    gamma = float(preset.get("gamma", 0.4))            # interlayer coupling
-    alpha = float(preset.get("alpha", 0.02))           # frequency adaptation rate
+    gamma = float(preset.get("gamma", 0.4))
+    alpha = float(preset.get("alpha", 0.02))
     resource_params = preset.get("resource", {"gain": 0.5, "leak": 0.3})
     K_base = float(preset.get("K", 1.2))
     K_env = float(preset.get("K_env", 0.2))
@@ -159,13 +118,12 @@ def simulate(preset: dict, seed: int = 11):
     omega_mu = float(preset.get("omega_mu", 0.0))
     omega_sigma = float(preset.get("omega_sigma", 0.25))
     omega = rng.normal(omega_mu, omega_sigma, size=N)
-
     theta = rng.uniform(0, TWOPI, size=(L, N))
 
-    # resources in [0,1] modulate effective coupling K_node = K_base * f(r)
+    # resources K_of_r
     r = np.clip(np.array(preset.get("r0", rng.uniform(0.3, 0.7, size=N)), dtype=float), 0.0, 1.0)
-    def K_of_r(rvals):
-        return K_base * (0.2 + 0.8 * rvals)  # minimum coupling floor 0.2K .. 1.0K
+    def K_of_r(rvals):  # coupling scales with resource
+        return K_base * (0.2 + 0.8 * rvals)
 
     # environment driver
     if "env_drivers" in preset:
@@ -178,10 +136,23 @@ def simulate(preset: dict, seed: int = 11):
     interventions = preset.get("interventions", [])
 
     # storage
-    TH = np.zeros((steps, N))  # pick a representative layer for metrics (e.g., layer 0)
-    TH_comm = np.zeros((steps, N))  # if using another layer as "community" (layer 1)
+    TH = np.zeros((steps, N))          # phases on metrics layer
+    TH_comm = np.zeros((steps, N))     # phases on community layer
+    r_history = np.zeros((steps, N))   # resources over time
+    env_phase_history = np.zeros(steps)
+
     L_metrics_layer = int(preset.get("metrics_layer", 0))
     comm_layer = int(preset.get("community_layer", min(1, L-1)))
+
+    # helper for local coherence proxy R_local
+    def local_R(layer_idx):
+        A = layers[layer_idx]
+        deg = np.clip(A.sum(axis=1), 1e-9, None)
+        nbr_mean = np.zeros(N, dtype=complex)
+        for i in range(N):
+            if deg[i] > 0:
+                nbr_mean[i] = np.sum(A[i] * np.exp(1j * theta[layer_idx])) / deg[i]
+        return np.abs(nbr_mean)
 
     for t in range(steps):
         # scheduled interventions
@@ -198,45 +169,49 @@ def simulate(preset: dict, seed: int = 11):
                 w = float(iv.get("weight", 1.0))
                 layers[l][i, j] = layers[l][j, i] = w
 
-        # environment entrainment (phase nudge on env_layer)
+        # env
         phi_env = env.phase_at(t)
+        env_phase_history[t] = phi_env
         theta[env_layer] = apply_environment(theta, phi_env, K_env, env_layer)
 
-        # compute per-node effective coupling
+        # step
         K_node = K_of_r(r)
-
-        # step dynamics
         theta = euler_step_multilayer(theta, omega, K_node, layers, gamma, noise_std, dt)
-
-        # adaptation: update natural frequencies toward local centroid on community layer
         omega = adaptive_frequency_update(omega, theta[comm_layer], alpha, dt)
 
-        # local coherence proxy R_local per node: magnitude of neighbor phasor mean (community layer)
-        A = layers[comm_layer]
-        deg = np.clip(A.sum(axis=1), 1e-9, None)
-        nbr_mean = np.zeros(N, dtype=complex)
-        for i in range(N):
-            if deg[i] > 0:
-                nbr_mean[i] = np.sum(A[i] * np.exp(1j * theta[comm_layer])) / deg[i]
-        R_local = np.abs(nbr_mean)
-
-        # resource dynamics
+        # resources
+        R_local = local_R(comm_layer)
         r = resource_update(r, R_local, resource_params, dt)
 
         # record
         TH[t] = theta[L_metrics_layer]
         TH_comm[t] = theta[comm_layer]
+        r_history[t] = r
 
-    # metrics on the metrics layer
+    # metrics
     m = time_series_metrics(TH, groups=groups)
     summary = summarize_metrics(m)
+
+    # optional before/after windows around first intervention (if present)
+    windows = None
+    if len(interventions) > 0 and "t_start" in interventions[0] and "t_end" in interventions[0]:
+        t0 = int(interventions[0]["t_start"])
+        t1 = int(interventions[0]["t_end"])
+        pre = slice(max(0, t0 - 200), max(1, t0))
+        post = slice(min(TH.shape[0], t1), min(TH.shape[0], t1 + 200))
+        windows = {"pre": (pre.start, pre.stop), "post": (post.start, post.stop)}
 
     return {
         "summary": summary,
         "metrics_layer": m,
         "community_layer_phases": TH_comm,
+        "r_history": r_history,
+        "env_phase": env_phase_history,
         "final_resources_mean": float(np.mean(r)),
-        "final_omega_mean": float(np.mean(omega))
+        "final_omega_mean": float(np.mean(omega)),
+        "windows": windows,
+        "interventions": interventions,
+        "groups": groups
     }
 
 def main():
