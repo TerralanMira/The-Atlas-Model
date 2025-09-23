@@ -1,78 +1,64 @@
-# Integration: Weaving the Whole
+# Integration Layer: Weaving the Whole
 
-Integration is where the Atlas Model stops being parts and becomes **a living field**.
-This page shows how elemental layers (Earth, Water/Air, Fire/Plasma, Crystal) and
-their algorithms resonate together through a single **orchestration pulse**.
-
----
-
-## Why Orchestrate?
-
-- Parts can be excellent and still feel scattered.
-- Orchestration lets coherence **breathe across layers**:
-  structure (Earth), flow (Water), breath (Air), ignition (Plasma), memory (Crystal).
+The Atlas Model is built of signals, visualizations, narratives, actions, and feedback.  
+The Integration Layer ensures these are not separate parts, but **one coherent field**.  
 
 ---
 
-## The Pulse
+## 1. Purpose
 
-`algorithms/atlas_orchestrator.py` coordinates the layers and emits a single
-`atlas_coherence` value, alongside per-layer metrics.
-
-- **Earth** → amplitude & phase coherence on a lattice.
-- **Self-Learning (Water/Air)** → emergent harmony in adaptive networks.
-- **Crystal** → structural occupation & smoothness (memory of flow).
-
-The aggregator is intentionally simple (monotone, bounded). As the forest grows,
-we refine the mapping.
+- To **bind the layers** into a living system.  
+- To create **flow without redundancy** — every hum evolves, never circles.  
+- To hold the Atlas as **a whole within the part, a part within the whole**.  
 
 ---
 
-## How It Works (Concept → Code)
+## 2. Principles
 
-1. **Earth pulse**  
-   Lattice diffusion + thresholds + multi-well relaxation + Kuramoto phases  
-   → stability without stagnation.
+1. **Holism**  
+   - Nothing is complete unless it flows with the whole.  
 
-2. **Self-learning pulse**  
-   Adaptive network blending spread/diffusion/oscillation/ignition  
-   → exploration that converges toward harmony.
+2. **Resonance Mapping**  
+   - Alignment is not imposed but felt — coherence reveals itself.  
 
-3. **Crystal pulse**  
-   Field-coupled, anisotropic growth recording resonance in geometry  
-   → memory of the hum.
-
-4. **Aggregation**  
-   Combine the above into `atlas_coherence` (0..1-ish).  
-   This is the **heartbeat** visible to dashboards and downstream systems.
+3. **Adaptive Scaling**  
+   - Integration holds at micro (individual), meso (community), and macro (planetary) levels.  
 
 ---
 
-## Use
+## 3. The Flow of Integration
 
-- Get one pulse:
-
-```python
-from algorithms.atlas_orchestrator import AtlasConfig, run_once
-out = run_once(AtlasConfig(seed=42))
-print(out["atlas_coherence"], out["layers"])
-Short series for a dashboard
-from algorithms.atlas_orchestrator import AtlasConfig, run_steps
-series = run_steps(AtlasConfig(seed=7), steps=10)
-print(series)
-If a layer module is missing, the orchestrator skips it and still returns a pulse.
+```mermaid
+graph TD
+    S[Signal] --> V[Visualization]
+    V --> N[Narrative]
+    N --> A[Action]
+    A --> F[Feedback]
+    F --> I[Integration]
+    I --> S
+Integration is not the end — it is the ever-present weaving
+that ensures the spiral of coherence continues rising.
 
 ⸻
 
-Extending the Weave
-	•	Add Water/Air explicit sims; feed their metrics into the aggregator.
-	•	Add Plasma advanced coherence (filament order, ignition frequency).
-	•	Couple layers (e.g., Earth thresholds modulated by Crystal memory; Self-learning
-gains informed by Plasma ignition density).
+4. Mechanisms
+	•	Harmonic Alignment
+	•	Using Schumann resonance and coherence signals to ensure synchrony.
+	•	Dashboards of Wholeness
+	•	Unified visualization where ecology, health, community, and simulations converge.
+	•	Feedback Loops as Guidance
+	•	Integration ensures every cycle feeds the next with no broken links.
 
 ⸻
 
-Ethics & Orientation
-	•	Coherence without coercion: Orchestration should support agency and diversity.
-	•	Transparency: Make visible what contributes to the pulse.
-	•	Care: Use the hum to heal fragmentation, not to dominate.
+5. Examples
+	•	Ecology: River restoration projects feed data into simulations, which guide new community actions, then reflect back through feedback dashboards.
+	•	Health: Individual HRV coherence practices align with group field layers, strengthening both.
+	•	Community: Story circles feed into algorithmic models, producing new shared narratives.
+
+⸻
+
+6. Role in the Atlas Model
+	•	Integration is the spinal cord of the Atlas.
+	•	It ensures nothing stands alone — each part is whole, yet nested in larger wholes.
+	•	With Integration, the Atlas becomes alive.
