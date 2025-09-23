@@ -1,26 +1,43 @@
 {
-  "community_demo": {
-    "N": 60,
-    "steps": 1500,
+  "multilayer_demo": {
+    "N": 90,
+    "L": 3,
+    "steps": 1800,
     "dt": 0.05,
-    "K": 1.2,
-    "noise_std": 0.05,
-    "k_ring": 6,
-    "p_rewire": 0.08,
+    "K": 1.1,
+    "gamma": 0.5,
+    "noise_std": 0.04,
+    "alpha": 0.02,
     "omega_mu": 0.0,
-    "omega_sigma": 0.25,
+    "omega_sigma": 0.22,
+    "resource": { "gain": 0.6, "leak": 0.25 },
+    "r0": "uniform",  // optional; if provided must be list length N; otherwise uniform 0.3..0.7
+    "env_layer": 0,
+    "K_env": 0.25,
+    "env_drivers": [
+      { "freq_hz": 7.83, "amplitude": 1.0, "phase": 0.0 },
+      { "freq_hz": 0.1,  "amplitude": 0.5, "phase": 0.2 }
+    ],
+    "time_scale": 1.0,
+    "k_ring": 6,
+    "p_rewire": 0.07,
+    "metrics_layer": 1,
+    "community_layer": 1,
     "groups": [
       "inner","inner","inner","inner","inner","inner","inner","inner","inner","inner",
-      "outer","outer","outer","outer","outer","outer","outer","outer","outer","outer",
+      "practice","practice","practice","practice","practice","practice","practice","practice","practice","practice",
       "city","city","city","city","city","city","city","city","city","city",
-      "node","node","node","node","node","node","node","node","node","node",
-      "bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge",
-      "edge","edge","edge","edge","edge","edge","edge","edge","edge","edge"
+      "forest","forest","forest","forest","forest","forest","forest","forest","forest","forest",
+      "crews","crews","crews","crews","crews","crews","crews","crews","crews","crews",
+      "hubs","hubs","hubs","hubs","hubs","hubs","hubs","hubs","hubs","hubs",
+      "edge","edge","edge","edge","edge","edge","edge","edge","edge","edge",
+      "bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge"
     ],
     "interventions": [
-      {"t_start": 300, "t_end": 500, "type": "increase_coupling", "factor": 1.8},
-      {"t_start": 600, "t_end": 900, "type": "reduce_noise", "new_noise": 0.01},
-      {"t_start": 1000, "t_end": 1100, "type": "add_bridge", "i": 5, "j": 42, "weight": 1.0}
+      { "t_start": 300,  "t_end": 500,  "type": "increase_coupling", "new_K": 1.4 },
+      { "t_start": 700,  "t_end": 900,  "type": "reduce_noise",     "new_noise": 0.01 },
+      { "t_start": 950,  "t_end": 1100, "type": "add_bridge",       "layer": 2, "i": 8,  "j": 61, "weight": 1.0 },
+      { "t_start": 1200, "t_end": 1400, "type": "add_bridge",       "layer": 1, "i": 27, "j": 73, "weight": 1.0 }
     ]
   }
 }
