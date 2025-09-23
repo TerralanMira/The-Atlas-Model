@@ -1,30 +1,26 @@
 {
-  "flower_of_life": {
-    "description": "Interlocking circles; structure without clamp.",
-    "N_inner": 72, "N_outer": 36,
-    "K_inner": 0.38, "K_outer": 0.24, "K_cross": 0.12,
-    "omega_inner_std": 0.11, "omega_outer_std": 0.06,
-    "steps": 1200, "dt": 0.05
-  },
-  "multi_scale_field": {
-    "description": "Individual→Relational→Collective→Cosmic echo.",
-    "N_inner": 80, "N_outer": 40,
-    "K_inner": 0.40, "K_outer": 0.26, "K_cross": 0.15,
-    "omega_inner_std": 0.12, "omega_outer_std": 0.06,
-    "steps": 1400, "dt": 0.05
-  },
-  "conscious_choice": {
-    "description": "Decision tension without collapse.",
-    "N_inner": 48, "N_outer": 24,
-    "K_inner": 0.34, "K_outer": 0.20, "K_cross": 0.14,
-    "omega_inner_std": 0.13, "omega_outer_std": 0.07,
-    "steps": 900, "dt": 0.05
-  },
-  "ouroboros_loop": {
-    "description": "Closed loop; gentle self-reference (watch clamp).",
-    "N_inner": 60, "N_outer": 30,
-    "K_inner": 0.42, "K_outer": 0.24, "K_cross": 0.18,
-    "omega_inner_std": 0.10, "omega_outer_std": 0.05,
-    "steps": 1100, "dt": 0.05
+  "community_demo": {
+    "N": 60,
+    "steps": 1500,
+    "dt": 0.05,
+    "K": 1.2,
+    "noise_std": 0.05,
+    "k_ring": 6,
+    "p_rewire": 0.08,
+    "omega_mu": 0.0,
+    "omega_sigma": 0.25,
+    "groups": [
+      "inner","inner","inner","inner","inner","inner","inner","inner","inner","inner",
+      "outer","outer","outer","outer","outer","outer","outer","outer","outer","outer",
+      "city","city","city","city","city","city","city","city","city","city",
+      "node","node","node","node","node","node","node","node","node","node",
+      "bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge",
+      "edge","edge","edge","edge","edge","edge","edge","edge","edge","edge"
+    ],
+    "interventions": [
+      {"t_start": 300, "t_end": 500, "type": "increase_coupling", "factor": 1.8},
+      {"t_start": 600, "t_end": 900, "type": "reduce_noise", "new_noise": 0.01},
+      {"t_start": 1000, "t_end": 1100, "type": "add_bridge", "i": 5, "j": 42, "weight": 1.0}
+    ]
   }
 }
