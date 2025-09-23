@@ -1,6 +1,17 @@
+# Core numerics & graphs
 numpy>=1.24
-matplotlib>=3.7 ; platform_system != "iOS"  # optional plotting
+scipy>=1.11
+networkx>=3.2
+
+# Visualization (skip on iOS where wheels are limited)
+matplotlib>=3.7 ; platform_system != "iOS"
+
+# Docs
 markdown>=3.5
 mkdocs>=1.5
 mkdocs-material>=9.5
+pymdown-extensions>=10.7
+mkdocs-glightbox>=0.3.7
+
+# Dev & tests
 pytest>=7.4
