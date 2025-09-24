@@ -1,148 +1,132 @@
 {
-  "multilayer_demo": {
-    "N": 80,
-    "L": 2,
-    "steps": 2000,
-    "dt": 0.05,
-    "noise_std": 0.03,
-    "gamma": 0.4,
-    "alpha": 0.02,
-    "K": 1.2,
-    "K_env": 0.2,
-    "env_layer": 0,
-    "metrics_layer": 0,
-    "community_layer": 1,
+  "_about": "Atlas sims presets — paste-as-whole. Each top-level key maps to a Config(**dict).",
+  "schumann_demo": {
+    "_hint": "If you have sims/schumann_pulse.py",
+    "steps": 3000,
+    "dt": 0.02,
+    "seed": 42,
+    "N": 160,
     "k_ring": 6,
-    "p_rewire": 0.08,
-    "omega_mu": 0.0,
-    "omega_sigma": 0.25,
-    "resource": { "gain": 0.5, "leak": 0.3 },
-    "env_drivers": [
-      { "freq_hz": 7.83, "amplitude": 1.0 }
-    ],
-    "groups": [],
-    "interventions": [
-      { "type": "increase_coupling", "t_start": 800, "t_end": 1000, "new_K": 1.5 }
-    ]
-  },
-  "memory_demo": {
-    "N": 120,
-    "L": 2,
-    "steps": 2400,
-    "dt": 0.05,
-    "noise_std": 0.025,
-    "gamma": 0.45,
-    "alpha": 0.03,
-    "K": 1.1,
-    "K_env": 0.25,
-    "env_layer": 0,
-    "metrics_layer": 0,
-    "community_layer": 1,
-    "k_ring": 8,
     "p_rewire": 0.06,
     "omega_mu": 0.0,
-    "omega_sigma": 0.2,
-    "resource": { "gain": 0.6, "leak": 0.25 },
-    "env_drivers": [
-      { "freq_hz": 7.83, "amplitude": 1.0 },
-      { "freq_hz": 14.3, "amplitude": 0.6 }
-    ],
-    "groups": [],
-    "interventions": [
-      { "type": "reduce_noise", "t_start": 700, "t_end": 900, "new_noise": 0.015 },
-      { "type": "increase_coupling", "t_start": 1200, "t_end": 1400, "new_K": 1.6 },
-      { "type": "add_bridge", "t_start": 1600, "t_end": 1601, "layer": 1, "i": 0, "j": 60, "weight": 1.0 }
+    "omega_sigma": 0.25,
+    "noise_std": 0.035,
+    "K_base": 1.0,
+    "K_env": 0.28,
+    "drivers": [
+      {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
+      {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
+      {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
     ]
   },
-  "transfer_demo": {
-    "_hint": "Use sims.resonance_transfer.TransferConfig(**this)",
-    "steps": 2200,
-    "dt": 0.05,
-    "N_total": 120,
-    "groups": [60, 60],
-    "K_intra": 1.0,
-    "K_cross": 0.06,
-    "noise_std": 0.03,
+
+  "crystal_demo": {
+    "_hint": "If you have sims/crystallization_points.py",
+    "steps": 3000,
+    "dt": 0.02,
+    "seed": 21,
+    "N": 140,
+    "k_ring": 6,
+    "p_rewire": 0.05,
     "omega_mu": 0.0,
-    "omega_sigma": 0.22,
-    "seed": 11
+    "omega_sigma": 0.25,
+    "noise_std": 0.04,
+    "K_base": 1.0,
+    "window": 80,
+    "thresh_R_local": 0.85,
+    "thresh_resource": 0.55,
+    "K_anchor_boost": 0.6,
+    "noise_anchor_drop": 0.02,
+    "anchor_half_life": 600,
+    "starve_threshold": 0.35,
+    "r_init": 0.6,
+    "resource_gain": 0.35,
+    "resource_leak": 0.22,
+    "resource_noise": 0.02
+  },
+
+  "braid_demo": {
+    "_hint": "Use sims.braided_field.BraidedConfig(**this)",
+    "steps": 3000,
+    "dt": 0.02,
+    "seed": 42,
+    "N": 160,
+    "k_ring": 6,
+    "p_rewire": 0.06,
+    "omega_mu": 0.0,
+    "omega_sigma": 0.25,
+    "noise_std": 0.035,
+    "K_base": 1.0,
+    "period": 600,
+    "K_cross_base": 0.02,
+    "K_cross_amp": 0.08,
+    "noise_drop": 0.02,
+    "K_env": 0.28,
+    "drivers": [
+      {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
+      {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
+      {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
+    ],
+    "window": 80,
+    "thresh_R_local": 0.85,
+    "thresh_resource": 0.55,
+    "K_anchor_boost": 0.6,
+    "noise_anchor_drop": 0.02,
+    "anchor_half_life": 600,
+    "starve_threshold": 0.35,
+    "r_init": 0.6,
+    "resource_gain": 0.35,
+    "resource_leak": 0.22,
+    "resource_noise": 0.02
+  },
+
+  "creation_demo": {
+    "_hint": "Use sims.creation.CreationConfig(**this)",
+    "steps": 4000,
+    "dt": 0.02,
+    "seed": 108,
+    "N": 180,
+    "k_ring": 4,
+    "p_rewire": 0.02,
+
+    "K_base_start": 0.6,
+    "K_base_end": 1.0,
+    "noise_start": 0.06,
+    "noise_end": 0.03,
+
+    "period": 600,
+    "K_cross_base_start": 0.0,
+    "K_cross_base_end": 0.02,
+    "K_cross_amp_start": 0.0,
+    "K_cross_amp_end": 0.08,
+
+    "K_env": 0.28,
+    "drivers": [
+      {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
+      {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
+      {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
+    ],
+
+    "r_init": 0.55,
+    "resource_gain": 0.33,
+    "resource_leak": 0.20,
+    "resource_noise": 0.02,
+
+    "window": 80,
+    "thresh_R_local": 0.84,
+    "thresh_resource": 0.55,
+    "K_anchor_boost": 0.6,
+    "noise_anchor_drop": 0.02,
+    "anchor_half_life": 700,
+    "starve_threshold": 0.35,
+
+    "grow_every": 200,
+    "grow_budget": 80,
+    "grow_batch_min": 3,
+    "grow_batch_max": 8,
+    "grow_require_R_local": 0.80,
+    "grow_require_r": 0.55,
+
+    "tail_frac": 0.5
   }
-}
-,
-"schumann_demo": {
-  "_hint": "Use sims.schumann_pulse.SchumannConfig(**this)",
-  "steps": 3000,
-  "dt": 0.01,
-  "N": 256,
-  "K": 1.1,
-  "K_env": 0.3,
-  "noise_std": 0.03,
-  "omega_mu": 0.0,
-  "omega_sigma": 0.25,
-  "seed": 11,
-  "drivers": [
-    {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
-    {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
-    {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
-  ]
-}
-,
-"crystal_demo": {
-  "_hint": "Use sims.crystallization_points.CrystalConfig(**this)",
-  "steps": 3000,
-  "dt": 0.05,
-  "N": 150,
-  "k_ring": 6,
-  "p_rewire": 0.05,
-  "K": 1.0,
-  "noise_std": 0.035,
-  "omega_mu": 0.0,
-  "omega_sigma": 0.25,
-  "window": 80,
-  "thresh_R_local": 0.85,
-  "thresh_resource": 0.55,
-  "K_anchor_boost": 0.6,
-  "noise_anchor_drop": 0.02,
-  "resource_gain": 0.35,
-  "resource_leak": 0.22,
-  "resource_noise": 0.02,
-  "r_init": 0.6,
-  "anchor_half_life": 600,
-  "starve_threshold": 0.35,
-  "seed": 13
-}
-,
-"braid_demo": {
-  "_hint": "Use sims.braided_field.BraidedConfig(**this)",
-  "steps": 3000,
-  "dt": 0.02,
-  "seed": 42,
-  "N": 160,
-  "k_ring": 6,
-  "p_rewire": 0.06,
-  "omega_mu": 0.0,
-  "omega_sigma": 0.25,
-  "noise_std": 0.035,
-  "K_base": 1.0,
-  "period": 600,
-  "K_cross_base": 0.02,
-  "K_cross_amp": 0.08,
-  "noise_drop": 0.02,
-  "K_env": 0.28,
-  "drivers": [
-    {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
-    {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
-    {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
-  ],
-  "window": 80,
-  "thresh_R_local": 0.85,
-  "thresh_resource": 0.55,
-  "K_anchor_boost": 0.6,
-  "noise_anchor_drop": 0.02,
-  "anchor_half_life": 600,
-  "starve_threshold": 0.35,
-  "r_init": 0.6,
-  "resource_gain": 0.35,
-  "resource_leak": 0.22,
-  "resource_noise": 0.02
 }
