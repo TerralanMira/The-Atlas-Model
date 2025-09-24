@@ -53,5 +53,18 @@
       { "type": "increase_coupling", "t_start": 1200, "t_end": 1400, "new_K": 1.6 },
       { "type": "add_bridge", "t_start": 1600, "t_end": 1601, "layer": 1, "i": 0, "j": 60, "weight": 1.0 }
     ]
+  },
+  "transfer_demo": {
+    "_hint": "Use sims.resonance_transfer.TransferConfig(**this)",
+    "steps": 2200,
+    "dt": 0.05,
+    "N_total": 120,
+    "groups": [60, 60],
+    "K_intra": 1.0,
+    "K_cross": 0.06,
+    "noise_std": 0.03,
+    "omega_mu": 0.0,
+    "omega_sigma": 0.22,
+    "seed": 11
   }
 }
