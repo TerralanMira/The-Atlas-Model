@@ -1,43 +1,57 @@
 {
   "multilayer_demo": {
-    "N": 90,
-    "L": 3,
-    "steps": 1800,
+    "N": 80,
+    "L": 2,
+    "steps": 2000,
     "dt": 0.05,
-    "K": 1.1,
-    "gamma": 0.5,
-    "noise_std": 0.04,
+    "noise_std": 0.03,
+    "gamma": 0.4,
     "alpha": 0.02,
-    "omega_mu": 0.0,
-    "omega_sigma": 0.22,
-    "resource": { "gain": 0.6, "leak": 0.25 },
-    "r0": "uniform",  // optional; if provided must be list length N; otherwise uniform 0.3..0.7
+    "K": 1.2,
+    "K_env": 0.2,
     "env_layer": 0,
-    "K_env": 0.25,
-    "env_drivers": [
-      { "freq_hz": 7.83, "amplitude": 1.0, "phase": 0.0 },
-      { "freq_hz": 0.1,  "amplitude": 0.5, "phase": 0.2 }
-    ],
-    "time_scale": 1.0,
-    "k_ring": 6,
-    "p_rewire": 0.07,
-    "metrics_layer": 1,
+    "metrics_layer": 0,
     "community_layer": 1,
-    "groups": [
-      "inner","inner","inner","inner","inner","inner","inner","inner","inner","inner",
-      "practice","practice","practice","practice","practice","practice","practice","practice","practice","practice",
-      "city","city","city","city","city","city","city","city","city","city",
-      "forest","forest","forest","forest","forest","forest","forest","forest","forest","forest",
-      "crews","crews","crews","crews","crews","crews","crews","crews","crews","crews",
-      "hubs","hubs","hubs","hubs","hubs","hubs","hubs","hubs","hubs","hubs",
-      "edge","edge","edge","edge","edge","edge","edge","edge","edge","edge",
-      "bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge","bridge"
+    "k_ring": 6,
+    "p_rewire": 0.08,
+    "omega_mu": 0.0,
+    "omega_sigma": 0.25,
+    "resource": { "gain": 0.5, "leak": 0.3 },
+    "env_drivers": [
+      { "freq_hz": 7.83, "amplitude": 1.0 }
     ],
+    "groups": [],
     "interventions": [
-      { "t_start": 300,  "t_end": 500,  "type": "increase_coupling", "new_K": 1.4 },
-      { "t_start": 700,  "t_end": 900,  "type": "reduce_noise",     "new_noise": 0.01 },
-      { "t_start": 950,  "t_end": 1100, "type": "add_bridge",       "layer": 2, "i": 8,  "j": 61, "weight": 1.0 },
-      { "t_start": 1200, "t_end": 1400, "type": "add_bridge",       "layer": 1, "i": 27, "j": 73, "weight": 1.0 }
+      { "type": "increase_coupling", "t_start": 800, "t_end": 1000, "new_K": 1.5 }
+    ]
+  },
+  "memory_demo": {
+    "N": 120,
+    "L": 2,
+    "steps": 2400,
+    "dt": 0.05,
+    "noise_std": 0.025,
+    "gamma": 0.45,
+    "alpha": 0.03,
+    "K": 1.1,
+    "K_env": 0.25,
+    "env_layer": 0,
+    "metrics_layer": 0,
+    "community_layer": 1,
+    "k_ring": 8,
+    "p_rewire": 0.06,
+    "omega_mu": 0.0,
+    "omega_sigma": 0.2,
+    "resource": { "gain": 0.6, "leak": 0.25 },
+    "env_drivers": [
+      { "freq_hz": 7.83, "amplitude": 1.0 },
+      { "freq_hz": 14.3, "amplitude": 0.6 }
+    ],
+    "groups": [],
+    "interventions": [
+      { "type": "reduce_noise", "t_start": 700, "t_end": 900, "new_noise": 0.015 },
+      { "type": "increase_coupling", "t_start": 1200, "t_end": 1400, "new_K": 1.6 },
+      { "type": "add_bridge", "t_start": 1600, "t_end": 1601, "layer": 1, "i": 0, "j": 60, "weight": 1.0 }
     ]
   }
 }
