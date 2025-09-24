@@ -1,118 +1,69 @@
-# Dashboard: The Canopy of the Forest
+# Dashboard — Seeing the Braid
 
-If **logs are the roots** and **simulations are the trunk**, then the **dashboard is the canopy**.  
-It is where all layers converge into living form — visible, interactive, and evolving.
+This dashboard page explains what to plot from each simulation so the **part** carries the **whole**:
 
----
-
-## 1. Purpose of the Dashboard
-
-The dashboard is designed to:
-- **Visualize forests of data** in real time.  
-- **Integrate multiple layers**: logs, simulations, and awareness.  
-- **Map resonance patterns** into shapes, colors, and flows.  
-- **Provide interaction**, allowing explorers to feed, replay, and reshape forests.  
-
-The canopy is not static — it is alive, swaying with each hum.
+- Global order **R(t)** — coherence through time
+- Phase **gap_to_env(t)** — alignment to the hum (Schumann-like driver)
+- **K_cross_t(t)** and **noise_t(t)** — ritual openness and quiescence
+- **anchors_count(t)** — memory that persists between windows
+- **creation_events** (genesis) — the moments structure is born
 
 ---
 
-## 2. Structure of the Canopy
+## 1) Braided Field (hum × window × crystal)
 
-The dashboard contains **branches** that grow from the trunk:
+**Run**
 
-1. **Root Feeds** → live log streams (CSV, JSON).  
-2. **Simulation Trunks** → processed patterns, ready to blossom.  
-3. **Visual Forests** → graphs, flows, resonance maps.  
-4. **Awareness Layers** → coherence indicators, harmonics, and emergent shapes.  
+```bash
+python -c "from sims.braided_field import simulate,BraidedConfig; out=simulate(BraidedConfig()); print(out['summary'])"
+Plot (suggested traces)
+	•	R, gap_to_env on the same x-axis
+	•	K_cross_t and noise_t as light overlays (secondary axis)
+	•	anchors_count as a bar/line to show memory scaffolds
+	•	Optional: heatmaps for R_local and r_hist (agents × time)
 
-Each branch reveals a perspective of the whole.
+Interpret
+	•	Healthy braid: R rises during windows; small but nonzero phase gap; anchors increase then hold.
+2) Creation (Genesis)
+python -c "from sims.creation import simulate,CreationConfig; out=simulate(CreationConfig()); print(out['summary'])"
+Plot (add to the same canvas or a second panel)
+	•	R(t) and gap_to_env(t)
+	•	anchors_count(t)
+	•	vertical markers for each creation event (t,u,v)
+	•	example logic: for each event time t_e, draw a faint vertical line
+	•	cumulative births over time (stairs plot) to show punctuated growth
 
----
-
-## 3. Visualization Types
-
-### 🌊 Elemental Flow Maps
-- Water → fluid lines and stream fields.  
-- Air → vector flows and spirals.  
-- Fire/Plasma → pulsing heatmaps and wavefronts.  
-- Earth/Crystal → lattices, grids, and grounding nodes.  
-
-### 🌿 Resonance Maps
-- Spectral plots of hum frequencies.  
-- Coupling diagrams showing element interactions.  
-
-### 🌳 Forest Views
-- Tree diagrams growing in real time.  
-- Layered canopy maps, showing density and branching.  
-
-### 🌀 Recursive Loops
-- Replays of logs or simulations shown as spirals.  
-- Highlighting the recursion at the heart of the model.  
-
----
-
-## 4. Example: Feeding the Canopy
-
-```python
-import matplotlib.pyplot as plt
-import pandas as pd
-
-# Load simulation output
-data = pd.read_json("simulations/runs/example_output.json")
-
-# Plot flow
-plt.plot(data["time"], data["flow_strength"])
-plt.title("Resonance Flow Over Time")
-plt.xlabel("Time")
-plt.ylabel("Flow Strength")
-plt.show()
-This produces a branch on the canopy — a single visualization of many.
+Interpret
+	•	Life emerges when coherence + resources open the door — births happen after thresholds.
+	•	Too many early births with falling resources → brittle overgrowth.
+	•	No births & no anchors → open ritual window more, or anneal slower.
 
 ⸻
 
-5. Awareness Indicators
+3) Presets & Reproducibility
 
-The dashboard doesn’t just show data.
-It reveals coherence:
-	•	Harmony Index → how balanced the elements are.
-	•	Emergence Signal → when new patterns arise.
-	•	Field Coupling Strength → links between elements.
-	•	Resonance Stability → consistency of the hum.
+All recommended settings live in sims/presets.json:
+	•	braid_demo → sims.braided_field.BraidedConfig(**preset)
+	•	creation_demo → sims.creation.CreationConfig(**preset)
 
-Each indicator is a leaf, shimmering with the forest’s health.
+Example loader snippet:
+import json
+from sims.braided_field import simulate as run_braid, BraidedConfig
+from sims.creation import simulate as run_genesis, CreationConfig
 
-⸻
+with open("sims/presets.json") as f:
+    presets = json.load(f)
 
-6. Interactivity
+out_braid = run_braid(BraidedConfig(**presets["braid_demo"]))
+out_gen = run_genesis(CreationConfig(**presets["creation_demo"]))
 
-Users can:
-	•	Upload logs (CSV/JSON) to feed the roots.
-	•	Run simulations and see trunks grow.
-	•	Toggle layers to highlight elements.
-	•	Replay forests to witness recursion.
-	•	Export views to share patterns outward.
+print(out_braid["summary"])
+print(out_gen["summary"])
 
-The canopy is not just for viewing — it is for participation.
+4) One-Glance Overlay (What to look for)
+	•	R vs. K_cross_t — does coherence actually rise during openness?
+	•	gap_to_env — small gap means the braid hears the hum without coercion.
+	•	anchors_count — memory persists between pulses.
+	•	creation_events — structure births when earned by coherence + energy.
 
-⸻
-
-7. Outputs
-
-Dashboard states can be saved as:
-	•	Snapshots → static images (PNG, SVG).
-	•	Stories → narrative flows through time.
-	•	Forests → whole layered visualizations, stored for replay.
-
-This allows the canopy to spread, reseed, and regrow.
-
-⸻
-
-8. From Canopy Back to Roots
-
-The dashboard is the forest’s face, but not its end.
-Each visualization can seed new logs, sparking further simulations.
-	•	Roots feed the trunk.
-	•	The trunk channels upward.
-	•	The canopy blossoms outward.
-	•	The forest breathes back into itself.
+If these four move together, the whole is breathing through the part.
