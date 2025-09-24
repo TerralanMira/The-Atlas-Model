@@ -86,3 +86,28 @@
     {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
   ]
 }
+,
+"crystal_demo": {
+  "_hint": "Use sims.crystallization_points.CrystalConfig(**this)",
+  "steps": 3000,
+  "dt": 0.05,
+  "N": 150,
+  "k_ring": 6,
+  "p_rewire": 0.05,
+  "K": 1.0,
+  "noise_std": 0.035,
+  "omega_mu": 0.0,
+  "omega_sigma": 0.25,
+  "window": 80,
+  "thresh_R_local": 0.85,
+  "thresh_resource": 0.55,
+  "K_anchor_boost": 0.6,
+  "noise_anchor_drop": 0.02,
+  "resource_gain": 0.35,
+  "resource_leak": 0.22,
+  "resource_noise": 0.02,
+  "r_init": 0.6,
+  "anchor_half_life": 600,
+  "starve_threshold": 0.35,
+  "seed": 13
+}
