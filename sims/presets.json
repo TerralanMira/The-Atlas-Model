@@ -111,3 +111,38 @@
   "starve_threshold": 0.35,
   "seed": 13
 }
+,
+"braid_demo": {
+  "_hint": "Use sims.braided_field.BraidedConfig(**this)",
+  "steps": 3000,
+  "dt": 0.02,
+  "seed": 42,
+  "N": 160,
+  "k_ring": 6,
+  "p_rewire": 0.06,
+  "omega_mu": 0.0,
+  "omega_sigma": 0.25,
+  "noise_std": 0.035,
+  "K_base": 1.0,
+  "period": 600,
+  "K_cross_base": 0.02,
+  "K_cross_amp": 0.08,
+  "noise_drop": 0.02,
+  "K_env": 0.28,
+  "drivers": [
+    {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
+    {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
+    {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
+  ],
+  "window": 80,
+  "thresh_R_local": 0.85,
+  "thresh_resource": 0.55,
+  "K_anchor_boost": 0.6,
+  "noise_anchor_drop": 0.02,
+  "anchor_half_life": 600,
+  "starve_threshold": 0.35,
+  "r_init": 0.6,
+  "resource_gain": 0.35,
+  "resource_leak": 0.22,
+  "resource_noise": 0.02
+}
