@@ -90,3 +90,5 @@ Next Expansions
 	•	Introduce agent-based models (different groups may amplify or dampen echoes differently).
 	•	Visualize resonance as wave interference patterns across layers.
 	•	Compare stable traditions vs. emergent adaptations.
+By running these simulations, we practice seeing memory as a living ecological system rather than a static record.
+Each echo contributes to the hum of the whole.
