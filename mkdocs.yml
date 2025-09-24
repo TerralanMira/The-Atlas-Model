@@ -1,49 +1,38 @@
 site_name: The Atlas Model
+site_description: Hum ↔ Code — a living, fractal repository of resonance, coherence, and creation.
+repo_url: https://github.com/TerralanMira/The-Atlas-Model
 theme:
   name: material
   features:
-    - navigation.tabs
+    - navigation.instant
     - navigation.sections
-    - navigation.expand
+    - navigation.indexes
     - toc.integrate
-    - search.suggest
-    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.tabbed:
+      alternate_style: true
 
 nav:
   - Home: index.md
-  - Resonant Reality: docs/resonant_reality.md
-  - Books: docs/books.md
   - Awareness & Coherence:
-      - Awareness: docs/awareness.md
-      - Coherence: docs/coherence.md
-  - Field Layer:
-      - Overview: docs/field_layer.md
-      - Water: docs/water.md
-      - Air: docs/air.md
-      - Fire & Plasma: docs/fire_plasma.md
-      - Crystals: docs/crystals.md
-  - Field Applications:
-      - Overview: docs/field_applications.md
-      - Ecology: docs/ecology.md
-      - Health: docs/health.md
-      - Community: docs/community.md
-      - Algorithms & Simulations: docs/simulations.md
-  - Synthesis:
-      - Synthesis Layer: docs/synthesis_layer.md
-      - Synthesis Patterns: docs/synthesis_patterns.md
-  - Practice:
-      - Practice Layer: docs/practice_layer.md
-      - Integration: docs/integration.md
-      - Integration Layer: docs/integration_layer.md
-  - Convergence: docs/convergence.md
-  - Emergence: docs/emergence_layer.md
-  - Dashboard: docs/dashboard.md
-  - Logs: docs/logs.md
-
-markdown_extensions:
-  - admonition
-  - codehilite
-  - footnotes
-  - meta
-  - toc:
-      permalink: true
+      - Awareness: awareness.md
+      - Coherence: coherence.md
+  - Field Layers:
+      - Field Layers (Whole): field_layers.md
+  - Applications: applications.md
+  - LLM:
+      - Atlas System Prompt: llm/atlas_system_prompt.md
+  - Simulations:
+      - Dashboard (What to Plot): dashboard.md
+      - Creation (Genesis): creation.md
+      - Creation — How to Read Births: creation_guide.md
+  - Logs:
+      - Feeding the Canopy: logs/README.md
