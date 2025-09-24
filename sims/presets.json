@@ -68,3 +68,21 @@
     "seed": 11
   }
 }
+,
+"schumann_demo": {
+  "_hint": "Use sims.schumann_pulse.SchumannConfig(**this)",
+  "steps": 3000,
+  "dt": 0.01,
+  "N": 256,
+  "K": 1.1,
+  "K_env": 0.3,
+  "noise_std": 0.03,
+  "omega_mu": 0.0,
+  "omega_sigma": 0.25,
+  "seed": 11,
+  "drivers": [
+    {"freq": 7.83, "amplitude": 1.0, "phase": 0.0},
+    {"freq": 14.3, "amplitude": 0.6, "phase": 0.0},
+    {"freq": 20.8, "amplitude": 0.4, "phase": 0.0}
+  ]
+}
