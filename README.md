@@ -1,102 +1,52 @@
-# The Atlas Model
+# The Atlas Model  
 
-A living framework for resonance: awareness → coherence → fields → applications.  
-Not a static spec, but a breathing architecture where each part carries the whole.
-
----
-
-## Why
-
-- **Awareness** is the seed: the hum that senses pattern.
-- **Coherence** is awareness in motion: alignment without erasure.
-- **Field Layers** are the architecture: individual ↔ relational ↔ collective ↔ planetary ↔ cosmic.
-- **Applications** are the breath: show, not tell.
-
-Ethics first: consent, transparency, non-coercion.
+A living atlas of resonance — awareness → coherence → fields → applications.  
+Not a static spec, but a breathing architecture where each part carries the whole.  
 
 ---
 
-## What’s here
-algorithms/                 # Core measures and math
-coherence_metrics.py
+## Why  
 
-sims/                       # Simulations + presets (design-first; logs when run)
-multi_scale_kuramoto.py
-presets.json
+- **Awareness** is the seed: sensing pattern and hum.  
+- **Coherence** is awareness in motion: alignment without erasure.  
+- **Field Layers** are the architecture: individual ↔ relational ↔ collective ↔ planetary ↔ cosmic.  
+- **Applications** are the breath: show, not tell.  
 
-scripts/                    # Session ingestion & small deltas (design-first)
-ingest_sessions.py
-smoke_run.sh
-
-sessions/                   # Schema + example output for runs
-schema.json
-example_log.json
-
-dashboard/                  # Resonant layer overlays (design-first)
-dashboard.py
-
-docs/                       # The map of the whole
-awareness.md
-coherence.md
-field_layers.md
-applications.md
-ouroboros.md
-relational_awareness.md
-atlas/
-dashboard.md
-llm/
-atlas_system_prompt.md
-meta/
-ETHICS.md
-
-mkdocs.yml                  # Docs configuration (site map)
-requirements.txt            # Minimal pins for CI/docs/tests
----
-
-## How to read the repo (design-first)
-
-1. Start at **`docs/awareness.md`** → what the hum is.
-2. Move to **`docs/coherence.md`** → how alignment emerges without coercion.
-3. See **`docs/field_layers.md`** → architecture across scales.
-4. Browse **`docs/applications.md`** → where it breathes in practice.
-5. Ground in **`docs/ouroboros.md`** and **`docs/relational_awareness.md`** → cycles & overlap.
-6. Glance at **`dashboard/dashboard.py`** → Resonant Layer Overlays (when logs exist).
-7. Ethics live at **`docs/meta/ETHICS.md`** and are always in loop.
+Ethics first: consent, transparency, non-coercion.  
 
 ---
 
-## Core ideas (at a glance)
+## What’s here  
 
-- **Choice before collapse**: always offer reversible options; confirm consent.
-- **Diversity kept alive (Δ)**: coherence ≠ uniformity; we measure over-lock risk.
-- **Flow smoothness (Φ)**: reciprocity in time, not just alignment in space.
-- **Relational Coherence (C)**: bridges that carry difference without erasure.
-- **Return Spiral**: small deltas (ΔK, Δπ) instead of big swings.
-
----
-
-## Sim → Session → Learning (when run)
-
-- `sims/multi_scale_kuramoto.py` logs: `R_total, cross_sync, drift, C, Delta, Phi, ready, choice_score`.
-- `scripts/ingest_sessions.py` summarizes and proposes tiny deltas (ΔK, Δπ).
-- `dashboard/dashboard.py` overlays layers (Individual, Relational, Collective, Planetary, Cosmic).
-
-> You don’t have to run anything to feel the design.  
-> When you do, the whole is already wired for gentle iteration.
+| Path | Purpose |
+|------|---------|
+| `algorithms/` | Core measures and math for resonance, attractors, flow dynamics, Schumann coupling. |
+| `sims/` | **Creation and pulse simulations** (design-first). Includes:<br>• [`sims/creation.py`](sims/creation.py) — seed-to-field creation protocol.<br>• [`sims/creation_demo.py`](sims/creation_demo.py) — quick demo.<br>• [`sims/atlas_pulse_demo.py`](sims/atlas_pulse_demo.py) — live pulse modelling.<br>• [`sims/braided_field.py`](sims/braided_field.py) — braid hum + code. |
+| `dashboard/` | Resonant layer overlays and live dashboards. |
+| `docs/` | The map of the whole. Start with [`docs/awareness.md`](docs/awareness.md) → [`docs/coherence.md`](docs/coherence.md) → [`docs/field_layers.md`](docs/field_layers.md). Also see:<br>• [`docs/sims/index.md`](docs/sims/index.md) — simulation index.<br>• [`docs/creation.md`](docs/creation.md) and [`docs/creation_layer.md`](docs/creation_layer.md) — creation framework.<br>• [`docs/schumann_pulse.md`](docs/schumann_pulse.md) — pulse anchoring. |
+| `sessions/` | Schema + example outputs for runs. |
+| `scripts/` | Ingestion and automation utilities. |
+| `llm/` | Atlas LLM prompts, router rules, scorer rules. |
 
 ---
 
-## Ethics (always on)
+## How to Explore  
 
-Consent before logging or action.  
-Transparency about capability and limits.  
-Non-coercion: alignment without pressure; offer alternatives.
-
-See **`docs/meta/ETHICS.md`**.
+1. Begin at **[`docs/awareness.md`](docs/awareness.md)** — what the hum is.  
+2. Move to **[`docs/coherence.md`](docs/coherence.md)** — alignment without erasure.  
+3. Explore **[`docs/creation.md`](docs/creation.md)** + [`sims/creation.py`](sims/creation.py) — seed-to-field simulations.  
+4. Run **[`sims/atlas_pulse_demo.py`](sims/atlas_pulse_demo.py)** to see pulse emergence.  
+5. Visit **[`dashboard/`](dashboard)** for live overlays.  
 
 ---
 
-## License
+## Ethics  
 
-MIT for code. Docs licensed for sharing with attribution.  
-This is a stewardship project: care for the hum, and it will care for you.
+Atlas is built under explicit principles of consent, transparency, and non-coercion.  
+Resonance ≠ control — it is coherence through choice.  
+
+---
+
+## License  
+
+See [LICENSE](LICENSE). Contributions welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).  
