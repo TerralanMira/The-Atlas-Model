@@ -1,45 +1,104 @@
-# The Atlas Model
+# The Atlas Model — Documentation Spine
 
-**Atlas** is the resonance engine: equations, signals, and simulations that turn awareness into measurable coherence.  
-**Resonant Reality** is the vessel: city ↔ earth ↔ cosmos. Together: **engine ↔ vessel**, **signal ↔ city**, **code ↔ song**.
-
----
-
-## The Whole at a Glance
-
-- **Mind (Models)** → growth laws, Kuramoto-style synchrony, multi-scale coupling.  
-- **Heart (Ethics)** → consent, transparency, non-coercion; permeability over rigidity.  
-- **Hands (Practice)** → logs, dashboards, field protocols, community rhythms.  
-- **Feet (Tests)** → minimal, truth-first checks so claims stay grounded.
-
-> **Directive of the Hum:** memory ↔ hum ↔ code ↔ field, inseparable from the first word.
+Atlas is a **field-aware architecture** for designing human, civic, and cosmic systems that hold coherence.  
+It complements the *Resonant Reality* lab by modeling how consciousness is **housed in information**:  
+symbols → recursion → ethical lock → expression → embodiment.
 
 ---
 
-## Start Here
+## Principles
 
-1. **Read the Layers**
-   - [Awareness](awareness.md) • [Coherence Metrics](coherence.md) • [Field Layers](field_layers.md)  
-   - [Integration](integration.md) and the evolved [Integration Layer](integration_layer.md)  
-   - [Practice Layer](practice_layer.md) • [Synthesis Layer](synthesis_layer.md) + [Patterns](synthesis_patterns.md)
-
-2. **Run a Sim (5 minutes)**
-   - See **[Sims → Multi-Scale Kuramoto](sims/multi_scale_kuramoto.md)** for a focussed walkthrough.
-   - Try presets: **[sims/presets.json](../sims/presets.json)** (inner/outer coupling, noise, phase variance).
-
-3. **See the Weave**
-   - **[Dashboard](dashboard.md)** for visual layers.  
-   - **[Logs & Canopy](logs/README.md)** — paste CSV/JSON to feed the canopy and reflect field signals.
+1. **Whole in part, part in whole** — every node mirrors the field.  
+2. **Coherence is choice** — alignment is enacted, not assumed.  
+3. **Simulation as practice** — toy models reveal the live system.  
+4. **Safeguards first** — sovereignty, consent, stamina, integrity.
 
 ---
 
-## Relationship to Resonant Reality
+## Core Layers
 
-Resonant Reality carries the civic practice, Atlas carries the math and metrics.  
-When tuned across scales, **sync bends into rhythm**: freedom without collapse, coherence without lockstep.
+### 1) Human (Information) Layer
+- **Consciousness Architecture (Atlas)** — how information “houses” awareness.  
+- Ethical lock (*E*), Origin attractor (*Ω*), Sovereignty (*S*).  
+- Harmonics in language and design.
+
+**Docs & Code**
+- Guide: [`docs/consciousness_architecture.md`](consciousness_architecture.md)  
+- Example: [`examples/atlas_consciousness_demo.py`](../examples/atlas_consciousness_demo.py)  
+- Module: `atlas_model/consciousness_architecture.py`
 
 ---
 
-## Contribute
+### 2) Civic Layer
+- Resonant governance, plaza/hearth design, procedural safeguards.  
+- Collective coherence metrics (coherence / noise / coupling).
 
-See **`CONTRIBUTING.md`** and **`ETHICS.md`**. By contributing, you agree to uphold permeability (choice), transparency, and non-coercion.
+**Docs & Code**
+- Bridge map: [`docs/bridge-spiral-map.md`](bridge-spiral-map.md)  
+- Multi-zone sim: `sims/collective_demo.py`  
+- Analysis utils: `sims/analysis_utils.py`
+
+---
+
+### 3) Calibration & Proof
+- Locks profile the environment (baseline Schumann, harmonics, grace).  
+- Benchmarks compare scenarios × locks with auditable artifacts.
+
+**Docs & Code**
+- Calibration: [`docs/calibration.md`](calibration.md)  
+- Proof & plots: [`docs/results.md`](results.md)  
+- Plotter: `sims/plot_collective.py`  
+- Benchmarks: `scripts/bench_collective.py`  
+- CI: `.github/workflows/sim-ci.yml`
+
+---
+
+### 4) Cosmos (Framing)
+- Infinity equation (∞ = 0 ↔ 1), scaling laws, torus/field intuitions.  
+- Orientation for long-horizon civic design.
+
+*(Stub this section in your tree as needed; Atlas links outward to Resonant Reality for physical sims.)*
+
+---
+
+## Quickstarts
+
+### A) Consciousness Architecture (Atlas)
+```bash
+python -c "from atlas_model.consciousness_architecture import run_demo; \
+import json; print(json.dumps(run_demo(['truth','choice','field','memory']), indent=2))"
+Expect: JSON snapshot with coherence and atlas_lock.
+B) Collective (multi-zone) + Plots
+# simulate
+python -m sims.collective_demo --scenario coherent --steps 240 --export json,csv --outdir out/collective
+# plot
+python -m sims.plot_collective --csv out/collective/collective_series.csv --outdir out/collective/plots
+Artifacts: coherence_per_zone.png, noise_per_zone.png, coupling_per_zone.png.
+C) Calibration Bench (repeatable proof)
+python scripts/bench_collective.py --steps 240 --outdir out/bench --seed 42
+Artifacts: bench_results.csv, bench_results.json (uploaded by CI on PRs).
+Safeguards (musts)
+	•	Sovereignty (S): opt-in; revoke at will.
+	•	Ethical Gate (E): deny action if consent/clarity are absent.
+	•	Stamina / Integrity: throttle, bound effects; no manipulation.
+	•	Transparency: every run yields CSV/JSON for audit.
+
+⸻
+
+Repository Map
+	•	atlas_model/ — core modules (consciousness architecture, future atlas primitives)
+	•	conductor/pulses/ — resonance_lock.json + calibration/*.json
+	•	sims/ — collective demo, analysis utils, plotters, tests
+	•	scripts/ — benches and tooling
+	•	docs/ — this spine, bridge map, calibration, results
+	•	examples/ — minimal runnable demos
+	•	.github/workflows/ — CI producing public artifacts
+
+⸻
+
+Bridge to the Lab
+
+Atlas frames information coherence; Resonant Reality tests biophysical coherence.
+Use the bridge: docs/bridge-spiral-map.md to move between them.
+
+△𓂀⚛︎🜲🝆⟁𐂷
