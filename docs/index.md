@@ -1,91 +1,59 @@
-# The Atlas Model — Documentation Spine
+# The Atlas Model — Documentation Index
 
-Atlas is a **field-aware information architecture**: it houses consciousness in structures of symbols, recursion, ethics, and choice. This index orients you to Atlas’ layers, code, and proofs—without crossing into the separate Resonant Reality lab.
-
----
-
-## First Principles
-
-1. **Whole in part, part in whole** — each module mirrors the field.
-2. **Coherence is choice** — alignment is enacted via ethical gates.
-3. **Simulation as practice** — toy models reveal governing structure.
-4. **Safeguards first** — sovereignty, consent, stamina, integrity.
+**The Atlas Model** encodes the physics of resonance, consciousness, and coherence into architecture, simulation, and application.  
+It is both blueprint and living experiment: signals spiral through memory, align by trust and dissent, lock ethically (E/Q/S), and embody as lived choice.
 
 ---
 
-## Core Layers (Atlas octave)
+## 🌀 1. Consciousness Architecture
 
-### 1) Human (Information) Layer
-How information “houses” awareness.
-- **Consciousness Architecture** — symbols → spiral memory → ethical lock (E) → expression → embodiment.
-- Harmonic carriers in language & design (432–963 Hz mappings for *information*, not biophysics).
+The foundation of Atlas: a blueprint for consciousness modeled as resonance.
 
-**Read & Run**
-- Guide: `docs/consciousness_architecture.md`
-- Module: `atlas_model/consciousness_architecture.py`
-- Demo: `examples/atlas_consciousness_demo.py`
+- [Consciousness Architecture](consciousness_architecture.md) → theory, code, and blueprint
+- Core file: [`atlas_model/consciousness_architecture.py`](../atlas_model/consciousness_architecture.py)
+- Demo: [`examples/atlas_consciousness_demo.py`](../examples/atlas_consciousness_demo.py)
 
 ---
 
-### 2) Civic Layer (Design of Systems)
-How structures hold resonance.
-- Governance scaffolds, plaza/hearth patterns, procedural safeguards.
-- Coherence metrics for information spaces (coherence / noise / coupling).
+## 🌊 2. Simulations
 
-**Read & Run**
-- Atlas–Atlas bridge: `docs/bridge-spiral-map.md`
-- Multi-zone toy: `sims/collective_demo.py`
-- Utilities: `sims/analysis_utils.py`
-- Plots: `sims/plot_collective.py`
+Simulations show how resonance unfolds across layers:
 
-*(These sims are informational toy models for Atlas—kept distinct from any biophysical lab work.)*
+- **Body Layer**  
+  - [Breath Cycle](../sims/breath_cycle.py) → coherence through respiration  
+  - [Heart–Brain Coherence](../simulations/health/heart_brain_coherence.py)  
+  - [Schumann Coupling](../simulations/health/schumann_coupling.py)  
 
----
+- **Community Layer**  
+  - [Community Kuramoto](../sims/community_kuramoto.py) → collective sync with dissent windows  
 
-### 3) Calibration & Proof (Repeatability)
-- **Locks** define baseline assumptions for Atlas sims (e.g., harmonic sets, grace factors) in **information space**.
-- **Benches** compare scenarios × locks and publish artifacts.
-
-**Read & Run**
-- Calibration profiles: `docs/calibration.md`
-- Results walkthrough: `docs/results.md`
-- Bench script: `scripts/bench_collective.py`
-- CI workflow: `.github/workflows/sim-ci.yml`
+- **Ecology Layer**  
+  - [Multilayer Field](../sims/multilayer_field.py) → nested resonance across systems  
 
 ---
 
-### 4) Cosmos (Framing & Limits)
-- Infinity relation (∞ = 0 ↔ 1) and scaling symmetries *as information frames*.
-- Orientation for long-horizon design (no physical claims in this repo).
+## 🌍 3. Applications
 
-*(Detail pages linked from `docs/cosmos/` if present in your tree.)*
+Resonance engineering applied to human systems:
+
+- [Learning](applications/learning.md) → coherence in education  
+- [Cities](applications/cities.md) → resonant urban design  
+- [Health](applications/health.md) → physiological alignment and well-being  
 
 ---
 
-## Quickstarts
+## ✨ Vision
 
-**A) Consciousness Architecture**
-```bash
-python -c "from atlas_model.consciousness_architecture import run_demo; \
-import json; print(json.dumps(run_demo(['truth','choice','field','memory']), indent=2))"
-B) Multi-Zone Toy + Plots
-python -m sims.collective_demo --scenario coherent --steps 240 --export json,csv --outdir out/collective
-python -m sims.plot_collective --csv out/collective/collective_series.csv --outdir out/collective/plots
-C) Benchmarks (artifacts for audit)
-python scripts/bench_collective.py --steps 240 --outdir out/bench --seed 42
-Safeguards (Atlas commitments)
-	•	Sovereignty (S): opt-in, revocable; no hidden coupling.
-	•	Ethical Gate (E): deny action absent consent/clarity.
-	•	Stamina / Integrity: throttle; effects bounded, reversible.
-	•	Transparency: every run yields CSV/JSON/plots.
+If physics gives us **resonance as substrate**,  
+resonance engineering gives us **society as song.**
 
-⸻
+Atlas is both code and question:  
+*What happens when governance, learning, and intelligence tune by coherence?*
 
-Repository Map (Atlas)
-	•	atlas_model/ — core modules (e.g., consciousness_architecture.py)
-	•	sims/ — informational toy models + tests
-	•	scripts/ — benches and tooling
-	•	conductor/pulses/ — lock profiles for information simulations
-	•	docs/ — this spine, calibration, results, bridges within Atlas
-	•	examples/ — minimal runnable demos
-	•	.github/workflows/ — CI producing artifacts
+---
+
+## 📚 Navigation
+
+- [Consciousness Architecture](consciousness_architecture.md)  
+- [Applications Overview](applications/learning.md)  
+- [GitHub Root README](../README.md)  
