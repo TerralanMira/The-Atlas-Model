@@ -1,0 +1,12 @@
+sample_rate_hz: 20
+bands: {theta: [4,7], alpha: [8,13], gamma: [30,45]}
+state_norm: minmax
+coupling:
+  latent_bias_gain: 0.15
+  audio_gain: 0.12
+ethics:
+  max_hr_increase_bpm: 12
+  min_plv: 0.22
+  dissent_window_pct: [0.05, 0.07]   # expands when dPLV/dt < 0
+memory:
+  path: "./data/session_graph.jsonl"
