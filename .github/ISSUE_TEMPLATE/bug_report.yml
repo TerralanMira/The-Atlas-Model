@@ -1,0 +1,21 @@
+name: Bug Report
+description: Something is broken
+labels: [type:bug, stage:testable]
+body:
+  - type: input
+    id: version
+    attributes: { label: Version/commit }
+  - type: textarea
+    id: repro
+    attributes: { label: Reproduction, placeholder: "Steps / expected / actual" }
+  - type: textarea
+    id: logs
+    attributes: { label: Logs / stack traces }
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - label: blocks release
+        - label: data loss
+        - label: perf regression
