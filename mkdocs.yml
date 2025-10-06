@@ -1,38 +1,94 @@
 site_name: The Atlas Model
-site_description: Hum ↔ Code — a living, fractal repository of resonance, coherence, and creation.
+site_description: A disciplined map of resonance—algorithms, simulations, awareness, and coherent design.
 repo_url: https://github.com/TerralanMira/The-Atlas-Model
+
 theme:
   name: material
   features:
-    - navigation.instant
+    - navigation.top
+    - navigation.expand
     - navigation.sections
-    - navigation.indexes
     - toc.integrate
     - content.code.copy
-    - content.tabs.link
+    - content.code.annotate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: teal
+    - scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
 markdown_extensions:
   - admonition
+  - footnotes
+  - tables
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true
   - pymdownx.details
   - pymdownx.superfences
-  - pymdownx.highlight
-  - pymdownx.tabbed:
-      alternate_style: true
+  - pymdownx.tabbed
+  - pymdownx.tasklist
+  - pymdownx.arithmatex
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      execute: false
+  - awesome-pages
 
 nav:
   - Home: index.md
-  - Awareness & Coherence:
-      - Awareness: awareness.md
-      - Coherence: coherence.md
-  - Field Layers:
-      - Field Layers (Whole): field_layers.md
-  - Applications: applications.md
-  - LLM:
-      - Atlas System Prompt: llm/atlas_system_prompt.md
-  - Simulations:
-      - Dashboard (What to Plot): dashboard.md
-      - Creation (Genesis): creation.md
-      - Creation — How to Read Births: creation_guide.md
-  - Logs:
-      - Feeding the Canopy: logs/README.md
+
+  - Algorithms:
+      - Overview: algorithms/index.md
+      - Simulations (Hub): algorithms/simulations.md
+      - Simulation Families:
+          - Kuramoto / Multi-Scale: algorithms/simulations/kuramoto.md
+          - Schumann Hybrid: algorithms/simulations/schumann_hybrid.md
+          - LC Grid Modes: algorithms/simulations/lc_grid.md
+          - Crystals / Standing Patterns: algorithms/simulations/crystals.md
+          - Harmonic Observation: algorithms/simulations/harmonic_observation.md
+          - Entropy Drift: algorithms/simulations/entropy_drift.md
+          - Civic Resonance: algorithms/simulations/civic_resonance.md
+          - Atlas Coherence (Human ↔ AI): algorithms/simulations/atlas_coherence.md
+
+  - Awareness:
+      - Overview: awareness/index.md
+      - Observation & Collapse: awareness/observation.md
+      - Ethics & Coherence: awareness/ethics_coherence.md
+      - Integration (with math appendix): awareness/integration.md
+
+  - Atlas (Spec & Language):
+      - Overview: atlas/index.md
+      - Principles: atlas/principles.md
+      - Terminology: atlas/terminology.md
+      - Design Notes: atlas/design.md
+
+  - LLM Interfaces:
+      - Overview: llm/index.md
+      - System Prompt: llm/atlas_system_prompt.md
+      - Roles & Prompts: llm/roles_prompts.md
+      - Router Rules: llm/router_rules.md
+      - Scorer Rules: llm/scorer_rules.md
+
+  - Applications:
+      - Overview: applications/index.md
+      - Health: applications/health.md
+      - Governance: applications/governance.md
+      - Education: applications/education.md
+      - Economy: applications/economy.md
+
+  - ADR:
+      - Index: ADR/README.md
+      # Add each ADR explicitly as you create it, e.g.:
+      # - ADR 0001: ADR/0001-observer-collapse-semantics.md
+      # - ADR 0002: ADR/0002-ethics-as-coherence.md
+
+# Build note:
+# Run `mkdocs build --strict` locally and in CI to ensure nav targets exist.
