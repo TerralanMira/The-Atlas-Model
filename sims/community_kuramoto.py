@@ -1,149 +1,85 @@
-"""
-Community Kuramoto Simulator
-
-- Loads a preset from sims/presets.json (graph, K, dt, steps, noise, groups)
-- Simulates phases on a network with Euler integration
-- Computes community resonance metrics and prints a compact summary
-
-Usage:
-    python sims/community_kuramoto.py --preset community_demo
-"""
-
-import argparse
-import json
+# File: sims/community_kuramoto.py
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse, math
+from dataclasses import dataclass
 import numpy as np
-from pathlib import Path
 
-try:
-    # Local import; ensure algorithms is a package or adjust sys.path as needed
-    from algorithms.community_metrics import time_series_metrics, summarize_metrics
-except Exception:
-    # Fallback: allow running as script when project root isn't in PYTHONPATH
-    import sys
-    sys.path.append(str(Path(__file__).resolve().parents[1]))
-    from algorithms.community_metrics import time_series_metrics, summarize_metrics
+@dataclass
+class Params:
+    n: int = 256
+    K: float = 1.2
+    rho: float = 0.6          # observation rate (lowers effective noise)
+    lam0: float = 0.20        # initial ethics weight
+    R_star: float = 0.75      # target coherence
+    eta: float = 0.02         # adaptation rate dλ/dt
+    sigma: float = 0.45       # base noise
+    dt: float = 0.02
+    T: float = 40.0
+    seed: int = 1
+    graph: str = "ring"       # ring|all|smallworld
+    shock_t: float = 20.0
+    shock_sigma: float = 1.2
 
-def euler_step(theta, omega, K, A, noise_std, dt):
-    """
-    One Euler step for graph-coupled Kuramoto.
-    theta: (N,)
-    omega: (N,)
-    A: (N,N)
-    """
-    N = theta.shape[0]
-    deg = np.clip(A.sum(axis=1), 1e-9, None)
-    sin_terms = np.zeros(N)
-    # interaction term
-    for i in range(N):
-        sin_terms[i] = np.sum(A[i] * np.sin(theta - theta[i])) / deg[i]
-    dtheta = omega + K * sin_terms
-    if noise_std > 0:
-        dtheta += np.random.normal(0, noise_std, size=N)
-    return (theta + dt * dtheta) % (2*np.pi)
-
-def simulate(preset: dict, seed: int = 7):
-    rng = np.random.default_rng(seed)
-
-    N = int(preset.get("N", 50))
-    steps = int(preset.get("steps", 2000))
-    dt = float(preset.get("dt", 0.05))
-    K = float(preset.get("K", 1.0))
-    noise_std = float(preset.get("noise_std", 0.0))
-
-    # Graph
-    if "adjacency" in preset:
-        A = np.array(preset["adjacency"], dtype=float)
-        N = A.shape[0]
+def build_graph(n, kind="ring"):
+    if kind == "all":
+        A = np.ones((n,n)) - np.eye(n)
+    elif kind == "smallworld":
+        k = max(2, n//20)
+        A = np.zeros((n,n))
+        for i in range(n):
+            for d in range(1,k+1):
+                A[i,(i+d)%n]=1; A[i,(i-d)%n]=1
+        rng = np.random.default_rng(42)
+        for i in range(n):
+            if rng.random() < 0.03:
+                j = rng.integers(0,n); A[i,:]=0; A[i,j]=1
+        A = np.maximum(A, A.T); np.fill_diagonal(A,0)
     else:
-        # default: ring + small-world rewirings
-        p_rewire = float(preset.get("p_rewire", 0.05))
-        k_ring = int(preset.get("k_ring", 4))
-        A = np.zeros((N, N))
-        for i in range(N):
-            for k in range(1, k_ring//2 + 1):
-                j = (i + k) % N
-                A[i, j] = 1
-                A[j, i] = 1
-        # rewire
-        for i in range(N):
-            for j in range(i+1, N):
-                if A[i, j] == 1 and rng.random() < p_rewire:
-                    A[i, j] = A[j, i] = 0
-                    # new random connection
-                    r = rng.integers(0, N)
-                    while r == i:
-                        r = rng.integers(0, N)
-                    A[i, r] = A[r, i] = 1
+        A = np.zeros((n,n))
+        for i in range(n):
+            A[i,(i-1)%n]=1; A[i,(i+1)%n]=1
+    deg = A.sum(axis=1, keepdims=True); deg[deg==0]=1
+    return A/deg
 
-    # Groups (labels)
-    groups = preset.get("groups", None)
-    if groups is not None and len(groups) != N:
-        raise ValueError("Length of 'groups' must match N")
+def order_parameter(theta):
+    return abs(np.exp(1j*theta).mean())
 
-    # Natural frequencies
-    if "omega" in preset:
-        omega = np.array(preset["omega"], dtype=float)
-        if omega.shape[0] != N:
-            raise ValueError("omega length must equal N")
-    else:
-        omega_mu = float(preset.get("omega_mu", 0.0))
-        omega_sigma = float(preset.get("omega_sigma", 0.3))
-        omega = rng.normal(omega_mu, omega_sigma, size=N)
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    for field, typ in Params.__annotations__.items():
+        default = getattr(Params, field)
+        ap.add_argument(f"--{field}", type=typ if typ!=bool else None, default=default)
+    args = ap.parse_args(argv)
+    p = Params(**{k: getattr(args,k) for k in Params.__annotations__})
 
-    # Initial phases
-    if "theta0" in preset:
-        theta = np.array(preset["theta0"], dtype=float) % (2*np.pi)
-        if theta.shape[0] != N:
-            raise ValueError("theta0 length must equal N")
-    else:
-        theta = rng.uniform(0, 2*np.pi, size=N)
+    rng = np.random.default_rng(p.seed)
+    A = build_graph(p.n, p.graph)
+    theta = rng.uniform(-math.pi, math.pi, size=p.n)
+    omega = rng.normal(0, 0.5, size=p.n)
+    lam = p.lam0
+    alpha = 0.98; m = 0.0
 
-    # Optional intervention schedule
-    interventions = preset.get("interventions", [])  # list of {t_start,t_end, type, params}
+    steps = int(p.T/p.dt); t=0.0
+    print("t,R,m,lam")
+    for _ in range(steps):
+        sigma_eff = p.sigma*math.exp(-p.rho)
+        shock = (p.shock_sigma if abs(t-p.shock_t) < p.dt*1.5 else 0.0)
+        sin_diff = np.sin(theta[np.newaxis,:]-theta[:,np.newaxis])
+        coupling = p.K*(A*sin_diff).sum(axis=1)
+        ethics_grad = (A*np.sin(theta[:,None]-theta[None,:])).sum(axis=1)
+        dtheta = omega + coupling - lam*ethics_grad
+        noise = rng.normal(0, sigma_eff+shock, size=p.n)
+        theta = (theta + p.dt*dtheta + math.sqrt(p.dt)*noise + math.tau) % math.tau
 
-    # Sim loop
-    T = steps
-    TH = np.zeros((T, N))
-    K_t = K
-
-    for t in range(T):
-        # apply interventions if any
-        for iv in interventions:
-            t0, t1 = iv.get("t_start", 0), iv.get("t_end", 0)
-            if t0 <= t < t1:
-                if iv.get("type") == "increase_coupling":
-                    K_t = K * float(iv.get("factor", 2.0))
-                elif iv.get("type") == "reduce_noise":
-                    noise_std = float(iv.get("new_noise", 0.0))
-                elif iv.get("type") == "add_bridge":
-                    i, j, w = iv["i"], iv["j"], float(iv.get("weight", 1.0))
-                    A[i, j] = A[j, i] = w
-            else:
-                # reset to defaults after window
-                K_t = K
-
-        theta = euler_step(theta, omega, K_t, A, noise_std, dt)
-        TH[t] = theta
-
-    # Metrics
-    m = time_series_metrics(TH, groups=groups)
-    summary = summarize_metrics(m)
-    return {"summary": summary, "metrics": m}
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--preset", type=str, default="community_demo")
-    parser.add_argument("--presets_path", type=str, default=str(Path(__file__).with_name("presets.json")))
-    args = parser.parse_args()
-
-    with open(args.presets_path, "r") as f:
-        presets = json.load(f)
-    if args.preset not in presets:
-        raise KeyError(f"Preset '{args.preset}' not found.")
-    result = simulate(presets[args.preset])
-    print("=== Community Resonance Summary ===")
-    for k, v in result["summary"].items():
-        print(f"{k}: {v:.4f}")
+        R = order_parameter(theta)
+        m = alpha*m + (1-alpha)*R
+        # ethics adaptation: push lam toward value that yields R≈R*
+        lam += p.eta * (p.R_star - R)
+        lam = max(0.0, min(2.0, lam))
+        print(f"{t:.3f},{R:.6f},{m:.6f},{lam:.6f}")
+        t += p.dt
+    return 0
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
