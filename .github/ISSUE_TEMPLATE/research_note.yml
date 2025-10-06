@@ -1,0 +1,21 @@
+name: Research Note
+description: Capture speculation, theory, hypothesis, or reference
+labels: [type:research, stage:speculation]
+body:
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage
+      options: [speculation, theory, testable]
+  - type: textarea
+    id: claim
+    attributes:
+      label: Claim / Hypothesis
+  - type: textarea
+    id: method
+    attributes:
+      label: How would we test this?
+  - type: textarea
+    id: refs
+    attributes:
+      label: References
