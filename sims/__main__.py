@@ -50,3 +50,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+ To make each sim runnable, ensure each module (e.g., community_kuramoto.py) exposes a main(args: list[str]) that parses its own arguments and runs.
+ 
