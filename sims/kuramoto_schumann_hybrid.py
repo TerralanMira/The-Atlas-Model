@@ -1,88 +1,45 @@
-"""
-kuramoto_schumann_hybrid.py
----------------------------
-
-Single-population Kuramoto oscillators with an optional
-Schumann-like external anchor (7.83 Hz proxy as a fixed phase driver).
-
-Dependencies: numpy, matplotlib (optional for plotting)
-
-Run:
-    python sims/kuramoto_schumann_hybrid.py
-"""
-
+# File: sims/kuramoto_schumann_hybrid.py
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse, math
 import numpy as np
 
-try:
-    import matplotlib.pyplot as plt
-except Exception:
-    plt = None
+def schumann_forcing(t, f0=7.83, amp=0.25, duty=0.6):
+    # square-envelope sinusoid: active for a duty fraction each second
+    gate = 1.0 if (t%1.0) < duty else 0.0
+    return amp * gate * math.sin(2*math.pi*f0*t)
 
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--n", type=int, default=256)
+    ap.add_argument("--K", type=float, default=1.1)
+    ap.add_argument("--rho", type=float, default=0.5)
+    ap.add_argument("--sigma", type=float, default=0.45)
+    ap.add_argument("--f0", type=float, default=7.83)
+    ap.add_argument("--amp", type=float, default=0.25)
+    ap.add_argument("--duty", type=float, default=0.6)
+    ap.add_argument("--dt", type=float, default=0.002)
+    ap.add_argument("--T", type=float, default=20.0)
+    ap.add_argument("--seed", type=int, default=2)
+    args = ap.parse_args(argv)
 
-def order_parameter(theta):
-    z = np.exp(1j * theta).mean()
-    return float(np.abs(z)), float(np.angle(z))
-
-
-def simulate(
-    N=120,
-    sigma=0.6,       # natural frequency spread
-    K=0.8,           # all-to-all coupling
-    use_anchor=True,
-    K_e=0.20,        # anchor coupling strength
-    phi_anchor=0.0,  # anchor phase (radians)
-    dphi_anchor=0.0, # anchor phase speed (0 = fixed)
-    dt=0.05,
-    steps=2000,
-    seed=7
-):
-    rng = np.random.default_rng(seed)
-    omega = rng.normal(0.0, sigma, size=N)
-    theta = rng.uniform(0, 2*np.pi, size=N)
-
-    R_hist = np.zeros(steps, dtype=float)
-
-    for t in range(steps):
-        # mean field
-        z = np.exp(1j * theta).mean()
-        R = np.abs(z)
-        psi = np.angle(z)
-        R_hist[t] = R
-
-        # Kuramoto mean-field identity: K * R * sin(psi - theta)
-        coupling_term = K * R * np.sin(psi - theta)
-
-        # Anchor driver (fixed or slowly moving phase)
-        anchor_term = K_e * np.sin(phi_anchor - theta) if use_anchor else 0.0
-
-        dtheta = omega + coupling_term + anchor_term
-        theta = (theta + dt * dtheta) % (2*np.pi)
-
-        phi_anchor = (phi_anchor + dt * dphi_anchor) % (2*np.pi)
-
-    return {"R": R_hist, "theta": theta}
-
-
-def main():
-    out_off = simulate(use_anchor=False)
-    out_on = simulate(use_anchor=True, K_e=0.2)
-
-    if plt is None:
-        for label, arr in [("no_anchor", out_off["R"]), ("anchor", out_on["R"])]:
-            print(label, f"R_final={arr[-1]:.3f}")
-        return
-
-    import matplotlib.pyplot as plt
-    plt.figure()
-    plt.plot(out_off["R"], label="No anchor")
-    plt.plot(out_on["R"], label="Anchor on (K_e=0.2)", alpha=0.9)
-    plt.xlabel("Step")
-    plt.ylabel("R (coherence)")
-    plt.legend()
-    plt.title("Kuramoto × Schumann (anchor) hybrid")
-    plt.tight_layout()
-    plt.show()
-
+    rng = np.random.default_rng(args.seed)
+    theta = rng.uniform(-math.pi, math.pi, size=args.n)
+    omega = rng.normal(0, 0.5, size=args.n)
+    t=0.0; steps=int(args.T/args.dt)
+    print("t,R,F")
+    for _ in range(steps):
+        sigma_eff = args.sigma*math.exp(-args.rho)
+        F = schumann_forcing(t, args.f0, args.amp, args.duty)
+        # all-to-all Kuramoto + global forcing injected as phase bias
+        z = np.exp(1j*theta).mean()
+        R, psi = abs(z), math.atan2(z.imag, z.real)
+        dtheta = omega + args.K*R*np.sin(psi - theta) + F
+        noise = rng.normal(0, sigma_eff, size=args.n)
+        theta = (theta + args.dt*dtheta + math.sqrt(args.dt)*noise + math.tau) % math.tau
+        print(f"{t:.3f},{R:.6f},{F:.6f}")
+        t += args.dt
+    return 0
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
