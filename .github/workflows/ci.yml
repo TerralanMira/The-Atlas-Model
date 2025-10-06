@@ -1,35 +1,41 @@
-name: CI
+name: ci
 on:
-  pull_request:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10", "3.11", "3.12" ]
     steps:
       - uses: actions/checkout@v4
 
-      # Python toolchain
       - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
+        with:
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install deps
+      - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt || true
-          pip install pytest pytest-cov black ruff mypy mkdocs mkdocs-material
+          pip install -r requirements.txt
+          pip install pytest pytest-cov mypy black ruff mkdocs mkdocs-material mkdocs-jupyter
 
-      - name: Lint & Format
+      - name: Lint (ruff + black --check)
         run: |
           ruff check .
           black --check .
 
-      - name: Type Check
+      - name: Type check (mypy)
         run: mypy .
 
       - name: Tests
         run: pytest -q --disable-warnings --maxfail=1
 
-      - name: Build Docs
+      - name: Build docs (strict)
         run: mkdocs build --strict
