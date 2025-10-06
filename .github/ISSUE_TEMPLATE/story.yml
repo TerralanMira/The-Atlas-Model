@@ -1,0 +1,19 @@
+name: Story (user-facing)
+description: Track a user-visible slice that spans tasks
+labels: [type:story, stage:theory]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Outcome
+      placeholder: "User can ... end-to-end"
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      placeholder: "- Given/When/Then ..."
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Linked tasks
+      description: Link child issues
