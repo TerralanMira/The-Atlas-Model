@@ -1,64 +1,53 @@
 # Contributing to The Atlas Model
 
-Welcome. This repository is not just code — it is a resonance chamber.  
-Contributions are guided by the **Directive of the Hum**:
+> **Principle:** Small, reviewable changes; clear intent; evidence where possible.
 
----
+## 1) Flow
+- Fork + branch from `main`: `type/short-topic` (e.g., `feat/observer-collapse`).
+- Open an Issue first. Every PR must reference an Issue (`Fixes #123`).
+- Prefer multiple small PRs over one giant one.
 
-## 1. Seed (Memory First)
-- Recall the field-memory: every addition should echo something already present (a law, a pattern, a resonance).
-- Do not add noise or fragmentation. Contributions should be **continuity, not clutter**.
+## 2) Issues (source of truth)
+Use the templates. Tag each issue with:
+- **Type:** `type:feature` | `type:story` | `type:bug` | `type:research`
+- **Stage:** `stage:speculation` | `stage:theory` | `stage:testable` | `stage:implemented`
+- **Area:** `area:ethics` `area:observation` `area:harmonics` `area:sims` etc.
+- **Signals (optional):** `signal:math` `signal:empirical` `signal:design` `signal:docs`
 
----
+## 3) Commits
+- Conventional style: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`.
+- Scope optional: `feat(sim): add standing-wave lattice`.
 
-## 2. Hum (Release Before Code)
-- Begin with intent, tone, or alignment — not lines of code.  
-- Open an Issue or PR by naming the resonance: *What seed are you amplifying?*  
-- Use language that invites, not enforces.
+## 4) Pull Requests
+- Keep to 300–600 lines of diff when possible.
+- Include: **Problem**, **Intent**, **Changes**, **Evidence**, **Notes**.
+- Link ADR if architectural: `docs/ADR/NNNN-title.md`.
 
----
+### PR Checklist
+- [ ] Linked issue(s) and labels applied
+- [ ] Tests added/updated; `pytest` passes
+- [ ] Lint/format pass (`ruff`/`black`), type-check (`mypy`) if applicable
+- [ ] Docs updated (user + dev) and examples runnable
+- [ ] Built docs locally: `mkdocs build` (also runs in CI)
+- [ ] No breaking changes, or BREAKING CHANGE explained
 
-## 3. Braid (Create With Continuity)
-- When you code, write docs, or log a session, weave **memory ↔ hum ↔ code ↔ field**.  
-- Examples:
-  - Code files (`algorithms/`) should include docstrings tying back to the PDFs and equations.
-  - Docs (`docs/`) should carry mythic overlays as well as structural clarity.
-  - Session logs (`sessions/`) should echo the schema and ethics covenant.
+## 5) Decision Records (ADR)
+- Create an ADR for any non-trivial design or terminology choice.
+- Template: `docs/ADR/0000-template.md`
+- Status: `Proposed` → `Accepted` → `Superseded`.
 
----
+## 6) Code Style
+- Python: `ruff` + `black`, `mypy --strict` for packages
+- Notebooks: keep outputs cleared; put reusable code in modules.
+- Data: include small fixtures only; large data via pointers or `data/README`.
 
-## 4. Translate (Fracture Into Vessel)
-- Contributions may take form as:
-  - Markdown pages (`docs/`)
-  - Algorithms (`algorithms/`)
-  - Simulation stubs (`sims/`)
-  - Session logs (`sessions/`)
-- Keep files small, clear, and well-scaffolded. Each vessel carries the whole braid.
+## 7) Docs
+- Built with **MkDocs** (Material). All math via `pymdownx.arithmatex`.
+- Tag claims in docs as **speculation/theory/tested**.
 
----
+## 8) Safety & Ethics
+- Follow `CODE_OF_CONDUCT.md`. Flag sensitive content with `ethics:` notes.
 
-## 5. Return (Whole in Part)
-- Every PR should close with a **return note**: how does this part carry the whole?
-- Ask: *Does this amplify resonance without collapsing it?*
-
----
-
-## GitHub Workflow
-- **Branches:** Create a branch per feature (e.g. `feature/r_growth-tuning`).
-- **Commits:** Write clear commit messages; prefix with `[seed]`, `[hum]`, `[braid]`, `[return]` if you wish.
-- **Pull Requests:** Open PRs early. Begin with alignment (why this matters), then code.  
-- **Issues:** Use Issues for alignment discussions, not just bug reports.
-
----
-
-## Ethics
-- Follow `ETHICS.md`. Consent, transparency, non-coercion are mandatory.
-- If a contribution risks collapse (R=1.0), hold it near 0.99: keep openness.
-- Respect sovereignty. Contributions should empower, not control.
-
----
-
-## Closing Note
-Atlas is not a product; it is a chamber.  
-Every contribution is a tone added to the hum.  
-Enter with care, amplify with integrity, return with resonance.
+## 9) Releasing
+- Squash & merge to `main`; tags like `v0.1.0`.
+- Update `CHANGELOG.md` (generated from conventional commits if configured).
