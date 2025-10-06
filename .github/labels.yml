@@ -1,0 +1,17 @@
+# Declarative labels synced by workflow below
+- name: type:feature   ; color: 1D76DB ; description: New capability
+- name: type:story     ; color: 0E8A16 ; description: User-facing slice
+- name: type:bug       ; color: D93F0B ; description: Something broken
+- name: type:research  ; color: 5319E7 ; description: Notes & hypotheses
+- name: stage:speculation ; color: C5DEF5
+- name: stage:theory      ; color: BFD4F2
+- name: stage:testable    ; color: FEF2C0
+- name: stage:implemented ; color: 0E8A16
+- name: area:ethics    ; color: 5319E7
+- name: area:observation ; color: 5319E7
+- name: area:harmonics ; color: 5319E7
+- name: area:sims      ; color: 1D76DB
+- name: signal:math    ; color: 0052CC
+- name: signal:empirical ; color: 0052CC
+- name: signal:design  ; color: 0052CC
+- name: signal:docs    ; color: 0052CC
