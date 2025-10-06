@@ -1,0 +1,10 @@
+{
+  "include-component-in-tag": false,
+  "release-type": "simple",
+  "packages": {
+    ".": {
+      "package-name": "the-atlas-model",
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}
