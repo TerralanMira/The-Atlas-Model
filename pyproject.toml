@@ -1,0 +1,28 @@
+[tool.black]
+line-length = 100
+target-version = ["py310","py311","py312"]
+exclude = "/(site|.venv|build|dist|node_modules)/"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["site", ".venv", "build", "dist", "node_modules"]
+select = ["E","F","I","B","UP"]
+ignore = []
+fix = false
+
+[tool.ruff.isort]
+known-first-party = ["atlas", "sims", "algorithms", "tests"]
+combine-as-imports = true
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+show_error_codes = true
+exclude = "(^site/|^build/|^dist/|^node_modules/|^docs/)"
