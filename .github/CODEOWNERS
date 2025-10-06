@@ -1,0 +1,6 @@
+# Default reviewers
+*       @your-org/core
+
+# Areas
+/sims/   @your-org/simulation
+/docs/   @your-org/docs
