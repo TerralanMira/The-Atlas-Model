@@ -51,3 +51,12 @@ Use the templates. Tag each issue with:
 ## 9) Releasing
 - Squash & merge to `main`; tags like `v0.1.0`.
 - Update `CHANGELOG.md` (generated from conventional commits if configured).
+  ## Docs placement (canonical)
+- Algorithms/Math/Sim pages → `docs/algorithms/**`
+- Atlas concepts/definitions/spec → `docs/atlas/**`
+- Awareness/Ethics/Practice → `docs/awareness/**`
+- LLM prompts/rules/interfaces → `docs/llm/**`
+- Applications (health, governance, education, economy) → `docs/applications/**`
+
+> No duplicate basenames across folders. If a page crosses domains, keep it in the
+> **most specific** domain and deep-link from others.
