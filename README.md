@@ -4,6 +4,12 @@
 It encodes how signals spiral through memory, align by trust and dissent, lock ethically, and embody as lived choice.  
 This repository contains both the theoretical foundations and runnable simulations.
 
+## Quickstart (sims)
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m sims --list
+python -m sims run community_kuramoto --n 256 --K 1.2 --rho 0.6
 ---
 
 ## 🌌 Structure
