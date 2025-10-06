@@ -1,19 +1,10 @@
-# python
+# Python
 __pycache__/
 *.pyc
 .venv/
-env/
-venv/
 
-# logs + outputs
-logs/
-*.csv
-
-# mkdocs site
+# MkDocs
 site/
 
-# OS/editor
+# OS
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/
