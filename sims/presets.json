@@ -1,5 +1,5 @@
 {
-  "default": {"n_local": 64, "n_clusters": 4, "k_local": 1.0, "k_global": 0.15, "noise_sigma": 0.00},
-  "weak_global": {"n_local": 64, "n_clusters": 6, "k_local": 1.0, "k_global": 0.05, "noise_sigma": 0.00},
-  "noisy": {"n_local": 64, "n_clusters": 4, "k_local": 1.0, "k_global": 0.15, "noise_sigma": 0.05}
+  "default":  { "n_local": 64, "n_clusters": 4, "k_local": 1.0, "k_global": 0.15, "noise_sigma": 0.00 },
+  "weak_global": { "n_local": 64, "n_clusters": 6, "k_local": 1.0, "k_global": 0.05, "noise_sigma": 0.00 },
+  "noisy":   { "n_local": 64, "n_clusters": 4, "k_local": 1.0, "k_global": 0.15, "noise_sigma": 0.05 }
 }
