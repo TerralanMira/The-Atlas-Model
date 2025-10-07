@@ -328,3 +328,12 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
+ # at bottom of algorithms/coherence_metrics.py
+if __name__ == "__main__":
+    import argparse, json
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--in", dest="inp", required=True, help="JSON list of strings")
+    args = parser.parse_args()
+    texts = json.loads(open(args.inp, "r", encoding="utf-8").read())
+    # call existing functions to compute local/global scores...
+    print(json.dumps({"local_tfidf": local_tfidf, "global_tfidf": global_tfidf, ...}, indent=2)) 
