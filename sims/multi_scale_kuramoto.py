@@ -1,4 +1,3 @@
-# sims/multi_scale_kuramoto.py
 from __future__ import annotations
 import numpy as np
 from dataclasses import dataclass
@@ -9,7 +8,7 @@ class KuramotoConfig:
     n_local: int = 64           # oscillators per local cluster
     n_clusters: int = 4
     k_local: float = 1.0        # intra-cluster coupling
-    k_global: float = 0.15      # inter-cluster coupling
+    k_global: float = 0.15      # inter-cluster coupling (between cluster reps)
     dt: float = 0.01
     t_max: float = 20.0
     noise_sigma: float = 0.0
@@ -23,34 +22,37 @@ def _ring_adjacency(n: int) -> np.ndarray:
     return A
 
 def make_multiscale_graph(cfg: KuramotoConfig) -> np.ndarray:
-    # block-diag local rings + weak all-to-all between cluster means
     n = cfg.n_local * cfg.n_clusters
     A = np.zeros((n, n), float)
+    # local rings
     for c in range(cfg.n_clusters):
-        idx = slice(c*cfg.n_local, (c+1)*cfg.n_local)
+        idx = slice(c * cfg.n_local, (c + 1) * cfg.n_local)
         A[idx, idx] = _ring_adjacency(cfg.n_local) * cfg.k_local
-    # global coupling between cluster centroids
+    # weak global ties between cluster “leaders”
     for c in range(cfg.n_clusters):
-        for d in range(c+1, cfg.n_clusters):
-            i0 = c*cfg.n_local
-            j0 = d*cfg.n_local
+        for d in range(c + 1, cfg.n_clusters):
+            i0 = c * cfg.n_local
+            j0 = d * cfg.n_local
             A[i0, j0] = A[j0, i0] = cfg.k_global
     return A
 
-def kuramoto_step(theta: np.ndarray, omega: np.ndarray, A: np.ndarray, dt: float, noise: float, rng: np.random.Generator) -> np.ndarray:
-    # Kuramoto: dθ_i/dt = ω_i + Σ_j A_ij * sin(θ_j − θ_i) + noise
+def kuramoto_step(theta: np.ndarray, omega: np.ndarray, A: np.ndarray,
+                  dt: float, noise: float, rng: np.random.Generator) -> np.ndarray:
+    # dθ_i/dt = ω_i + Σ_j A_ij * sin(θ_j − θ_i) + ξ
     phase_diff = theta[None, :] - theta[:, None]
     coupling = np.sum(A * np.sin(phase_diff), axis=1)
     dtheta = omega + coupling
     if noise > 0:
         dtheta += rng.normal(0.0, noise, size=theta.shape)
-    return (theta + dt * dtheta + np.pi) % (2*np.pi) - np.pi
+    return (theta + dt * dtheta + np.pi) % (2 * np.pi) - np.pi
 
 def order_parameter(theta: np.ndarray) -> Tuple[float, float]:
     z = np.exp(1j * theta).mean()
     return np.abs(z), np.angle(z)
 
-def run(cfg: KuramotoConfig, omega_fn: Optional[Callable[[int], np.ndarray]] = None, callback: Optional[Callable[[int, np.ndarray, float, float], None]] = None):
+def run(cfg: KuramotoConfig,
+        omega_fn: Optional[Callable[[int], np.ndarray]] = None,
+        callback: Optional[Callable[[int, np.ndarray, float, float], None]] = None):
     rng = np.random.default_rng(cfg.seed)
     n = cfg.n_local * cfg.n_clusters
     A = make_multiscale_graph(cfg)
