@@ -1,4 +1,3 @@
-# scripts/ingest_sessions.py
 import json, sys, pathlib
 import pandas as pd
 
@@ -9,6 +8,8 @@ def validate_session(obj: dict) -> None:
     missing = REQ_TOP - obj.keys()
     if missing:
         raise ValueError(f"Missing top fields: {missing}")
+    if not isinstance(obj["events"], list) or not obj["events"]:
+        raise ValueError("events must be a non-empty list")
     for e in obj["events"]:
         if not REQ_EVENT <= e.keys():
             raise ValueError(f"Bad event keys: {set(e.keys())}")
@@ -21,13 +22,15 @@ def normalize(obj: dict) -> pd.DataFrame:
             "t": e["t"],
             "type": e["type"],
             "text": e.get("text",""),
-            "participants": ",".join(obj.get("participants",[]))
+            "participants": ",".join(obj.get("participants",[])),
+            "start": obj["start"],
+            "end": obj["end"]
         })
-    return pd.DataFrame(rows).sort_values("t")
+    return pd.DataFrame(rows).sort_values("t").reset_index(drop=True)
 
 def main(in_path: str, out_base: str):
     p = pathlib.Path(in_path)
-    obj = json.loads(p.read_text())
+    obj = json.loads(p.read_text(encoding="utf-8"))
     validate_session(obj)
     df = normalize(obj)
     base = pathlib.Path(out_base)
