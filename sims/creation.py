@@ -1,315 +1,195 @@
+# sims/creation.py
 """
-Creation (Genesis) Simulation
+Synchronization-Led Emergence (Toy Kuramoto Model)
+==================================================
 
-From near-silence to living structure:
-- Start cold (low coupling, higher noise).
-- Slowly ramp ritual openness and lower noise (an annealing schedule).
-- Baseline hum nudges orientation.
-- When local coherence + resources are ample, "creation events" add long-range edges.
-- Crystallization points lock in as anchors that persist between pulses.
+This module simulates a *phase-coupled oscillator system* in which
+collective synchronization can trigger an abrupt, stable structure we
+label a “creation event” (emergence). It is a **toy** computational model,
+not a cosmological or biological claim.
 
-Self-contained (numpy only).
+Governing equations
+-------------------
+Oscillator phases (i = 1..N), Kuramoto-like dynamics:
 
-Author: Atlas
+    dθ_i/dt = ω_i
+              + (K(t)/N) * Σ_j sin(θ_j − θ_i)
+              + A_drive * sin(2π f_drive t + φ)
+
+Order parameter:
+
+    R(t) e^{iψ(t)} = (1/N) * Σ_j e^{i θ_j(t)}
+    with R ∈ [0,1], ψ ∈ [−π, π].
+
+Coupling growth (bounded logistic-like with relaxation):
+
+    dK/dt = α * max(0, R(t) − R_thresh) * (K_max − K)
+            − β * (K − K_min)
+
+Event logic (delegated to algorithms/creation_protocols.py):
+- Detects upward crossings of R(t) beyond R_event, with minimal hold time T_hold.
+- Additional guardrails can include minimum K and minimum anchors (locally phase-locked nodes).
+
+**Claims & Limits**
+- Scope: toy Kuramoto system (dimensionless or arbitrary units).
+- Demonstrates: how coherence + growth rules can yield abrupt structure (an “event”).
+- NOT claiming: cosmological creation or biological genesis.
+
+Outputs
+-------
+The simulate() function returns arrays for R(t), K(t), gap_to_env(t), and an
+array of creation events. Companion demo saves CSV + PNG.
+
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional, Tuple
+from dataclasses import dataclass
+from typing import Dict, Tuple
 import numpy as np
 
+# ----------------- utilities ----------------- #
 
-# ---------- Driver (Schumann-like) ----------
+def wrap_angle(x: np.ndarray) -> np.ndarray:
+    """Wrap angles to [-pi, pi] elementwise."""
+    return (x + np.pi) % (2 * np.pi) - np.pi
 
-@dataclass
-class Driver:
-    freq: float
-    amplitude: float
-    phase: float = 0.0
+def order_parameter(phases: np.ndarray) -> Tuple[float, float]:
+    """
+    Kuramoto order parameter for a 1D phase vector.
+    Returns (R, psi) where R ∈ [0,1], psi ∈ [-pi, pi].
+    """
+    z = np.exp(1j * phases)
+    z_mean = np.mean(z)
+    R = np.abs(z_mean)
+    psi = np.angle(z_mean)
+    return float(R), float(psi)
 
-def driver_series(steps: int, dt: float, drivers: List[Driver]) -> Dict[str, np.ndarray]:
-    t = np.arange(steps) * dt
-    comps = np.array([d.amplitude * np.sin(2*np.pi*d.freq*t + d.phase) for d in drivers])  # (C,T)
-    env = comps.sum(axis=0)
-    env_d = np.gradient(env, dt)
-    phi_env = np.arctan2(env_d, env)  # crude phase proxy
-    return {"t": t, "components": comps, "env": env, "phi_env": phi_env}
+# ----------------- config ----------------- #
 
-
-# ---------- Config ----------
-
-@dataclass
+@dataclass(frozen=True)
 class CreationConfig:
-    # time
-    steps: int = 4000
-    dt: float = 0.02
-    seed: Optional[int] = 108
-    # population
-    N: int = 180
-    k_ring: int = 4           # very low initial lattice degree
-    p_rewire: float = 0.02
-    # base coupling + noise (start cold)
-    K_base_start: float = 0.6
-    K_base_end: float = 1.0
-    noise_start: float = 0.06
-    noise_end: float = 0.03
-    # ritual windows (ramped openness)
-    period: int = 600
-    K_cross_base_start: float = 0.0
-    K_cross_base_end: float = 0.02
-    K_cross_amp_start: float = 0.0
-    K_cross_amp_end: float = 0.08
-    # driver
-    K_env: float = 0.28
-    drivers: List[Driver] = field(default_factory=lambda: [
-        Driver(7.83, 1.0, 0.0),
-        Driver(14.3, 0.6, 0.0),
-        Driver(20.8, 0.4, 0.0),
-    ])
-    # resources
-    r_init: float = 0.55
-    resource_gain: float = 0.33
-    resource_leak: float = 0.20
-    resource_noise: float = 0.02
-    # crystallization
-    window: int = 80
-    thresh_R_local: float = 0.84
-    thresh_resource: float = 0.55
-    K_anchor_boost: float = 0.6
-    noise_anchor_drop: float = 0.02
-    anchor_half_life: int = 700
-    starve_threshold: float = 0.35
-    # creation events (edge births)
-    grow_every: int = 200             # steps between growth checks
-    grow_budget: int = 80             # total edges that can be birthed
-    grow_batch_min: int = 3
-    grow_batch_max: int = 8
-    grow_require_R_local: float = 0.80
-    grow_require_r: float = 0.55
-    # summary tail
-    tail_frac: float = 0.5
+    N: int = 120                 # number of oscillators
+    steps: int = 6000            # time steps
+    dt: float = 0.002            # time step (s or a.u.)
+    seed: int = 7
 
+    # intrinsic
+    omega_mean: float = 2.0 * np.pi * 1.0   # mean natural freq (rad/s)
+    omega_spread: float = 0.3               # gaussian std (rad/s)
 
-# ---------- Graph helpers ----------
+    # coupling K(t)
+    K_init: float = 0.1
+    K_min: float = 0.0
+    K_max: float = 4.0
+    alpha: float = 1.2                       # growth rate when R>R_thresh
+    beta: float = 0.3                        # relaxation toward K_min
+    R_thresh: float = 0.55                   # coherence threshold for growth
 
-def watts_strogatz(N: int, k: int, p: float, rng: np.random.Generator):
-    nbrs = [set() for _ in range(N)]
-    for i in range(N):
-        for j in range(1, k//2 + 1):
-            a = (i - j) % N; b = (i + j) % N
-            nbrs[i].add(a); nbrs[i].add(b)
-    for i in range(N):
-        for j in list(nbrs[i]):
-            if j > i and rng.random() < p:
-                choices = [x for x in range(N) if x != i and x not in nbrs[i]]
-                if choices:
-                    new = int(rng.choice(choices))
-                    nbrs[i].remove(j); nbrs[j].remove(i)
-                    nbrs[i].add(new); nbrs[new].add(i)
-    return [np.array(sorted(list(s)), dtype=int) for s in nbrs]
+    # external drive
+    A_drive: float = 0.0                     # amplitude (rad/s)
+    f_drive: float = 0.5                     # Hz
+    phi_drive: float = 0.0                   # rad
 
-def add_edge(u: int, v: int, nbrs: List[np.ndarray]) -> None:
-    # mutate neighbor lists in place
-    su = set(nbrs[u].tolist()); sv = set(nbrs[v].tolist())
-    if v not in su and u != v:
-        su.add(v); sv.add(u)
-        nbrs[u] = np.array(sorted(list(su)), dtype=int)
-        nbrs[v] = np.array(sorted(list(sv)), dtype=int)
+    # event detection thresholds (delegated)
+    R_event: float = 0.8
+    T_hold: float = 0.5                      # seconds (steps*dt to cross)
 
+    # misc
+    record_every: int = 1                    # record at every step
 
-# ---------- Utilities ----------
+# ----------------- simulation core ----------------- #
 
-def lerp(a: float, b: float, x: float) -> float:
-    return (1.0 - x) * a + x * b
-
-def order_param(phases: np.ndarray) -> complex:
-    return np.mean(np.exp(1j * phases))
-
-def local_R(i: int, phases: np.ndarray, nbrs: List[np.ndarray]) -> float:
-    if len(nbrs[i]) == 0:
-        return 0.0
-    group = np.concatenate(([i], nbrs[i]))
-    return float(np.abs(np.mean(np.exp(1j * phases[group]))))
-
-
-# ---------- Simulation ----------
-
-def simulate(cfg: CreationConfig | Dict[str, Any]) -> Dict[str, Any]:
-    if isinstance(cfg, dict):
-        d = cfg.get("drivers", None)
-        if d and len(d) and not isinstance(d[0], Driver):
-            cfg["drivers"] = [Driver(**x) for x in d]
-        cfg = CreationConfig(**cfg)
-
+def simulate(cfg: CreationConfig) -> Dict[str, np.ndarray | Dict[str, float]]:
+    """
+    Run the toy Kuramoto system with bounded coupling growth.
+    Returns arrays and a summary dict. Event detection is performed via
+    algorithms.creation_protocols.detect_events.
+    """
     rng = np.random.default_rng(cfg.seed)
 
-    # state
-    phases = rng.uniform(0, 2*np.pi, size=cfg.N)
-    omega = rng.normal(0.0, 0.25, size=cfg.N)
-    r = np.clip(cfg.r_init + 0.05 * rng.standard_normal(cfg.N), 0.0, 1.0)
-    nbrs = watts_strogatz(cfg.N, cfg.k_ring, cfg.p_rewire, rng)
+    # natural frequencies ω_i
+    omega = rng.normal(loc=cfg.omega_mean, scale=cfg.omega_spread, size=cfg.N)
+    # phases θ_i
+    theta = rng.uniform(low=-np.pi, high=np.pi, size=cfg.N)
+    # coupling K
+    K = cfg.K_init
 
-    # anchors
-    is_anchor = np.zeros(cfg.N, dtype=bool)
-    anchor_age = np.zeros(cfg.N, dtype=int)
+    # outputs
+    T = cfg.steps
+    R_tr = np.zeros(T, dtype=float)
+    psi_tr = np.zeros(T, dtype=float)
+    K_tr = np.zeros(T, dtype=float)
+    gap_env_tr = np.zeros(T, dtype=float)   # |ω_i − ω_mean| averaged (a proxy)
+    anchors_tr = np.zeros(T, dtype=float)   # fraction locally phase-locked
 
-    # driver
-    drv = driver_series(cfg.steps, cfg.dt, cfg.drivers)
+    # drive angular frequency
+    w_drive = 2.0 * np.pi * cfg.f_drive
 
-    # logs
-    R_global = np.zeros(cfg.steps)
-    gap_env = np.zeros(cfg.steps)
-    K_cross_t = np.zeros(cfg.steps)
-    noise_t = np.zeros(cfg.steps)
-    R_local = np.zeros((cfg.steps, cfg.N))
-    r_hist = np.zeros((cfg.steps, cfg.N))
-    anchors_count = np.zeros(cfg.steps, dtype=int)
-    # creation events as tuples: (t, u, v)
-    creation_events: List[Tuple[int,int,int]] = []
+    # helper: local anchor fraction (simple nearest-neighbor lock proxy)
+    def local_anchor_fraction(phases: np.ndarray, tol: float = 0.25) -> float:
+        # fraction of nodes whose nearest neighbor phase difference < tol
+        phases_sorted = np.sort(wrap_angle(phases.copy()))
+        diffs = np.abs(np.diff(np.concatenate([phases_sorted, phases_sorted[:1] + 2*np.pi])))
+        return float(np.mean(diffs < tol))
 
-    # sliding window for local coherence
-    Rbuf = np.zeros((cfg.window, cfg.N)); wptr = 0; warm = 0
+    for t_idx in range(T):
+        t = t_idx * cfg.dt
 
-    # growth budget tracker
-    edges_left = cfg.grow_budget
+        # compute order parameter
+        R, psi = order_parameter(theta)
+        R_tr[t_idx] = R
+        psi_tr[t_idx] = psi
 
-    for t in range(cfg.steps):
-        # annealing (0..1 ramp)
-        x = t / max(1, cfg.steps-1)
-        K_base = lerp(cfg.K_base_start, cfg.K_base_end, x)
-        noise_base = lerp(cfg.noise_start, cfg.noise_end, x)
-        K_cross_base = lerp(cfg.K_cross_base_start, cfg.K_cross_base_end, x)
-        K_cross_amp  = lerp(cfg.K_cross_amp_start,  cfg.K_cross_amp_end,  x)
+        # proxy environment gap: mean absolute deviation from ω_mean
+        gap_env_tr[t_idx] = float(np.mean(np.abs(omega - np.mean(omega))))
+        anchors_tr[t_idx] = local_anchor_fraction(theta)
 
-        # ritual modulation
-        cyc = np.sin(2*np.pi * t / cfg.period) * 0.5 + 0.5   # 0..1
-        K_cross = K_cross_base + K_cross_amp * cyc
-        noise_mod = noise_base - 0.02 * cyc
-        K_cross_t[t] = K_cross
-        noise_t[t] = noise_mod
+        K_tr[t_idx] = K
 
-        # local coherence
-        for i in range(cfg.N):
-            Ri = local_R(i, phases, nbrs)
-            R_local[t, i] = Ri
-            Rbuf[wptr, i] = Ri
-        wptr = (wptr + 1) % cfg.window
-        warm = min(warm + 1, cfg.window)
+        # external drive term (same added to all oscillators)
+        drive = cfg.A_drive * np.sin(w_drive * t + cfg.phi_drive)
 
-        # crystallization
-        if warm == cfg.window:
-            Rmean_local = Rbuf.mean(axis=0)
-            to_anchor = (~is_anchor) & (Rmean_local >= cfg.thresh_R_local) & (r >= cfg.thresh_resource)
-            is_anchor[to_anchor] = True
-            anchor_age[to_anchor] = 0
+        # Kuramoto update (Euler)
+        # dθ_i = ω_i + (K/N)*Σ_j sin(θ_j − θ_i) + drive
+        sines = np.sin(theta[None, :] - theta[:, None])  # NxN
+        coupling_term = (K / cfg.N) * np.sum(sines, axis=1)
+        dtheta = omega + coupling_term + drive
+        theta = wrap_angle(theta + cfg.dt * dtheta)
 
-        # starve → decay
-        starving = is_anchor & (r < cfg.starve_threshold)
-        anchor_age[is_anchor] += 1
-        hl = max(1, cfg.anchor_half_life)
-        decay_prob = np.zeros(cfg.N)
-        decay_prob[starving] = 1.0 - 0.5 ** (anchor_age[starving] / hl)
-        drop = rng.random(cfg.N) < decay_prob
-        is_anchor[drop] = False
-        anchor_age[drop] = 0
+        # K growth dynamics
+        # dK/dt = α * max(0, R − R_thresh) * (K_max − K) − β*(K − K_min)
+        grow = max(0.0, R - cfg.R_thresh)
+        dK = cfg.alpha * grow * (cfg.K_max - K) - cfg.beta * (K - cfg.K_min)
+        K = float(np.clip(K + cfg.dt * dK, cfg.K_min, cfg.K_max))
 
-        # global stats
-        mean_c = order_param(phases)
-        R_global[t] = np.abs(mean_c)
-        anchors_count[t] = int(is_anchor.sum())
-        mean_phase = np.angle(mean_c)
-        gap_env[t] = np.abs(np.angle(np.exp(1j * (mean_phase - drv["phi_env"][t]))))
-        r_hist[t] = r
+    # event detection (upward R crossing + hold)
+    from algorithms.creation_protocols import detect_events
+    events = detect_events(
+        R_tr,
+        K_tr,
+        anchors_tr,
+        dt=cfg.dt,
+        R_event=cfg.R_event,
+        T_hold=cfg.T_hold,
+        K_min=cfg.K_min + 0.05  # small guard
+    )
 
-        # dynamics
-        dphi = np.zeros(cfg.N)
-
-        # neighbor mean (base)
-        for i in range(cfg.N):
-            if len(nbrs[i]) == 0:
-                continue
-            neighbor_mean = np.angle(np.mean(np.exp(1j * phases[nbrs[i]])))
-            dphi[i] += K_base * np.sin(neighbor_mean - phases[i])
-
-        # cross openness (ritual)
-        dphi += K_cross * np.sin(mean_phase - phases)
-
-        # Schumann driver
-        dphi += cfg.K_env * np.sin(drv["phi_env"][t] - phases)
-
-        # anchor effect
-        K_eff_scale = np.ones(cfg.N)
-        for i in range(cfg.N):
-            if is_anchor[i] or (len(nbrs[i]) and np.any(is_anchor[nbrs[i]])):
-                K_eff_scale[i] += cfg.K_anchor_boost / max(K_base, 1e-6)
-
-        # noise shaping
-        noise_node = np.full(cfg.N, noise_mod)
-        noise_node[is_anchor] = np.maximum(0.0, noise_node[is_anchor] - cfg.noise_anchor_drop)
-
-        # integrate
-        phases = phases + (omega + dphi * K_eff_scale) * cfg.dt \
-                 + noise_node * np.sqrt(cfg.dt) * rng.standard_normal(cfg.N)
-        phases = np.mod(phases, 2*np.pi)
-
-        # resources
-        gain = cfg.resource_gain * (R_local[t] - 0.5)
-        r = r + (gain - cfg.resource_leak * (r - 0.5)) * cfg.dt \
-              + cfg.resource_noise * np.sqrt(cfg.dt) * rng.standard_normal(cfg.N)
-        r = np.clip(r, 0.0, 1.0)
-
-        # -------- creation events: birth long-range edges --------
-        if edges_left > 0 and (t % cfg.grow_every == 0) and warm == cfg.window:
-            # eligible nodes: coherent & resourced
-            eligible = np.where((Rbuf.mean(axis=0) >= cfg.grow_require_R_local) & (r >= cfg.grow_require_r))[0]
-            if eligible.size >= 2:
-                batch = int(rng.integers(cfg.grow_batch_min, cfg.grow_batch_max+1))
-                batch = min(batch, edges_left)
-                for _ in range(batch):
-                    u = int(rng.choice(eligible))
-                    # connect u to a far node that's not already a neighbor
-                    pool = [v for v in range(cfg.N) if v != u and v not in nbrs[u]]
-                    if not pool:
-                        continue
-                    # prefer distant by ring-distance
-                    v = int(rng.choice(pool))
-                    add_edge(u, v, nbrs)
-                    creation_events.append((t, u, v))
-                    edges_left -= 1
-                    if edges_left == 0:
-                        break
-
-    # summaries
-    tail_start = int(cfg.steps * (1.0 - cfg.tail_frac))
-    tail = slice(tail_start, cfg.steps)
+    # summary (tail averages)
+    tail = slice(int(0.8 * T), T)
     summary = {
-        "R_mean_tail": float(np.mean(R_global[tail])),
-        "gap_env_tail": float(np.mean(gap_env[tail])),
-        "anchors_tail_mean": float(np.mean(anchors_count[tail])),
-        "r_tail_mean": float(np.mean(r_hist[tail])),
-        "edges_birthed": int(len(creation_events)),
+        "seed": cfg.seed,
+        "R_mean_tail": float(np.mean(R_tr[tail])),
+        "K_mean_tail": float(np.mean(K_tr[tail])),
+        "anchors_mean_tail": float(np.mean(anchors_tr[tail])),
+        "events_count": int(events.shape[0]),
     }
 
     return {
-        "cfg": {
-            **{k: getattr(cfg, k) for k in vars(cfg) if k != "drivers"},
-            "drivers": [vars(d) for d in cfg.drivers],
-        },
-        "t": drv["t"],
-        "R": R_global,
-        "gap_to_env": gap_env,
-        "K_cross_t": K_cross_t,
-        "noise_t": noise_t,
-        "anchors_count": anchors_count,
-        "R_local": R_local,
-        "r_hist": r_hist,
-        "env": drv["env"],
-        "env_components": drv["components"],
-        "phi_env": drv["phi_env"],
-        "creation_events": np.array(creation_events, dtype=int) if creation_events else np.zeros((0,3), dtype=int),
+        "R": R_tr,
+        "psi": psi_tr,
+        "K": K_tr,
+        "gap_to_env": gap_env_tr,
+        "anchors_frac": anchors_tr,
+        "creation_events": events,  # shape (E, 3): [t_sec, R_at, K_at]
         "summary": summary,
     }
-
-if __name__ == "__main__":
-    out = simulate(CreationConfig())
-    print(out["summary"])
